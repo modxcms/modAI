@@ -5,7 +5,7 @@ A **generative AI Extra** for MODX Revolution that helps you **create content fa
 ## ✨ What modAI Can Do
 📝 **Generate Content** – Quickly craft page content, blog posts, and marketing copy.  
 🔍 **SEO Optimization** – Improve **meta titles, descriptions, and summaries** for better ranking.  
-🖼️ **Image Assistance** – Create and enhance images, **auto-generate alt text**, and improve accessibility.  
+🖼️ **Image Assistance** – Create and enhance images, **generate meaninful alt tags**, and improve accessibility.  
 💬 **Chat-Based Prompts** – Use **zero-shot or iterative chat** to refine your outputs dynamically.  
 
 ## ⚡ Powerful Features
@@ -16,4 +16,4 @@ A **generative AI Extra** for MODX Revolution that helps you **create content fa
 
 Perfect for **MODX users, content creators, and SEO specialists** who want to streamline their workflow! 🚀
 
-_For additional information, read the [documentation](https://modxcms.github.io/modAI/), view the [latest announcment](https://modx.com/blog/generative-ai-content-for-modx-revolution-with-modai)_
+_For additional information, read the [documentation](https://modxcms.github.io/modAI/), view the [latest announcment](https://modx.com/blog/generative-ai-content-for-modx-revolution-with-modai), or ask a question in an issue here._
