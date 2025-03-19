@@ -3,7 +3,7 @@ import { icon } from '../dom/icon';
 import { chevronDown } from '../icons';
 import { createElement } from '../utils';
 import { scrollToBottom } from './modalActions';
-import { globalState } from './state';
+import { globalState } from '../../globalState';
 
 export const buildScrollToBottom = () => {
   const scrollWrapper = createElement('div', 'scrollToBottomContainer', [

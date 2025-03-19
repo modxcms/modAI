@@ -1,7 +1,7 @@
+import { globalState } from '../../globalState';
 import { button } from '../dom/button';
 import { check } from '../icons';
 import { createElement } from '../utils';
-import { globalState } from './state';
 
 import type { Modal } from './types';
 import type { Message } from '../../chatHistory';

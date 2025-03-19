@@ -1,6 +1,6 @@
 import { closeModal, sendMessage } from './modalActions';
 import { buildModal } from './modalBuilder';
-import { globalState } from './state';
+import { globalState } from '../../globalState';
 
 import type { LocalChatConfig } from './types';
 

@@ -1,14 +1,15 @@
 import { chatHistory } from './chatHistory';
 import { executor } from './executor';
+import { globalState } from './globalState';
 import { history } from './history';
 import { initOnResource } from './resource';
 import { ui } from './ui';
-import { globalState } from './ui/localChat/state';
 
 export type Config = {
   name?: string;
   apiURL: string;
   cssURL: string;
+  translateFn?: (key: string, params?: Record<string, string>) => string;
 };
 
 export const init = (config: Config) => {

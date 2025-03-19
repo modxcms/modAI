@@ -1,11 +1,12 @@
 import { createActionButton } from './actionButton';
 import { createShadowElement } from './shadow';
 import { executor } from '../../executor';
+import { globalState } from '../../globalState';
+import { lng } from '../../lng';
 import { confirmDialog } from '../cofirmDialog';
 import { icon } from '../dom/icon';
 import { copy, edit, plus, triangleError } from '../icons';
 import { createElement, nlToBr } from '../utils';
-import { globalState } from './state';
 
 import type { LocalChatConfig } from './types';
 import type { Message, UpdatableHTMLElement } from '../../chatHistory';
@@ -277,7 +278,7 @@ export const copyToClipboard = async (message: Message) => {
     try {
       await navigator.clipboard.writeText(textContent);
     } catch {
-      addErrorMessage(_('modai.cmp.failed_copy'));
+      addErrorMessage(lng('modai.cmp.failed_copy'));
     }
   } else {
     try {
@@ -289,7 +290,7 @@ export const copyToClipboard = async (message: Message) => {
       document.execCommand('copy');
       document.body.removeChild(textarea);
     } catch {
-      addErrorMessage(_('modai.cmp.failed_copy'));
+      addErrorMessage(lng('modai.cmp.failed_copy'));
     }
   }
 };

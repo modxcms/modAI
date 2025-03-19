@@ -2,9 +2,9 @@ import { closeModal } from './modalActions';
 import { button } from '../dom/button';
 import { createElement } from '../utils';
 import { drag, endDrag, initDrag } from './dragHandlers';
+import { globalState } from '../../globalState';
 import { icon } from '../dom/icon';
 import { x } from '../icons';
-import { globalState } from './state';
 
 export const buildModalHeader = () => {
   const closeModalBtn = button(

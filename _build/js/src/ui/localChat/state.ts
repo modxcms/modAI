@@ -1,13 +1,6 @@
-import type { Modal } from './types';
-import type { Config } from '../../index';
-import type { Button } from '../dom/button';
+import { globalState } from '../../globalState';
 
-export const globalState = {
-  modalOpen: false,
-  alertOpen: false,
-  config: {} as Config,
-  modal: {} as Modal,
-};
+import type { Button } from '../dom/button';
 
 export const setLoadingState = (loading: boolean) => {
   globalState.modal.isLoading = loading;

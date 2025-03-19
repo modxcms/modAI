@@ -1,5 +1,5 @@
+import { globalState } from '../../globalState';
 import { createElement } from '../utils';
-import { globalState } from './state';
 
 export const buildModalChat = () => {
   const chatContainer = createElement('div', 'chatContainer', '', {

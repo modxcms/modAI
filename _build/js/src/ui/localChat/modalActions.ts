@@ -1,8 +1,9 @@
 import { drag, endDrag } from './dragHandlers';
 import { addErrorMessage, renderMessage } from './messageHandlers';
-import { setLoadingState, globalState } from './state';
+import { setLoadingState } from './state';
 import { chatHistory } from '../../chatHistory';
 import { executor } from '../../executor';
+import { globalState } from '../../globalState';
 
 import type { LocalChatConfig, ModalType } from './types';
 import type { Prompt } from '../../executor';

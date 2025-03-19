@@ -4,8 +4,8 @@ import { scrollToBottom } from './modalActions';
 import { buildModalChat } from './modalChat';
 import { buildModalHeader } from './modalHeader';
 import { buildModalInput } from './modalInput';
-import { globalState } from './state';
 import { chatHistory } from '../../chatHistory';
+import { globalState } from '../../globalState';
 import { createModAIShadow } from '../dom/modAIShadow';
 
 import type { Modal, LocalChatConfig } from './types';

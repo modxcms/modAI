@@ -1,5 +1,6 @@
 import { executor, TextData, TextParams } from '../../executor';
 import { DataOutput, history } from '../../history';
+import { lng } from '../../lng';
 import { confirmDialog } from '../cofirmDialog';
 import { button } from '../dom/button';
 import { icon } from '../dom/icon';
@@ -153,7 +154,9 @@ const createForcedTextPrompt = ({
       done();
       confirmDialog({
         title: 'Failed',
-        content: _('modai.cmp.failed_try_again', { msg: err instanceof Error ? err.message : '' }),
+        content: lng('modai.cmp.failed_try_again', {
+          msg: err instanceof Error ? err.message : '',
+        }),
         confirmText: 'Close',
         showCancel: false,
         onConfirm: () => {},
@@ -258,7 +261,9 @@ const createVisionPrompt = (config: VisionConfig & Target) => {
       done();
       confirmDialog({
         title: 'Failed',
-        content: _('modai.cmp.failed_try_again', { msg: err instanceof Error ? err.message : '' }),
+        content: lng('modai.cmp.failed_try_again', {
+          msg: err instanceof Error ? err.message : '',
+        }),
         confirmText: 'Close',
         showCancel: false,
         onConfirm: () => {},

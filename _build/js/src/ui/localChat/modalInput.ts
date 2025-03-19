@@ -13,7 +13,7 @@ import { button } from '../dom/button';
 import { icon } from '../dom/icon';
 import { image, refresh, arrowUp, square, text, trash } from '../icons';
 import { buildScrollToBottom } from './scrollBottom';
-import { globalState } from './state';
+import { globalState } from '../../globalState';
 
 import type { LocalChatConfig } from './types';
 import type { Button } from '../dom/button';

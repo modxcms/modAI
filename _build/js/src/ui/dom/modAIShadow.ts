@@ -1,4 +1,4 @@
-import { globalState } from '../localChat/state';
+import { globalState } from '../../globalState';
 import { createElement } from '../utils';
 
 export const createModAIShadow = <R extends HTMLElement>(

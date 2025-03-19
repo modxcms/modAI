@@ -1,5 +1,5 @@
+import { globalState } from '../../globalState';
 import { applyStyles, createElement } from '../utils';
-import { globalState } from './state';
 
 export type AttachmentsWrapper = HTMLDivElement & {
   visible: boolean;

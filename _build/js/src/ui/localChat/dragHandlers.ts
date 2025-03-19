@@ -1,4 +1,4 @@
-import { globalState } from './state';
+import { globalState } from '../../globalState';
 
 export const initDrag = (e: MouseEvent) => {
   globalState.modal.isDragging = true;
