@@ -1,14 +1,8 @@
 <?php
 namespace modAI;
 
+use modAI\Exceptions\RequiredSettingException;
 use MODX\Revolution\modX;
-
-class RequiredSettingException extends \Exception {
-    public function __construct(string $setting)
-    {
-        parent::__construct("System setting `$setting` is required.");
-    }
-}
 
 class Settings {
     private static function getOption(modX $modx, string $namespace, string $field, string $area, string $setting): ?string

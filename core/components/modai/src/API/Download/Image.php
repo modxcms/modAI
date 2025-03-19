@@ -55,7 +55,6 @@ class Image extends API {
             throw new LexiconException('modai.error.image_download_domain');
         }
 
-
         if (is_int($mediaSource) || ctype_digit((string)$mediaSource)) {
             $source = $this->modx->getObject(modMediaSource::class, [
                 'id' => (int)$mediaSource,

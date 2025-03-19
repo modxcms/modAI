@@ -109,3 +109,4 @@ $_lang['modai.error.invalid_data_url'] = 'Invalid data URL';
 $_lang['modai.error.failed_to_fetch_image'] = 'Failed to fetch image';
 $_lang['modai.error.source_not_found'] = 'MediaSource not found.';
 $_lang['modai.error.source_init failed'] = 'Failed to init MediaSource.';
+$_lang['modai.error.system_setting_required'] = 'System setting `[[+setting]]` is required.';

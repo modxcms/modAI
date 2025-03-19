@@ -16,6 +16,11 @@ class Utils {
         return array_filter($array);
     }
 
+    /**
+     * @param $dataURL
+     * @return array|mixed
+     * @throws LexiconException
+     */
     public static function parseDataURL($dataURL) {
         if (strpos($dataURL, 'data:') !== 0) {
             return $dataURL;
