@@ -2,6 +2,7 @@
 namespace modAI\API;
 
 use modAI\Exceptions\LexiconException;
+use modAI\modAI;
 use modAI\Services\Response\AIResponse;
 use modAI\Settings;
 use MODX\Revolution\modX;
@@ -11,16 +12,23 @@ use Throwable;
 abstract class API {
     protected modX $modx;
 
+    /** @var modAI|null  */
+    protected $modAI = null;
+
     public function __construct(modX $modx)
     {
         $this->modx = $modx;
         $this->modx->lexicon->load('modai:default');
+
+        if ($this->modx->services->has('modai')) {
+            $this->modAI = $this->modx->services->get('modai');
+        }
     }
 
     public function handleRequest(ServerRequestInterface $request): void
     {
         try {
-            if (empty($this->modx->user) || empty($this->modx->user->id) || !$this->modx->hasPermission('frames')) {
+            if ($this->modAI === null) {
                 throw APIException::unauthorized();
             }
 

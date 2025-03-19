@@ -20,6 +20,10 @@ class modAI
     {
         $this->modx =& $modx;
 
+        if (!$this->hasAccess()) {
+            throw new \Exception('Unauthorized');
+        }
+
         $corePath = $this->getOption('core_path', $config, $this->modx->getOption('core_path', null, MODX_CORE_PATH) . 'components/modai/');
         $assetsUrl = $this->getOption('assets_url', $config, $this->modx->getOption('assets_url', null, MODX_ASSETS_URL) . 'components/modai/');
 
@@ -33,7 +37,6 @@ class modAI
                 'jsUrl'     => $assetsUrl . 'js/',
 
                 'templatesPath' => $corePath . 'templates/',
-                'processorsPath' => $corePath . 'src/Processors',
             ],
             $config
         );
@@ -147,5 +150,21 @@ class modAI
         $assetsUrl = $this->getOption('assetsUrl');
 
         return "{$assetsUrl}css/modai.css?lit=$lit";
+    }
+
+    public function getBaseConfig()
+    {
+        $firstName = explode(' ', $this->modx->user->Profile->fullname)[0];
+
+        return [
+            'name' => $firstName,
+            'apiURL'=> $this->getAPIUrl(),
+            'cssURL' => $this->getCSSFile(),
+        ];
+    }
+
+    public function hasAccess()
+    {
+        return !empty($this->modx->user) && !empty($this->modx->user->id) && $this->modx->hasPermission('frames');
     }
 }

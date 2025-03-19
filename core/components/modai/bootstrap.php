@@ -8,7 +8,11 @@ require_once $namespace['path'] . 'vendor/autoload.php';
 
 if (!$modx->services->has('modai')) {
     $modx->services->add('modai', function($c) use ($modx) {
-        return new \modAI\modAI($modx);
+        try {
+            return new \modAI\modAI($modx);
+        } catch (\Exception $e) {
+            return null;
+        }
     });
 
 }

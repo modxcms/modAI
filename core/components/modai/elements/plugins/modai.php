@@ -9,8 +9,10 @@ if ($modx->event->name !== 'OnManagerPageBeforeRender') {
 
 if (!$modx->services->has('modai')) return;
 
-/** @var \modAI\modAI $modAI */
+/** @var \modAI\modAI | null $modAI */
 $modAI = $modx->services->get('modai');
+
+if ($modAI === null) return;
 
 $action = '';
 
@@ -23,17 +25,12 @@ if (isset($modx->controller) && is_object($modx->controller) && property_exists(
 if (in_array($action, ['resource/create', 'resource/update'])) {
     $modx->controller->addLexiconTopic('modai:default');
 
-    $firstName = explode(' ', $modx->user->Profile->fullname)[0];
-
+    $baseConfig = $modAI->getBaseConfig();
     $modx->controller->addHtml('
             <script type="text/javascript">
             let modAI;
             Ext.onReady(function() {
-                modAI = ModAI.init({
-                  name: "' . $firstName . '",
-                  apiURL: "' . $modAI->getAPIUrl() . '",
-                  cssURL: "' . $modAI->getCSSFile() . '",
-                });
+                modAI = ModAI.init(' . json_encode($baseConfig). ');
                 
                  Ext.defer(function () {
                    modAI.initOnResource({
