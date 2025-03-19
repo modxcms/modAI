@@ -30,6 +30,7 @@ export const sendMessage = async (
   const message: Prompt = providedMessage
     ? providedMessage.trim()
     : globalState.modal.messageInput.value.trim();
+
   if (!message || globalState.modal.isLoading) {
     return;
   }

@@ -107,3 +107,5 @@ $_lang['modai.error.resource_required'] = "Resource is required";
 $_lang['modai.error.unsupported_content_type'] = 'Content type [[+type]] is not supported';
 $_lang['modai.error.invalid_data_url'] = 'Invalid data URL';
 $_lang['modai.error.failed_to_fetch_image'] = 'Failed to fetch image';
+$_lang['modai.error.source_not_found'] = 'MediaSource not found.';
+$_lang['modai.error.source_init failed'] = 'Failed to init MediaSource.';

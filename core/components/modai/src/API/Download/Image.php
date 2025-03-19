@@ -20,7 +20,7 @@ class Image extends API {
         $field = $this->modx->getOption('field', $data, '');
         $namespace = $this->modx->getOption('namespace', $data, 'modai');
         $resource = (int)$this->modx->getOption('resource', $data, 0);
-        $mediaSource = (int)$this->modx->getOption('mediaSource', $data, 0);
+        $mediaSource = $this->modx->getOption('mediaSource', $data, '');
 
         if (empty($mediaSource)) {
             $mediaSource = Settings::getImageSetting($this->modx, $field, 'media_source', $namespace);
@@ -55,10 +55,23 @@ class Image extends API {
             throw new LexiconException('modai.error.image_download_domain');
         }
 
-        $source = modMediaSource::getDefaultSource($this->modx, $mediaSource);
+
+        if (is_int($mediaSource) || ctype_digit((string)$mediaSource)) {
+            $source = $this->modx->getObject(modMediaSource::class, [
+                'id' => (int)$mediaSource,
+            ]);
+        } else {
+            $source = $this->modx->getObject(modMediaSource::class, [
+                'name' => $mediaSource,
+            ]);
+        }
+
+        if (!$source) {
+            throw new LexiconException('modai.error.source_not_found');
+        }
 
         if (!$source->initialize()) {
-            throw new LexiconException('error');
+            throw new LexiconException('modai.error.source_init failed');
         }
 
         $path = Settings::getImageSetting($this->modx, $field, 'path');
