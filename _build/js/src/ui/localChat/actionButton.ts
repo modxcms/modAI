@@ -1,4 +1,5 @@
 import { globalState } from '../../globalState';
+import { lng } from '../../lng';
 import { button } from '../dom/button';
 import { check } from '../icons';
 import { createElement } from '../utils';
@@ -53,7 +54,7 @@ export const createActionButton = (config: ActionButtonConfig) => {
 
     if (!config.disableCompletedState) {
       icon.innerHTML = check;
-      label.innerHTML = config.completedText || 'Completed!';
+      label.innerHTML = config.completedText || lng('modai.ui.completed');
 
       await new Promise((resolve) => setTimeout(resolve, 2000));
     }

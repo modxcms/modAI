@@ -6,6 +6,7 @@ import { buildModalHeader } from './modalHeader';
 import { buildModalInput } from './modalInput';
 import { chatHistory } from '../../chatHistory';
 import { globalState } from '../../globalState';
+import { lng } from '../../lng';
 import { createModAIShadow } from '../dom/modAIShadow';
 
 import type { Modal, LocalChatConfig } from './types';
@@ -17,7 +18,7 @@ export const buildModal = (config: LocalChatConfig) => {
   });
 
   const chatModal = createElement('div', 'modai--root chat-modal', '', {
-    ariaLabel: 'modAI Assistant chat dialog',
+    ariaLabel: lng('modai.ui.modai_assistant_chat_dialog'),
   });
 
   shadow.modal = chatModal;
@@ -31,11 +32,7 @@ export const buildModal = (config: LocalChatConfig) => {
   chatModal.append(buildModalChat());
   chatModal.append(buildModalInput(config));
 
-  const disclaimer = createElement(
-    'div',
-    'disclaimer',
-    'AI can make mistakes. Please double-check responses.',
-  );
+  const disclaimer = createElement('div', 'disclaimer', lng('modai.ui.disclaimer'));
   chatModal.append(disclaimer);
 
   shadowRoot.appendChild(chatModal);

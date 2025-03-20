@@ -1,3 +1,4 @@
+import { lng } from '../../lng';
 import { button } from '../dom/button';
 import { createModAIShadow } from '../dom/modAIShadow';
 import { createElement } from '../utils';
@@ -33,7 +34,7 @@ export const confirmDialog = (config: ConfirmDialogOptions) => {
   });
 
   const cancelBtn = button(
-    config.cancelText ?? 'Cancel',
+    config.cancelText ?? lng('modai.ui.cancel'),
     () => {
       closeDialog();
     },

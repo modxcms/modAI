@@ -14,6 +14,7 @@ import { icon } from '../dom/icon';
 import { image, refresh, arrowUp, square, text, trash } from '../icons';
 import { buildScrollToBottom } from './scrollBottom';
 import { globalState } from '../../globalState';
+import { lng } from '../../lng';
 
 import type { LocalChatConfig } from './types';
 import type { Button } from '../dom/button';
@@ -29,9 +30,9 @@ export const buildModalInput = (config: LocalChatConfig) => {
   const inputWrapper = createElement('div', 'inputWrapper');
 
   const textarea = createElement('textarea', '', '', {
-    placeholder: 'Ask me anything…',
+    placeholder: lng('modai.ui.prompt_placeholder'),
     rows: 1,
-    ariaLabel: 'Type your message',
+    ariaLabel: lng('modai.ui.prompt_label'),
   }) as UserInput;
 
   textarea.setValue = (value: string) => {
@@ -55,11 +56,11 @@ export const buildModalInput = (config: LocalChatConfig) => {
       createElement('div', 'loadingDot'),
       createElement('div', 'loadingDot'),
     ],
-    { ariaLabel: 'AI is thinking' },
+    { ariaLabel: lng('modai.ui.loading_response') },
   );
 
   const sendBtn = button(icon(20, arrowUp), () => sendMessage(config), '', {
-    ariaLabel: 'Send message',
+    ariaLabel: lng('modai.ui.send_message'),
   });
   sendBtn.disable();
 
@@ -74,7 +75,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
   };
 
   const stopBtn = button(icon(20, square), () => stopGeneration(), '', {
-    ariaLabel: 'Stop generating message',
+    ariaLabel: lng('modai.ui.stop_generating_response'),
   });
   stopBtn.disable();
 
@@ -96,7 +97,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
 
   if (config.availableTypes?.includes('text')) {
     const textModeBtn = button(
-      [icon(24, text), createElement('span', 'tooltip', 'Text Mode')],
+      [icon(24, text), createElement('span', 'tooltip', lng('modai.ui.text_mode'))],
       () => {
         if (config.type === 'text') {
           return;
@@ -110,7 +111,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
       },
       '',
       {
-        ariaLabel: 'Text mode',
+        ariaLabel: lng('modai.ui.text_mode'),
       },
     );
 
@@ -122,7 +123,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
 
   if (config.availableTypes?.includes('image')) {
     const imageModeBtn = button(
-      [icon(24, image), createElement('span', 'tooltip', 'Image Mode')],
+      [icon(24, image), createElement('span', 'tooltip', lng('modai.ui.image_mode'))],
       () => {
         if (config.type === 'image') {
           return;
@@ -136,7 +137,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
       },
       '',
       {
-        ariaLabel: 'Image mode',
+        ariaLabel: lng('modai.ui.image_mode'),
       },
     );
     if (config.type === 'image') {
@@ -147,31 +148,31 @@ export const buildModalInput = (config: LocalChatConfig) => {
   }
 
   const tryAgainBtn = button(
-    [icon(24, refresh), createElement('span', 'tooltip', 'Retry Last Message')],
+    [icon(24, refresh), createElement('span', 'tooltip', lng('modai.ui.retry_last_message'))],
     () => {
       tryAgain(config);
     },
     '',
     {
-      ariaLabel: 'Retry last message',
+      ariaLabel: lng('modai.ui.retry_last_message'),
     },
   );
   tryAgainBtn.disable();
 
   const clearChatBtn = button(
-    [icon(24, trash), createElement('span', 'tooltip', 'Clear Chat')],
+    [icon(24, trash), createElement('span', 'tooltip', lng('modai.ui.clear_chat'))],
     () => {
       clearChat();
     },
     '',
     {
-      ariaLabel: 'Clear chat',
+      ariaLabel: lng('modai.ui.clear_chat'),
     },
   );
   clearChatBtn.disable();
 
   const options = createElement('div', 'options', [...modeButtons, tryAgainBtn, clearChatBtn], {
-    ariaLabel: 'Chat options',
+    ariaLabel: lng('modai.ui.clear_options'),
     role: 'toolbar',
   });
 
@@ -267,12 +268,12 @@ export const buildModalInput = (config: LocalChatConfig) => {
           }
         }
       } catch {
-        addErrorMessage('Failed to fetch an image');
+        addErrorMessage(lng('modai.error.failed_to_fetch_image'));
       }
       return;
     }
 
-    addErrorMessage('Only image files are allowed');
+    addErrorMessage(lng('modai.error.only_image_files_are_allowed'));
   });
 
   textarea.addEventListener('paste', async (e) => {

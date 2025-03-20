@@ -23,7 +23,9 @@ if (isset($modx->controller) && is_object($modx->controller) && property_exists(
 }
 
 if (in_array($action, ['resource/create', 'resource/update'])) {
-    $modx->controller->addLexiconTopic('modai:default');
+    foreach ($modAI->getUILexiconTopics() as $topic) {
+        $modx->controller->addLexiconTopic($topic);
+    }
 
     $baseConfig = $modAI->getBaseConfig();
     $modx->controller->addHtml('

@@ -177,7 +177,7 @@ const services: ServiceHandlers = {
         const content = data?.choices?.[0]?.message?.content;
 
         if (!content) {
-          throw new Error(lng('modai.cmp.failed_request'));
+          throw new Error(lng('modai.error.failed_request'));
         }
 
         const id = data.id;
@@ -194,7 +194,7 @@ const services: ServiceHandlers = {
           url = data?.data?.[0]?.b64_json;
 
           if (!url) {
-            throw new Error(lng('modai.cmp.failed_request'));
+            throw new Error(lng('modai.error.failed_request'));
           }
 
           url = `data:image/png;base64,${url}`;
@@ -211,7 +211,7 @@ const services: ServiceHandlers = {
         const content = data?.content?.[0]?.text;
 
         if (!content) {
-          throw new Error(lng('modai.cmp.failed_request'));
+          throw new Error(lng('modai.error.failed_request'));
         }
 
         const id = data.id;
@@ -227,7 +227,7 @@ const services: ServiceHandlers = {
         const content = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (!content) {
-          throw new Error(lng('modai.cmp.failed_request'));
+          throw new Error(lng('modai.error.failed_request'));
         }
 
         return {
@@ -239,7 +239,7 @@ const services: ServiceHandlers = {
         const base64 = data?.predictions?.[0]?.bytesBase64Encoded;
 
         if (!base64) {
-          throw new Error(lng('modai.cmp.failed_request'));
+          throw new Error(lng('modai.error.failed_request'));
         }
 
         return {
@@ -456,7 +456,7 @@ const serviceExecutor = async <D extends ServiceResponse>(
 
   const callStreamService = async (details: ForExecutor) => {
     if (executorDetails.parser !== 'content') {
-      throw new Error(lng('modai.cmp.service_unsupported'));
+      throw new Error(lng('modai.error.service_unsupported'));
     }
 
     const res = await fetch(details.url, {
@@ -477,7 +477,7 @@ const serviceExecutor = async <D extends ServiceResponse>(
   };
 
   if (!executorDetails.service || !executorDetails.parser) {
-    throw new Error(lng('modai.cmp.service_required'));
+    throw new Error(lng('modai.error.service_required'));
   }
 
   if (
@@ -485,7 +485,7 @@ const serviceExecutor = async <D extends ServiceResponse>(
       executorDetails.service as ServiceType
     ]?.[executorDetails.parser as keyof ServiceHandlers[BufferMode][ServiceType]]
   ) {
-    throw new Error(lng('modai.cmp.service_unsupported'));
+    throw new Error(lng('modai.error.service_unsupported'));
   }
 
   if (executorDetails.stream) {
@@ -558,7 +558,7 @@ const aiFetch = async <D extends ServiceResponse>(
 
   if (!service || !parser) {
     controller.abort();
-    throw new Error(lng('modai.cmp.service_required'));
+    throw new Error(lng('modai.error.service_required'));
   }
 
   if (
@@ -567,7 +567,7 @@ const aiFetch = async <D extends ServiceResponse>(
     ]
   ) {
     controller.abort();
-    throw new Error(lng('modai.cmp.service_unsupported'));
+    throw new Error(lng('modai.error.service_unsupported'));
   }
 
   if (!stream) {
@@ -578,7 +578,7 @@ const aiFetch = async <D extends ServiceResponse>(
   }
 
   if (parser !== 'content') {
-    throw new Error(lng('modai.cmp.service_unsupported'));
+    throw new Error(lng('modai.error.service_unsupported'));
   }
 
   return (await handleStream(

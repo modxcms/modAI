@@ -3,6 +3,7 @@ import { button } from '../dom/button';
 import { createElement } from '../utils';
 import { drag, endDrag, initDrag } from './dragHandlers';
 import { globalState } from '../../globalState';
+import { lng } from '../../lng';
 import { icon } from '../dom/icon';
 import { x } from '../icons';
 
@@ -13,11 +14,11 @@ export const buildModalHeader = () => {
       closeModal();
     },
     'closeBtn',
-    { ariaLabel: 'Close dialog' },
+    { ariaLabel: lng('modai.ui.close_dialog') },
   );
 
   const header = createElement('header', 'header', [
-    createElement('h1', '', 'modAI Assistant'),
+    createElement('h1', '', lng('modai.ui.modai_assistant')),
     closeModalBtn,
   ]);
 

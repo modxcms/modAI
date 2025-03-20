@@ -4,13 +4,17 @@ import { chevronDown } from '../icons';
 import { createElement } from '../utils';
 import { scrollToBottom } from './modalActions';
 import { globalState } from '../../globalState';
+import { lng } from '../../lng';
 
 export const buildScrollToBottom = () => {
   const scrollWrapper = createElement('div', 'scrollToBottomContainer', [
-    button([createElement('div', undefined, 'Scroll to bottom'), icon(14, chevronDown)], () => {
-      scrollToBottom();
-      checkScroll();
-    }),
+    button(
+      [createElement('div', undefined, lng('modai.ui.scroll_to_bottom')), icon(14, chevronDown)],
+      () => {
+        scrollToBottom();
+        checkScroll();
+      },
+    ),
   ]);
 
   globalState.modal.chatContainer.addEventListener('scroll', () => {

@@ -1,6 +1,7 @@
 import { closeModal, sendMessage } from './modalActions';
 import { buildModal } from './modalBuilder';
 import { globalState } from '../../globalState';
+import { lng } from '../../lng';
 
 import type { LocalChatConfig } from './types';
 
@@ -12,7 +13,7 @@ export const createModal = (config: LocalChatConfig) => {
   }
 
   if (!config.key) {
-    alert('key is required config property');
+    alert(lng('modai.error.key_required'));
     return;
   }
 

@@ -1,4 +1,5 @@
 import { globalState } from '../../globalState';
+import { lng } from '../../lng';
 import { createElement } from '../utils';
 
 export const buildModalChat = () => {
@@ -10,15 +11,17 @@ export const buildModalChat = () => {
     createElement(
       'p',
       'greeting',
-      globalState.config.name ? `Welcome, ${globalState.config.name}.` : 'Welcome!',
+      globalState.config.name
+        ? lng('modai.ui.greeting_with_name', { name: globalState.config.name })
+        : lng('modai.ui.greeting'),
     ),
-    createElement('p', 'msg', 'How can I help you today? ✨'),
+    createElement('p', 'msg', lng('modai.ui.welcome_msg')),
   ]);
 
   chatContainer.append(welcome);
 
   const chatHistory = createElement('div', 'history', '', {
-    ariaLabel: 'Conversation history',
+    ariaLabel: lng('modai.ui.conversation_history'),
   });
   chatContainer.append(chatHistory);
 

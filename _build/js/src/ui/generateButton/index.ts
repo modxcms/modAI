@@ -41,7 +41,7 @@ const createWandEl = <R extends HTMLElement>(onClick: () => void | Promise<void>
     'modai--root generate',
     button(icon(14, sparkle), onClick, 'btn', {
       type: 'button',
-      title: 'Generate using AI',
+      title: lng('modai.ui.generate_using_ai'),
     }),
   );
 
@@ -59,7 +59,7 @@ const createHistoryNav = (cache: ReturnType<typeof history.init<DataContext>>) =
     'history--prev',
     {
       type: 'button',
-      title: 'Previous Version',
+      title: lng('modai.ui.previous_version'),
       role: 'navigation',
     },
   );
@@ -72,7 +72,7 @@ const createHistoryNav = (cache: ReturnType<typeof history.init<DataContext>>) =
     'history--next',
     {
       type: 'button',
-      title: 'Next Version',
+      title: lng('modai.ui.next_version'),
       role: 'navigation',
     },
   );
@@ -154,7 +154,7 @@ const createForcedTextPrompt = ({
       done();
       confirmDialog({
         title: 'Failed',
-        content: lng('modai.cmp.failed_try_again', {
+        content: lng('modai.error.failed_try_again', {
           msg: err instanceof Error ? err.message : '',
         }),
         confirmText: 'Close',
@@ -260,11 +260,11 @@ const createVisionPrompt = (config: VisionConfig & Target) => {
     } catch (err) {
       done();
       confirmDialog({
-        title: 'Failed',
-        content: lng('modai.cmp.failed_try_again', {
+        title: lng('modai.error.failed'),
+        content: lng('modai.error.failed_try_again', {
           msg: err instanceof Error ? err.message : '',
         }),
-        confirmText: 'Close',
+        confirmText: lng('modai.ui.close'),
         showCancel: false,
         onConfirm: () => {},
       });

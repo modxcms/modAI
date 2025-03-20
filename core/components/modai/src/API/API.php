@@ -18,10 +18,15 @@ abstract class API {
     public function __construct(modX $modx)
     {
         $this->modx = $modx;
-        $this->modx->lexicon->load('modai:default');
 
         if ($this->modx->services->has('modai')) {
             $this->modAI = $this->modx->services->get('modai');
+        }
+
+        if ($this->modAI) {
+            foreach ($this->modAI->getUILexiconTopics() as $topic) {
+                $this->modx->lexicon->load($topic);
+            }
         }
     }
 

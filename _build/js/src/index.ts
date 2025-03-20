@@ -2,6 +2,7 @@ import { chatHistory } from './chatHistory';
 import { executor } from './executor';
 import { globalState } from './globalState';
 import { history } from './history';
+import { lng } from './lng';
 import { initOnResource } from './resource';
 import { ui } from './ui';
 
@@ -20,6 +21,7 @@ export const init = (config: Config) => {
     history,
     executor,
     ui,
+    lng,
     initOnResource,
   };
 };

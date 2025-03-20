@@ -51,14 +51,13 @@ export const addUserMessage = (msg: Message) => {
       disabled: globalState.modal.isLoading,
       disableCompletedState: true,
       icon: icon(14, edit),
-      label: 'Edit',
+      label: lng('modai.ui.edit'),
       onClick: (msg) => {
         globalState.alertOpen = true;
         confirmDialog({
-          title: 'Confirm Edit',
-          content:
-            'Editing this message will delete all responses that came after it. Do you want to proceed?',
-          confirmText: 'Edit Message',
+          title: lng('modai.ui.confirm_edit'),
+          content: lng('modai.ui.confirm_edit_content'),
+          confirmText: lng('modai.ui.edit_message'),
           onCancel: () => {
             globalState.alertOpen = false;
           },
@@ -138,8 +137,8 @@ export const addAssistantMessage = (msg: Message, config: LocalChatConfig) => {
           message: msg,
           disabled: globalState.modal.isLoading,
           icon: icon(14, copy),
-          label: 'Copy',
-          completedText: 'Copied!',
+          label: lng('modai.ui.copy'),
+          completedText: lng('modai.ui.copied'),
           onClick:
             typeof config.textActions?.copy === 'function'
               ? config.textActions.copy
@@ -154,8 +153,8 @@ export const addAssistantMessage = (msg: Message, config: LocalChatConfig) => {
           message: msg,
           disabled: globalState.modal.isLoading,
           icon: icon(14, plus),
-          label: 'Insert',
-          completedText: 'Inserted!',
+          label: lng('modai.ui.insert'),
+          completedText: lng('modai.ui.inserted'),
           onClick: config.textActions.insert,
         }),
       );
@@ -169,9 +168,9 @@ export const addAssistantMessage = (msg: Message, config: LocalChatConfig) => {
           message: msg,
           disabled: globalState.modal.isLoading,
           icon: icon(14, copy),
-          label: 'Copy',
-          loadingText: 'Downloading...',
-          completedText: 'Copied!',
+          label: lng('modai.ui.copy'),
+          loadingText: lng('modai.ui.downloading'),
+          completedText: lng('modai.ui.copied'),
           onClick: async (msg, modal) => {
             const handler =
               typeof config.textActions?.copy === 'function'
@@ -208,9 +207,9 @@ export const addAssistantMessage = (msg: Message, config: LocalChatConfig) => {
           message: msg,
           disabled: globalState.modal.isLoading,
           icon: icon(14, plus),
-          label: 'Insert',
-          completedText: 'Inserted!',
-          loadingText: 'Downloading...',
+          label: lng('modai.ui.insert'),
+          completedText: lng('modai.ui.inserted'),
+          loadingText: lng('modai.ui.downloading'),
           onClick: async (msg, modal) => {
             if (msg.ctx.downloaded === true) {
               insertCb(msg, modal);
@@ -278,7 +277,7 @@ export const copyToClipboard = async (message: Message) => {
     try {
       await navigator.clipboard.writeText(textContent);
     } catch {
-      addErrorMessage(lng('modai.cmp.failed_copy'));
+      addErrorMessage(lng('modai.error.failed_copy'));
     }
   } else {
     try {
@@ -290,7 +289,7 @@ export const copyToClipboard = async (message: Message) => {
       document.execCommand('copy');
       document.body.removeChild(textarea);
     } catch {
-      addErrorMessage(lng('modai.cmp.failed_copy'));
+      addErrorMessage(lng('modai.error.failed_copy'));
     }
   }
 };

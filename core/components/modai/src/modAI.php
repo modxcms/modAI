@@ -40,9 +40,7 @@ class modAI
             ],
             $config
         );
-        $this->modx->lexicon->load('modai:default');
     }
-
 
     /**
      * Get a local configuration option or a namespaced system setting by key.
@@ -166,5 +164,15 @@ class modAI
     public function hasAccess()
     {
         return !empty($this->modx->user) && !empty($this->modx->user->id) && $this->modx->hasPermission('frames');
+    }
+
+    public function getUILexiconTopics()
+    {
+        return ['modai:default'];
+    }
+
+    public function getLexiconTopics()
+    {
+        return ['modai:default', 'modai:setting'];
     }
 }

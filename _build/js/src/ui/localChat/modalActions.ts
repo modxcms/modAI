@@ -4,6 +4,7 @@ import { setLoadingState } from './state';
 import { chatHistory } from '../../chatHistory';
 import { executor } from '../../executor';
 import { globalState } from '../../globalState';
+import { lng } from '../../lng';
 
 import type { LocalChatConfig, ModalType } from './types';
 import type { Prompt } from '../../executor';
@@ -104,7 +105,7 @@ export const sendMessage = async (
       return;
     }
 
-    addErrorMessage('Unknown error');
+    addErrorMessage(lng('modai.error.unknown_error'));
   }
 
   setLoadingState(false);
@@ -188,7 +189,7 @@ export const clearChat = () => {
 
 export const handleImageUpload = async (fileOrUrl: File | string, isRemoteUrl: boolean = false) => {
   if (!isRemoteUrl && fileOrUrl instanceof File && !fileOrUrl.type.startsWith('image/')) {
-    addErrorMessage('Only image files are allowed');
+    addErrorMessage(lng('modai.error.only_image_files_are_allowed'));
     return;
   }
 
