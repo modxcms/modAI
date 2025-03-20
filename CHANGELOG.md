@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.11.0-pl - 2025-03-20
+
+### 🚀 Features
+
+- Convert from processors to custom API and enable streaming when using server execution ([e55a8b4](e55a8b489035b926895e21674803809f3fbcb30b))
+- Abort stream on error ([def1057](def1057694a61399985133fb61ad89d0ca4b4c5d))
+- Add streaming parser for claude ([960a20e](960a20e2ae204e40f17f67b4b190ea7f211f013b))
+- Add a support for local chat for free text prompts ([62307df](62307df2dda2a4ed6bd8c5cd8e65c6462ec5bbab))
+- Replace ext.js free text prompt with a custom ui ([9b3dfe7](9b3dfe7eec99b44afb75d014cd4340a1e8d018b5))
+- Create loading overlay on inputs while generating forced prompt ([0584fcb](0584fcb46ddf81eb68b19c5fe7801ae97900cb02))
+- Convert generate image modal to the new UI ([a712a28](a712a28b624cb98432fba6b3529d74c7f4d98900))
+- Add an ability to switch local chat mode between text and image ([f91dd91](f91dd911b31d9aba6435a4744921f8a919b558e5))
+- Support vision from free text prompts ([b0c5651](b0c565137c3e65ef46c74ecddb451f9773acd8d3))
+- Add clear chat button ([f27ac52](f27ac52232aea61f9e2f8df53bdf5e87298877c4))
+- Add generateButton to the UI api ([11f5426](11f5426c566d06340f819725b0da5b05e40eaded))
+- Add getter methods for css & js files ([96c57fe](96c57fef9e894a6c00fb402d742adfe8cae48f7b))
+- Block closing local chat modal while generating response ([41bcafd](41bcafd40168b656077a60ac65e32640c0058e43))
+- Render modAI elements in shadow dom ([79a9fdb](79a9fdbc9948a13c944a04f1a5c78e66b5efc066))
+- Streamline initing of modAI and it's security ([0b5341b](0b5341b4b3a3747034b10069d97a7c997e41ab54))
+- Accept name / id as mediaSource prop for Download/Image API endpoint ([1d5ac94](1d5ac946802db4a5a70598983df9180bf16bfeaf))
+- Add support for custom translation functions ([fdbb562](fdbb5627d7724a4e04d0c429cad2e7a6efa535e4))
+
+### 🐛 Bug Fixes
+
+- Correctly propagate errors from the ai proxy ([a6f5941](a6f5941c32306e741db7b70e7fc36c7501e4fc68))
+
+### 📚 Documentation
+
+- Update README.md ([a2ca0cc](a2ca0ccb78ceec8f2281b01bcc6036ca3b8b7338))
+- Update README.md ([7411d03](7411d03616223a996622006ebd1ab9a6ae5e88c3))
+
+### 🎨 Styling
+
+- Migrate to StyleX ([6c9c5f2](6c9c5f24f18aef2fccdf8d39ed0b6c5852cd2495))
+- New UI ([da185db](da185dbc52b8cc0d0679212f16c3bac7b4b9b196))
+
+### ⚙️ Miscellaneous Tasks
+
+- Migrate to TypeScript ([a4fd9bc](a4fd9bcb25d6a61d908b99483e9a30229fb896db))
+- Migrate the resource buttons to TypeScript ([31874b9](31874b91eda9c989c13e1b547862a1a780a204c4))
+- Update context prompt ([613349b](613349b65c36dd0c4c8a2f533f91c904899e54f5))
+- Add types to localChat styles ([fe4ab40](fe4ab4098bd1cd89aa0ff43a3342fafcc4fd47cc))
+- Add eslint and separate localChat to several files ([1408c26](1408c260b906deeefa3fc04136b1e4f546fbeb15))
+- Move from webpack to esbuild ([58e7125](58e71252627cc81d36688d3e3d538dedcb8d3aab))
+- Improve keyboard navigation ([0c22e73](0c22e7399d6d701ff3d3a808d427374be39815b7))
+- Add lexicons for global.image.style setting ([43a60da](43a60da1408c3eb984cc3388ffb7bb0f7422f4a0))
+- Create FUNDING.yml ([836e024](836e02439ede7b15ab8e7845ee2ba7bc475fd344))
+- Separate RequiredSettingException to own file ([96cb930](96cb930dfe697ffbd059e7118ab9d76d5028f868))
+- Use lexicons ([6b08176](6b081769bed4a9cf657f117d2c54af22b999ad36))
+
 ## 0.10.0-beta - 2025-02-28
 
 ### 🚀 Features
