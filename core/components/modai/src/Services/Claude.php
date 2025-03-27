@@ -1,4 +1,5 @@
 <?php
+
 namespace modAI\Services;
 
 use modAI\Exceptions\LexiconException;
@@ -66,7 +67,7 @@ class Claude extends BaseService
             return $this->formatImageMessage($item['value']);
         }
 
-        throw new LexiconException("modai.error.unsupported_content_type", ['type' => $item['type']] );
+        throw new LexiconException("modai.error.unsupported_content_type", ['type' => $item['type']]);
     }
 
     public function getCompletions(array $data, CompletionsConfig $config): AIResponse
@@ -222,5 +223,4 @@ class Claude extends BaseService
     {
         throw new LexiconException('modai.error.not_implemented');
     }
-
 }

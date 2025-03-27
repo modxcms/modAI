@@ -1,7 +1,9 @@
 <?php
+
 namespace modAI\Services\Config;
 
-trait Model {
+trait Model
+{
     private string $model;
 
     private function __construct(string $model)
@@ -9,11 +11,13 @@ trait Model {
         $this->model = $model;
     }
 
-    public static function new(string $model): self {
+    public static function new(string $model): self
+    {
         return new self($model);
     }
 
-    public function getModel(): string {
+    public function getModel(): string
+    {
         if (strncmp($this->model, 'custom_', strlen('custom_')) === 0) {
             return substr($this->model, 7);
         }

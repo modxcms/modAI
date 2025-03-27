@@ -4,3 +4,4 @@ _packages
 .vscode
 config.core.php
 node_modules
+vendor/

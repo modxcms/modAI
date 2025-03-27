@@ -1,4 +1,5 @@
 <?php
+
 namespace modAI;
 
 use MODX\Revolution\modTemplateVar;
@@ -116,7 +117,6 @@ class modAI
         }
 
         return $output;
-
     }
 
     public function getLit()
@@ -156,7 +156,7 @@ class modAI
 
         return [
             'name' => $firstName,
-            'apiURL'=> $this->getAPIUrl(),
+            'apiURL' => $this->getAPIUrl(),
             'cssURL' => $this->getCSSFile(),
         ];
     }

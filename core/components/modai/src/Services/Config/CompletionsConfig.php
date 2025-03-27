@@ -1,8 +1,11 @@
 <?php
+
 namespace modAI\Services\Config;
 
-class CompletionsConfig {
-    use Model, CustomOptions;
+class CompletionsConfig
+{
+    use Model;
+    use CustomOptions;
 
     private float $temperature;
     private int $maxTokens;
@@ -24,31 +27,36 @@ class CompletionsConfig {
         return $this;
     }
 
-    public function temperature(float $temperature): self {
+    public function temperature(float $temperature): self
+    {
         $this->temperature = $temperature;
 
         return $this;
     }
 
-    public function maxTokens(int $maxTokens): self {
+    public function maxTokens(int $maxTokens): self
+    {
         $this->maxTokens = $maxTokens;
 
         return $this;
     }
 
-    public function systemInstructions(array $systemInstructions): self {
+    public function systemInstructions(array $systemInstructions): self
+    {
         $this->systemInstructions = implode("\n", $systemInstructions);
 
         return $this;
     }
 
-    public function stream(bool $stream): self {
+    public function stream(bool $stream): self
+    {
         $this->stream = $stream;
 
         return $this;
     }
 
-    public function messages(array $messages): self {
+    public function messages(array $messages): self
+    {
         $this->messages = $messages;
 
         return $this;

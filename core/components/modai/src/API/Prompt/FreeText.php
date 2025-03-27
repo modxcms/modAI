@@ -1,4 +1,5 @@
 <?php
+
 namespace modAI\API\Prompt;
 
 use modAI\API\API;
@@ -60,7 +61,7 @@ class FreeText extends API
         $result = $aiService->getCompletions(
             $userMessages,
             CompletionsConfig::new($model)
-//                ->tools([GetWeather::class])
+            //                ->tools([GetWeather::class])
                 ->messages($messages)
                 ->customOptions($customOptions)
                 ->maxTokens($maxTokens)

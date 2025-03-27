@@ -1,10 +1,13 @@
 <?php
+
 namespace modAI\Services;
 
 use MODX\Revolution\modX;
 
-class AIServiceFactory {
-    public static function new($model, modX &$modx): AIService {
+class AIServiceFactory
+{
+    public static function new($model, modX &$modx): AIService
+    {
         if (strncmp($model, 'gemini-', strlen('gemini-')) === 0) {
             return new Gemini($modx);
         }

@@ -1,27 +1,33 @@
 <?php
+
 namespace modAI\Services\Config;
 
-class ImageConfig {
-    use Model, CustomOptions;
+class ImageConfig
+{
+    use Model;
+    use CustomOptions;
 
     private int $n = 1;
     private string $size;
     private string $quality;
     private string $style;
 
-    public function size(string $size): self {
+    public function size(string $size): self
+    {
         $this->size = $size;
 
         return $this;
     }
 
-    public function quality(string $quality): self {
+    public function quality(string $quality): self
+    {
         $this->quality = $quality;
 
         return $this;
     }
 
-    public function style(string $style): self {
+    public function style(string $style): self
+    {
         $this->style = $style;
 
         return $this;
@@ -46,5 +52,4 @@ class ImageConfig {
     {
         return $this->style;
     }
-
 }

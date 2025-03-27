@@ -1,7 +1,9 @@
 <?php
+
 namespace modAI\Services\Response;
 
-class AIResponse {
+class AIResponse
+{
     private string $service;
     private string $url;
     private string $parser;
@@ -14,11 +16,13 @@ class AIResponse {
         $this->service = $service;
     }
 
-    public static function new(string $service): self {
+    public static function new(string $service): self
+    {
         return new self($service);
     }
 
-    public function withUrl(string $url): self {
+    public function withUrl(string $url): self
+    {
         $this->url = $url;
         return $this;
     }

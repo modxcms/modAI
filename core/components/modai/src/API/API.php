@@ -1,4 +1,5 @@
 <?php
+
 namespace modAI\API;
 
 use modAI\Exceptions\LexiconException;
@@ -9,7 +10,8 @@ use MODX\Revolution\modX;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
-abstract class API {
+abstract class API
+{
     protected modX $modx;
 
     /** @var modAI|null  */
@@ -52,9 +54,9 @@ abstract class API {
                 default:
                     throw APIException::methodNotAllowed();
             }
-        } catch(LexiconException $e) {
+        } catch (LexiconException $e) {
             self::returnError($this->modx->lexicon($e->getLexicon(), $e->getLexiconParams()), 'Request Failed');
-        } catch(APIException $e) {
+        } catch (APIException $e) {
             self::returnErrorFromAPIException($e);
         } catch (\Exception $e) {
             self::returnError($e->getMessage(), 'Request Failed');
@@ -130,7 +132,8 @@ abstract class API {
         return $request->withParsedBody($data);
     }
 
-    protected function success($data): void {
+    protected function success($data): void
+    {
         http_response_code(200);
         header('Content-Type: application/json');
 

@@ -8,8 +8,8 @@ use modAI\Services\Config\ImageConfig;
 use modAI\Services\Config\VisionConfig;
 use modAI\Services\Response\AIResponse;
 
-interface AIService {
-
+interface AIService
+{
     /**
      * @throws LexiconException
      */

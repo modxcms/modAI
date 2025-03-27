@@ -1,4 +1,5 @@
 <?php
+
 namespace modAI\API\Prompt;
 
 use modAI\API\API;
@@ -44,6 +45,5 @@ class Vision extends API
         );
 
         $this->proxyAIResponse($result);
-
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \MODX\Revolution\modX $modx
  */
@@ -7,12 +8,16 @@ if ($modx->event->name !== 'OnManagerPageBeforeRender') {
     return;
 }
 
-if (!$modx->services->has('modai')) return;
+if (!$modx->services->has('modai')) {
+    return;
+}
 
 /** @var \modAI\modAI | null $modAI */
 $modAI = $modx->services->get('modai');
 
-if ($modAI === null) return;
+if ($modAI === null) {
+    return;
+}
 
 $action = '';
 
@@ -32,7 +37,7 @@ if (in_array($action, ['resource/create', 'resource/update'])) {
             <script type="text/javascript">
             let modAI;
             Ext.onReady(function() {
-                modAI = ModAI.init(' . json_encode($baseConfig). ');
+                modAI = ModAI.init(' . json_encode($baseConfig) . ');
                 
                  Ext.defer(function () {
                    modAI.initOnResource({

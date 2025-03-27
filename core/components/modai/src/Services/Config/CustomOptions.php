@@ -1,7 +1,9 @@
 <?php
+
 namespace modAI\Services\Config;
 
-trait CustomOptions {
+trait CustomOptions
+{
     private array $customOptions = [];
 
     public function customOptions($customOptions): self
@@ -21,7 +23,8 @@ trait CustomOptions {
         return $this;
     }
 
-    public function getCustomOptions(): array {
+    public function getCustomOptions(): array
+    {
         return $this->customOptions;
     }
 }

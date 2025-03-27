@@ -1,12 +1,13 @@
 <?php
-namespace modAI\API\Tools;
 
+namespace modAI\API\Tools;
 
 use modAI\API\API;
 use modAI\Tools\GetWeather;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Run extends API {
+class Run extends API
+{
     public function post(ServerRequestInterface $request): void
     {
         $data = $request->getParsedBody();

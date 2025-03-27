@@ -1,10 +1,12 @@
 <?php
+
 namespace modAI;
 
 use modAI\Exceptions\RequiredSettingException;
 use MODX\Revolution\modX;
 
-class Settings {
+class Settings
+{
     private static function getOption(modX $modx, string $namespace, string $field, string $area, string $setting): ?string
     {
         if (!empty($field)) {

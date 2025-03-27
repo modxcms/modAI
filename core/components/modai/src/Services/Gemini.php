@@ -1,4 +1,5 @@
 <?php
+
 namespace modAI\Services;
 
 use modAI\Exceptions\LexiconException;
@@ -9,7 +10,8 @@ use modAI\Services\Response\AIResponse;
 use modAI\Utils;
 use MODX\Revolution\modX;
 
-class Gemini extends BaseService {
+class Gemini extends BaseService
+{
     private modX $modx;
 
     const COMPLETIONS_API = 'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}';
@@ -48,7 +50,7 @@ class Gemini extends BaseService {
             ];
         }
 
-        throw new LexiconException("modai.error.unsupported_content_type", ['type' => $item['type']] );
+        throw new LexiconException("modai.error.unsupported_content_type", ['type' => $item['type']]);
     }
 
     protected function formatStringMessageContent(string $item)

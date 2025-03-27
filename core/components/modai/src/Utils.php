@@ -1,9 +1,11 @@
 <?php
+
 namespace modAI;
 
 use modAI\Exceptions\LexiconException;
 
-class Utils {
+class Utils
+{
     public static function explodeAndClean(string $stringArray, string $delimiter = ',', bool $keepDuplicates = false): array
     {
         $array = explode($delimiter, $stringArray);
@@ -21,7 +23,8 @@ class Utils {
      * @return array|mixed
      * @throws LexiconException
      */
-    public static function parseDataURL($dataURL) {
+    public static function parseDataURL($dataURL)
+    {
         if (strpos($dataURL, 'data:') !== 0) {
             return $dataURL;
         }

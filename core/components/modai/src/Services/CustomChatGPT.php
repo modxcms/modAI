@@ -1,4 +1,5 @@
 <?php
+
 namespace modAI\Services;
 
 use modAI\Exceptions\LexiconException;
@@ -38,7 +39,7 @@ class CustomChatGPT extends BaseService
             ];
         }
 
-        throw new LexiconException("modai.error.unsupported_content_type", ['type' => $item['type']] );
+        throw new LexiconException("modai.error.unsupported_content_type", ['type' => $item['type']]);
     }
 
     public function getCompletions(array $data, CompletionsConfig $config): AIResponse
@@ -120,8 +121,8 @@ class CustomChatGPT extends BaseService
                 'role' => 'user',
                 'content' => [
                     [
-                        "type"=> "text",
-                        "text"=> $prompt,
+                        "type" => "text",
+                        "text" => $prompt,
                     ],
                     [
                         "type" => "image_url",
@@ -149,7 +150,8 @@ class CustomChatGPT extends BaseService
             ->withBody($input);
     }
 
-    public function generateImage(string $prompt, ImageConfig $config): AIResponse {
+    public function generateImage(string $prompt, ImageConfig $config): AIResponse
+    {
         $apiKey = $this->modx->getOption('modai.api.custom.key');
         if (empty($apiKey)) {
             throw new LexiconException('modai.error.invalid_api_key', ['service' => 'custom']);
@@ -179,6 +181,4 @@ class CustomChatGPT extends BaseService
             ])
             ->withBody($input);
     }
-
-
 }

@@ -39,7 +39,7 @@ class ChatGPT extends BaseService
             ];
         }
 
-        throw new LexiconException("modai.error.unsupported_content_type", ['type' => $item['type']] );
+        throw new LexiconException("modai.error.unsupported_content_type", ['type' => $item['type']]);
     }
 
     public function getCompletions(array $data, CompletionsConfig $config): AIResponse
@@ -215,5 +215,4 @@ class ChatGPT extends BaseService
             ])
             ->withBody($input);
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
-namespace modAI\Services;
 
+namespace modAI\Services;
 
 use modAI\Exceptions\LexiconException;
 
-abstract class BaseService implements AIService {
+abstract class BaseService implements AIService
+{
     /**
      * @param string|array $item - when array is passed, it's of ["type" => string, "value" => string] elements
      * @throws LexiconException
@@ -26,7 +27,8 @@ abstract class BaseService implements AIService {
      * @throws LexiconException
      * @return mixed
      */
-    protected function formatUserMessageContent($message) {
+    protected function formatUserMessageContent($message)
+    {
         if (is_array($message)) {
             $formatted = [];
 
@@ -39,5 +41,4 @@ abstract class BaseService implements AIService {
 
         return $this->formatStringMessageContent($message);
     }
-
 }

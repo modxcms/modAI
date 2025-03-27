@@ -1,7 +1,9 @@
 <?php
+
 namespace modAI\Tools;
 
-class GetWeather {
+class GetWeather
+{
     public static function getName(): string
     {
         return 'get_weather';

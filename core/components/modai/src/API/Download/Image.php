@@ -9,7 +9,8 @@ use modAI\Utils;
 use MODX\Revolution\Sources\modMediaSource;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Image extends API {
+class Image extends API
+{
     private $allowedDomains = ['https://oaidalleapiprodscus.blob.core.windows.net'];
 
     public function post(ServerRequestInterface $request): void
@@ -81,8 +82,8 @@ class Image extends API {
         $source->createObject($filePath[0], $filePath[1], $image);
 
         $this->success([
-            'url' => $filePath[0].$filePath[1],
-            'fullUrl' => $source->getObjectUrl($filePath[0].$filePath[1])
+            'url' => $filePath[0] . $filePath[1],
+            'fullUrl' => $source->getObjectUrl($filePath[0] . $filePath[1])
         ]);
     }
 

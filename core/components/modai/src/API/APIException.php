@@ -1,4 +1,5 @@
 <?php
+
 namespace modAI\API;
 
 use Throwable;

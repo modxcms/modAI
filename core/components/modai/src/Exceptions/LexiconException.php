@@ -1,9 +1,11 @@
 <?php
+
 namespace modAI\Exceptions;
 
 use Throwable;
 
-class LexiconException extends \Exception {
+class LexiconException extends \Exception
+{
     private string $lexicon;
     private array $lexiconParams = [];
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace modAI\API\Prompt;
 
 use modAI\API\API;
@@ -21,7 +22,7 @@ class Contextualize extends API
         if (empty($prompt)) {
             throw new LexiconException('modai.error.prompt_required');
         }
-        
+
         //@todo implement vector database
 
         $message = '';
