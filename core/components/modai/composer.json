@@ -3,8 +3,5 @@
     "psr-4": {
       "modAI\\": "src/"
     }
-  },
-  "require-dev": {
-    "modx/revolution": "^3.1"
   }
 }
