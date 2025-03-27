@@ -60,7 +60,7 @@ systemSettings:
     value: 2048
   - key: global.text.model
     area: text
-    value: gpt-4o
+    value: gpt-4o-mini
   - key: global.text.temperature
     area: text
     value: 0.7
