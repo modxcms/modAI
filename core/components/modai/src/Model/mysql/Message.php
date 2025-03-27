@@ -147,22 +147,6 @@ class Message extends \modAI\Model\Message
                     ),
                 ),
             ),
-            'delivered_on' => 
-            array (
-                'alias' => 'delivered_on',
-                'primary' => false,
-                'unique' => false,
-                'type' => 'BTREE',
-                'columns' => 
-                array (
-                    'delivered_on' => 
-                    array (
-                        'length' => '',
-                        'collation' => 'A',
-                        'null' => false,
-                    ),
-                ),
-            ),
             'prompt_token_count' => 
             array (
                 'alias' => 'prompt_token_count',

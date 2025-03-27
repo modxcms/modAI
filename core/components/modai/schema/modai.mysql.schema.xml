@@ -58,9 +58,6 @@
         <index alias="user" name="user" primary="false" unique="false" type="BTREE">
             <column key="user" length="" collation="A" null="false" />
         </index>
-        <index alias="delivered_on" name="delivered_on" primary="false" unique="false" type="BTREE">
-            <column key="delivered_on" length="" collation="A" null="false" />
-        </index>
         <index alias="prompt_token_count" name="prompt_token_count" primary="false" unique="false" type="BTREE">
             <column key="prompt_token_count" length="" collation="A" null="false" />
         </index>
