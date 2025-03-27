@@ -1,4 +1,6 @@
-import { executor, TextData, TextParams } from '../../executor';
+import { executor } from '../../executor';
+import { TextData } from '../../executor/services';
+import { TextParams } from '../../executor/types';
 import { DataOutput, history } from '../../history';
 import { lng } from '../../lng';
 import { confirmDialog } from '../cofirmDialog';

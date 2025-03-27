@@ -60,6 +60,39 @@ class ChatGPT extends BaseService
         }
 
         foreach ($config->getMessages() as $msg) {
+            if ($msg['role'] === 'tool') {
+                foreach ($msg['content'] as $toolResponse) {
+                    $messages[] = [
+                        'role' => 'tool',
+                        'tool_call_id' => $toolResponse['id'],
+                        'content' => $toolResponse['content'],
+                    ];
+                }
+                continue;
+            }
+
+            if ($msg['role'] === 'assistant' && $msg['toolCalls']) {
+                $toolCalls = [];
+
+                foreach ($msg['toolCalls'] as $toolCall) {
+                    $toolCalls[] = [
+                        'id' => $toolCall['id'],
+                        'type' => 'function',
+                        'function' => [
+                            "name" => $toolCall['name'],
+                            "arguments" => $toolCall['arguments']
+                        ]
+                    ];
+                }
+
+                $messages[] = [
+                    'role' => 'assistant',
+                    'tool_calls' => $toolCalls
+                ];
+
+                continue;
+            }
+
             $messages[] = [
                 'role' => $msg['role'] === 'user' ? 'user' : 'assistant',
                 'content' => $this->formatUserMessageContent($msg['content'])
@@ -79,8 +112,29 @@ class ChatGPT extends BaseService
         $input['temperature'] = $config->getTemperature();
         $input['messages'] = $messages;
 
+        $tools = [];
+        foreach ($config->getTools() as $toolClass) {
+            $tools[] = [
+                'type' => 'function',
+                'function' => [
+                    'name' => $toolClass::getName(),
+                    'description' => $toolClass::getDescription(),
+                    'parameters' => (object)$toolClass::getParameters(),
+                ]
+            ];
+        }
+        if (!empty($tools)) {
+            $input['tools'] = $tools;
+
+            $input['tool_choice'] = $config->getToolChoice();
+        }
+
         if ($config->isStream()) {
             $input['stream'] = true;
+
+            $input['stream_options'] = [
+                'include_usage' => true,
+            ];
         }
 
         return AIResponse::new('chatgpt')

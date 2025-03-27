@@ -9,10 +9,15 @@ import { copy, edit, plus, triangleError } from '../icons';
 import { createElement, nlToBr } from '../utils';
 
 import type { LocalChatConfig } from './types';
-import type { Message, UpdatableHTMLElement } from '../../chatHistory';
+import type {
+  AssistantMessage,
+  Message,
+  UpdatableHTMLElement,
+  UserMessage,
+} from '../../chatHistory';
 
-export const addUserMessage = (msg: Message) => {
-  const messageElement: UpdatableHTMLElement = createElement('div', 'message user');
+export const addUserMessage = (msg: UserMessage) => {
+  const messageElement: UpdatableHTMLElement<UserMessage> = createElement('div', 'message user');
 
   let textContent;
   let imagesContent = null;
@@ -117,11 +122,12 @@ export const addErrorMessage = (content: string) => {
   return messageElement;
 };
 
-export const addAssistantMessage = (msg: Message, config: LocalChatConfig) => {
-  const messageElement: UpdatableHTMLElement = createElement('div', 'message ai');
+export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConfig) => {
+  const messageElement: UpdatableHTMLElement<AssistantMessage> = createElement('div', 'message ai');
+  messageElement.dataset.id = msg.id;
 
   let textContent = Array.isArray(msg.content) ? msg.content[0].value : msg.content;
-  if (msg.type === 'image') {
+  if (msg.contentType === 'image') {
     textContent = `<img src="${textContent}" />`;
   }
 
@@ -241,7 +247,8 @@ export const addAssistantMessage = (msg: Message, config: LocalChatConfig) => {
 
   messageElement.update = (msg) => {
     const textContent = Array.isArray(msg.content) ? msg.content[0].value : msg.content;
-    const content = msg.type === 'image' ? `<img src="${textContent}" />` : nlToBr(textContent);
+    const content =
+      msg.contentType === 'image' ? `<img src="${textContent}" />` : nlToBr(textContent);
     shadow.updateContent(content);
   };
 
@@ -253,7 +260,7 @@ export const renderMessage = (msg: Message, config: LocalChatConfig) => {
     return;
   }
 
-  if (msg.role === 'user') {
+  if (msg.__type === 'UserMessage') {
     const userMsg = addUserMessage(msg);
     userMsg.scrollIntoView({
       behavior: 'smooth',
@@ -263,14 +270,14 @@ export const renderMessage = (msg: Message, config: LocalChatConfig) => {
     return userMsg;
   }
 
-  if (msg.type === 'image') {
+  if (msg.__type === 'AssistantMessage') {
     return addAssistantMessage(msg, config);
   }
 
-  return addAssistantMessage(msg, config);
+  return;
 };
 
-export const copyToClipboard = async (message: Message) => {
+export const copyToClipboard = async (message: AssistantMessage) => {
   const textContent = Array.isArray(message.content) ? message.content[0].value : message.content;
 
   if (navigator.clipboard && navigator.clipboard.writeText) {

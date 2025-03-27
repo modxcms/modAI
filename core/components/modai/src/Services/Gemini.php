@@ -86,6 +86,46 @@ class Gemini extends BaseService {
         $messages = [];
 
         foreach ($config->getMessages() as $msg) {
+            if ($msg['role'] === 'tool') {
+                $content = [];
+                foreach ($msg['content'] as $toolResponse) {
+                    $content[] = [
+                        'functionResponse' => [
+                            'name' => $toolResponse['name'],
+                            'response' => [
+                                'name' => $toolResponse['name'],
+                                'content' => json_decode($toolResponse['content'], true),
+                            ]
+                        ]
+                    ];
+                }
+                $messages[] = [
+                    'role' => 'user',
+                    'parts' => $content
+                ];
+                continue;
+            }
+
+            if ($msg['role'] === 'assistant' && $msg['toolCalls']) {
+                $content = [];
+
+                foreach ($msg['toolCalls'] as $toolCall) {
+                    $content[] = [
+                        'functionCall' => [
+                            "name" => $toolCall['name'],
+                            "args" => (object)json_decode($toolCall['arguments'], true)
+                        ]
+                    ];
+                }
+
+                $messages[] = [
+                    'role' => 'model',
+                    'parts' => $content
+                ];
+
+                continue;
+            }
+
             $messages[] = [
                 'role' => $msg['role'] === 'user' ? 'user' : 'model',
                 'parts' => $this->formatUserMessageContent($msg['content'])
@@ -112,6 +152,32 @@ class Gemini extends BaseService {
                 "parts" => $systemInstruction
             ];
         }
+
+        $tools = [];
+        foreach ($config->getTools() as $toolClass) {
+            $params = $toolClass::getParameters();
+            if (empty($params)) {
+                $params = null;
+            }
+
+            $tools[] = [
+                'name' => $toolClass::getName(),
+                'description' => $toolClass::getDescription(),
+                'parameters' => $params,
+            ];
+        }
+
+        if (!empty($tools)) {
+            $input['tools'] = [
+                'function_declarations' => $tools
+            ];
+        }
+
+        $input['tool_config'] = [
+            'function_calling_config' => [
+                'mode' => $config->getToolChoice()
+            ]
+        ];
 
         return AIResponse::new('gemini')
             ->withStream($config->isStream())

@@ -6,6 +6,7 @@ use modAI\Exceptions\LexiconException;
 use modAI\Services\AIServiceFactory;
 use modAI\Services\Config\CompletionsConfig;
 use modAI\Settings;
+use modAI\Tools\GetWeather;
 use Psr\Http\Message\ServerRequestInterface;
 
 class FreeText extends API
@@ -22,7 +23,7 @@ class FreeText extends API
         $namespace = $this->modx->getOption('namespace', $data, 'modai');
         $messages = $this->modx->getOption('messages', $data);
 
-        if (empty($prompt)) {
+        if (empty($prompt) && empty($messages)) {
             throw new LexiconException('modai.error.prompt_required');
         }
 
@@ -51,12 +52,15 @@ class FreeText extends API
             $userMessages[] = str_replace('{context}', $context, $contextPrompt);
         }
 
-        $userMessages[] = $prompt;
+        if (!empty($prompt)) {
+            $userMessages[] = $prompt;
+        }
 
         $aiService = AIServiceFactory::new($model, $this->modx);
         $result = $aiService->getCompletions(
             $userMessages,
             CompletionsConfig::new($model)
+//                ->tools([GetWeather::class])
                 ->messages($messages)
                 ->customOptions($customOptions)
                 ->maxTokens($maxTokens)

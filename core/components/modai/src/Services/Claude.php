@@ -79,6 +79,42 @@ class Claude extends BaseService
         $messages = [];
 
         foreach ($config->getMessages() as $msg) {
+            if ($msg['role'] === 'tool') {
+                $content = [];
+                foreach ($msg['content'] as $toolResponse) {
+                    $content[] = [
+                        'type' => 'tool_result',
+                        'tool_use_id' => $toolResponse['id'],
+                        'content' => $toolResponse['content'],
+                    ];
+                }
+                $messages[] = [
+                    'role' => 'user',
+                    'content' => $content
+                ];
+                continue;
+            }
+
+            if ($msg['role'] === 'assistant' && $msg['toolCalls']) {
+                $content = [];
+
+                foreach ($msg['toolCalls'] as $toolCall) {
+                    $content[] = [
+                        'id' => $toolCall['id'],
+                        'type' => 'tool_use',
+                        "name" => $toolCall['name'],
+                        "input" => (object)json_decode($toolCall['arguments'], true)
+                    ];
+                }
+
+                $messages[] = [
+                    'role' => 'assistant',
+                    'content' => $content
+                ];
+
+                continue;
+            }
+
             $messages[] = [
                 'role' => $msg['role'] === 'user' ? 'user' : 'assistant',
                 'content' => $this->formatUserMessageContent($msg['content'])
@@ -106,6 +142,31 @@ class Claude extends BaseService
         if (!empty($system)) {
             $input['system'] = $system;
         }
+
+        $tools = [];
+        foreach ($config->getTools() as $toolClass) {
+            $params = $toolClass::getParameters();
+            if (empty($params)) {
+                $params = [
+                    'type' => 'object',
+                    'properties' => null,
+                ];
+            }
+
+            $tools[] = [
+                'name' => $toolClass::getName(),
+                'description' => $toolClass::getDescription(),
+                'input_schema' => (object)$params,
+            ];
+        }
+
+        if (!empty($tools)) {
+            $input['tools'] = $tools;
+        }
+
+        $input['tool_choice'] = [
+            'type' => $config->getToolChoice()
+        ];
 
         return AIResponse::new('claude')
             ->withStream($config->isStream())

@@ -9,6 +9,20 @@ class CompletionsConfig {
     private string $systemInstructions = '';
     private bool $stream = false;
     private array $messages = [];
+    private string $toolChoice = 'auto';
+    private array $tools = [];
+
+    public function tools(array $tools): self
+    {
+        $this->tools = $tools;
+        return $this;
+    }
+
+    public function toolChoice(string $toolChoice): self
+    {
+        $this->toolChoice = $toolChoice;
+        return $this;
+    }
 
     public function temperature(float $temperature): self {
         $this->temperature = $temperature;
@@ -65,4 +79,13 @@ class CompletionsConfig {
         return $this->messages;
     }
 
+    public function getTools(): array
+    {
+        return $this->tools;
+    }
+
+    public function getToolChoice(): string
+    {
+        return $this->toolChoice;
+    }
 }

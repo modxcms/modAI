@@ -92,6 +92,7 @@ class Text extends API
                 ->temperature($temperature)
                 ->systemInstructions($systemInstructions)
                 ->stream($stream)
+//                ->toolChoice('none')
         );
 
         $this->proxyAIResponse($result);

@@ -19,6 +19,7 @@ class Vision extends API
         $field = $this->modx->getOption('field', $data);
         $namespace = $this->modx->getOption('namespace', $data, 'modai');
         $image = $this->modx->getOption('image', $data);
+        $prompt = $this->modx->getOption('prompt', $data);
 
         if (empty($image)) {
             throw new LexiconException('modai.error.image_requried');
@@ -26,7 +27,9 @@ class Vision extends API
 
         $stream = intval(Settings::getVisionSetting($this->modx, $field, 'stream', $namespace)) === 1;
         $model = Settings::getVisionSetting($this->modx, $field, 'model', $namespace);
-        $prompt = Settings::getVisionSetting($this->modx, $field, 'prompt', $namespace);
+        if (empty($prompt)) {
+            $prompt = Settings::getVisionSetting($this->modx, $field, 'prompt', $namespace);
+        }
         $customOptions = Settings::getVisionSetting($this->modx, $field, 'custom_options', $namespace, false);
         $maxTokens = (int)Settings::getVisionSetting($this->modx, $field, 'max_tokens', $namespace);
 

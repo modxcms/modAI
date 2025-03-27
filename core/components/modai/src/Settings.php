@@ -43,6 +43,11 @@ class Settings {
      */
     public static function getTextSetting(modX $modx, string $field, string $setting, string $namespace = 'modai', bool $required = true): ?string
     {
+        // modai.global.text.model
+        // modai.res.description.text.model
+        // modai.tv.image.text.model
+        // medaibrowser.vision.model
+        // medaibrowser.vision.prompt = 'custom prompt
         $value = self::getOption($modx, $namespace, $field, 'text', $setting);
 
         if ($required && ($value === null || $value === '')) {

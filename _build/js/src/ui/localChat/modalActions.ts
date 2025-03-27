@@ -1,13 +1,14 @@
 import { drag, endDrag } from './dragHandlers';
 import { addErrorMessage, renderMessage } from './messageHandlers';
 import { setLoadingState } from './state';
-import { chatHistory } from '../../chatHistory';
+import { chatHistory, UpdatableHTMLElement } from '../../chatHistory';
 import { executor } from '../../executor';
 import { globalState } from '../../globalState';
 import { lng } from '../../lng';
 
 import type { LocalChatConfig, ModalType } from './types';
-import type { Prompt } from '../../executor';
+import type { ToolCalls } from '../../executor/services';
+import type { Prompt } from '../../executor/types';
 
 export const closeModal = () => {
   if (globalState.modal.isLoading) {
@@ -22,6 +23,42 @@ export const closeModal = () => {
   }
 
   globalState.modalOpen = false;
+};
+
+const callTools = async (
+  config: LocalChatConfig,
+  toolCalls: ToolCalls,
+  controller?: AbortController,
+) => {
+  globalState.modal.history.addAssistantMessage(crypto.randomUUID(), null, toolCalls, 'text', true);
+
+  const res = await executor.mgr.tools.run(toolCalls, controller);
+
+  globalState.modal.history.addToolResponseMessage(res.id, res.content, true);
+
+  const aiRes = await executor.mgr.prompt.freeText(
+    {
+      namespace: config.namespace,
+      context: config.context,
+      field: config.field || '',
+      prompt: '',
+      messages: globalState.modal.history.getMessagesHistory(),
+    },
+    (data) => {
+      if (data.__type === 'TextDataNoTools' || data.__type === 'TextDataMaybeTools') {
+        globalState.modal.history.updateAssistantMessage(data.id, data.content);
+      }
+    },
+    controller,
+  );
+
+  if (aiRes.content) {
+    globalState.modal.history.updateAssistantMessage(aiRes.id, aiRes.content);
+  }
+
+  if (aiRes.toolCalls) {
+    await callTools(config, aiRes.toolCalls, globalState.modal.abortController);
+  }
 };
 
 export const sendMessage = async (
@@ -74,12 +111,20 @@ export const sendMessage = async (
           messages,
         },
         (data) => {
+          if (data.__type === 'ToolsData') return;
+
           globalState.modal.history.updateAssistantMessage(data.id, data.content);
         },
         globalState.modal.abortController,
       );
 
-      globalState.modal.history.updateAssistantMessage(data.id, data.content);
+      if (data.content) {
+        globalState.modal.history.updateAssistantMessage(data.id, data.content);
+      }
+
+      if (data.toolCalls) {
+        await callTools(config, data.toolCalls, globalState.modal.abortController);
+      }
     }
 
     if (config.type === 'image') {
@@ -90,7 +135,7 @@ export const sendMessage = async (
         globalState.modal.abortController,
       );
 
-      globalState.modal.history.addAssistantMessage(data.url, data.id, 'image');
+      globalState.modal.history.addAssistantMessage(data.id, data.url, undefined, 'image');
     }
 
     globalState.modal.abortController = undefined;
@@ -147,7 +192,7 @@ export const switchType = (type: ModalType, config: LocalChatConfig) => {
   config.type = type;
 
   globalState.modal.history = chatHistory.init(`${config.key}/${config.type}`, (msg) => {
-    return renderMessage(msg, config);
+    return renderMessage(msg, config) as UpdatableHTMLElement | undefined;
   });
 
   while (globalState.modal.chatMessages.firstChild) {

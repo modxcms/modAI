@@ -1,48 +1,66 @@
-import type { Prompt } from './executor';
+import type { ToolCalls } from './executor/services';
+import type { Prompt, ToolResponseContent } from './executor/types';
 
-export type MessageType = 'text' | 'image';
+export type AssistantMessageContentType = 'text' | 'image';
 
-export type UpdatableHTMLElement = HTMLElement & {
-  update?: (msg: Message) => void;
+export type UpdatableHTMLElement<M extends Message = Message> = HTMLElement & {
+  update?: (msg: M) => void;
 };
 
-export type Message = {
-  content: Prompt;
+type BaseMessage = {
   id: string;
   hidden: boolean;
-  role: string;
-  type: MessageType;
-  el?: UpdatableHTMLElement;
   ctx: Record<string, unknown>;
+  toolCalls?: undefined;
 };
+
+export type ToolResponseMessage = BaseMessage & {
+  __type: 'ToolResponseMessage';
+  role: 'tool';
+  content: ToolResponseContent;
+  el?: UpdatableHTMLElement<ToolResponseMessage>;
+};
+
+export type AssistantMessage = Omit<BaseMessage, 'toolCalls'> & {
+  __type: 'AssistantMessage';
+  role: 'assistant';
+  content: string | null | undefined;
+  contentType: AssistantMessageContentType;
+  toolCalls?: ToolCalls;
+  el?: UpdatableHTMLElement<AssistantMessage>;
+};
+
+export type UserMessage = BaseMessage & {
+  __type: 'UserMessage';
+  role: 'user';
+  content: Prompt;
+  el?: UpdatableHTMLElement<UserMessage>;
+};
+
+export type Message = UserMessage | AssistantMessage | ToolResponseMessage;
 
 type Namespace = {
   history: Message[];
   idRef: Record<string, Message>;
-  onAddMessage: (msg: Message) => UpdatableHTMLElement | undefined;
+  onAddMessage: <M extends Message = Message>(msg: M) => UpdatableHTMLElement<M> | undefined;
 };
 
 const _namespace: Record<string, Namespace> = {};
 
-const ROLES = {
-  user: 'user',
-  assistant: 'assistant',
-};
-
-const addMessage = (
-  key: string,
-  content: Prompt,
-  role: string,
-  id: string,
-  hidden: boolean = false,
-  type: MessageType = 'text',
-) => {
+const addUserMessage = (key: string, id: string, content: Prompt, hidden: boolean = false) => {
   const namespace = _namespace[key];
   if (!namespace) {
     return;
   }
 
-  const msgObject: Message = { content, role, id, hidden, type, ctx: {} };
+  const msgObject: UserMessage = {
+    __type: 'UserMessage',
+    content,
+    role: 'user',
+    id,
+    hidden,
+    ctx: {},
+  };
 
   const index = namespace.history.push(msgObject) - 1;
   if (id) {
@@ -52,21 +70,81 @@ const addMessage = (
   msgObject.el = namespace.onAddMessage(msgObject);
 };
 
-const updateMessage = (key: string, id: string, content: string, type: MessageType = 'text') => {
+const addToolResponseMessage = (
+  key: string,
+  id: string,
+  content: ToolResponseMessage['content'],
+  hidden: boolean = false,
+) => {
+  const namespace = _namespace[key];
+  if (!namespace) {
+    return;
+  }
+
+  const msgObject: Message = {
+    __type: 'ToolResponseMessage',
+    content,
+    role: 'tool',
+    id,
+    hidden,
+    ctx: {},
+  };
+
+  const index = namespace.history.push(msgObject) - 1;
+  if (id) {
+    namespace.idRef[id] = namespace.history[index];
+  }
+
+  msgObject.el = namespace.onAddMessage(msgObject);
+};
+
+const addAssistantMessage = (
+  key: string,
+  id: string,
+  content: string | null | undefined,
+  toolCalls: ToolCalls | undefined,
+  contentType: AssistantMessageContentType,
+  hidden: boolean = false,
+) => {
+  const namespace = _namespace[key];
+  if (!namespace) {
+    return;
+  }
+
+  const msgObject: Message = {
+    __type: 'AssistantMessage',
+    content,
+    toolCalls,
+    contentType,
+    role: 'assistant',
+    id,
+    hidden,
+    ctx: {},
+  };
+
+  const index = namespace.history.push(msgObject) - 1;
+  if (id) {
+    namespace.idRef[id] = namespace.history[index];
+  }
+
+  msgObject.el = namespace.onAddMessage(msgObject);
+};
+
+const updateAssistantMessage = (key: string, id: string, content: string) => {
   const namespace = _namespace[key];
   if (!namespace) {
     return;
   }
 
   if (!namespace.idRef[id]) {
-    addMessage(key, content, ROLES.assistant, id, false, type);
+    addAssistantMessage(key, id, content, undefined, 'text', false);
     return;
   }
 
   const msg = namespace.idRef[id];
   msg.content = content;
 
-  if (msg.el && msg.el.update) {
+  if (msg.__type === 'AssistantMessage' && msg.el && msg.el.update) {
     msg.el.update(msg);
   }
 };
@@ -81,12 +159,23 @@ const getMessage = (key: string, id: string) => {
 };
 
 export type ChatHistory = {
-  addUserMessage: (content: Prompt, hidden?: boolean, type?: MessageType) => void;
-  addAssistantMessage: (content: string, id: string, type?: MessageType) => void;
-  updateAssistantMessage: (id: string, content: string, type?: MessageType) => void;
+  addUserMessage: (content: Prompt, hidden?: boolean) => void;
+  addAssistantMessage: (
+    id: string,
+    content: string | null | undefined,
+    toolCalls: ToolCalls | undefined,
+    contentType: AssistantMessageContentType,
+    hidden?: boolean,
+  ) => void;
+  addToolResponseMessage: (
+    id: string,
+    content: ToolResponseMessage['content'],
+    hidden?: boolean,
+  ) => void;
+  updateAssistantMessage: (id: string, content: string) => void;
   getAssistantMessage: (id: string) => Message | undefined;
   getMessages: () => Message[];
-  getMessagesHistory: () => Pick<Message, 'role' | 'content'>[];
+  getMessagesHistory: () => Pick<Message, 'role' | 'content' | 'toolCalls'>[];
   clearHistory: () => void;
   clearHistoryFrom: (id: string) => void;
 };
@@ -104,17 +193,20 @@ export const chatHistory = {
     _namespace[key].onAddMessage = onAddMessage;
 
     return {
-      addUserMessage: (content: Prompt, hidden?: boolean, type: MessageType = 'text') => {
+      addUserMessage: (content: Prompt, hidden = false) => {
         const id = 'user-msg-' + Date.now() + Math.round(Math.random() * 1000);
-        addMessage(key, content, ROLES.user, id, hidden, type);
+        addUserMessage(key, id, content, hidden);
       },
-      addAssistantMessage: (content: string, id: string, type: MessageType = 'text') => {
-        addMessage(key, content, ROLES.assistant, id, false, type);
+      addAssistantMessage: (id, content, toolCalls, contentType, hidden = false) => {
+        addAssistantMessage(key, id, content, toolCalls, contentType, hidden);
       },
-      updateAssistantMessage: (id: string, content: string, type: MessageType = 'text') => {
-        updateMessage(key, id, content, type);
+      addToolResponseMessage: (id, content, hidden = false) => {
+        addToolResponseMessage(key, id, content, hidden);
       },
-      getAssistantMessage: (id: string) => {
+      updateAssistantMessage: (id, content) => {
+        updateAssistantMessage(key, id, content);
+      },
+      getAssistantMessage: (id) => {
         return getMessage(key, id);
       },
       getMessages: () => {
@@ -124,6 +216,7 @@ export const chatHistory = {
         return _namespace[key].history.map((m) => ({
           role: m.role,
           content: m.content,
+          toolCalls: m.toolCalls,
         }));
       },
       clearHistory: () => {

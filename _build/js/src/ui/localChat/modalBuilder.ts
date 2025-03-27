@@ -4,7 +4,7 @@ import { scrollToBottom } from './modalActions';
 import { buildModalChat } from './modalChat';
 import { buildModalHeader } from './modalHeader';
 import { buildModalInput } from './modalInput';
-import { chatHistory } from '../../chatHistory';
+import { chatHistory, UpdatableHTMLElement } from '../../chatHistory';
 import { globalState } from '../../globalState';
 import { lng } from '../../lng';
 import { createModAIShadow } from '../dom/modAIShadow';
@@ -24,9 +24,10 @@ export const buildModal = (config: LocalChatConfig) => {
   shadow.modal = chatModal;
   globalState.modal = shadow;
 
-  shadow.history = chatHistory.init(`${config.key}/${config.type}`, (msg) => {
-    return renderMessage(msg, config);
-  });
+  shadow.history = chatHistory.init(
+    `${config.key}/${config.type}`,
+    (msg) => renderMessage(msg, config) as UpdatableHTMLElement | undefined,
+  );
 
   chatModal.append(buildModalHeader());
   chatModal.append(buildModalChat());

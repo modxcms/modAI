@@ -7,14 +7,14 @@ import { createElement } from '../utils';
 import type { Modal } from './types';
 import type { Message } from '../../chatHistory';
 
-type ActionButtonConfig = {
+type ActionButtonConfig<M extends Message = Message> = {
   label: string;
   icon: Element;
-  message: Message;
+  message: M;
   loadingText?: string;
   completedText?: string;
   completedTextDuration?: number;
-  onClick: (msg: Message, modal: Modal) => void | Promise<void>;
+  onClick: (msg: M, modal: Modal) => void | Promise<void>;
   disabled?: boolean;
   disableCompletedState?: boolean;
 };
@@ -27,7 +27,7 @@ const defaultConfig: Partial<ActionButtonConfig> = {
   disableCompletedState: false,
 };
 
-export const createActionButton = (config: ActionButtonConfig) => {
+export const createActionButton = <M extends Message>(config: ActionButtonConfig<M>) => {
   config = {
     ...defaultConfig,
     ...config,

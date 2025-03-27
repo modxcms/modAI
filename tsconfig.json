@@ -10,7 +10,7 @@
     "allowJs": true,
     "checkJs": false,
     "skipLibCheck": true,
-    "lib": ["dom", "es2016"]
+    "lib": ["dom", "esnext"]
   },
   "include": [
     "_build/js/src/**/*"
