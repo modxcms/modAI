@@ -1,0 +1,31 @@
+{
+    "config": {
+        "platform": {
+            "php": "8.2"
+        },
+        "discard-changes": true
+    },
+    "require": {
+    },
+    "minimum-stability": "RC",
+    "require-dev": {
+        "ext-json": "*",
+        "ext-pdo": "*",
+        "ext-soap": "*",
+        "ext-curl": "*",
+        "ext-simplexml": "*",
+        "squizlabs/php_codesniffer": "3.*",
+        "phpcompatibility/php-compatibility": "^9.3",
+        "xpdo/xpdo": "^v3.1"
+    },
+    "suggest": {
+        "ext-pcntl": "*"
+    },
+    "scripts": {
+        "build-schema": "vendor/bin/xpdo parse-schema mysql core/components/modai/schema/modai.mysql.schema.xml core/components/modai/src/ -v --update=1 --psr4=modAI",
+        "bootstrap": "php _bootstrap/index.php",
+        "phpcs": "vendor/bin/phpcs --standard=phpcs.xml",
+        "phpcbf": "vendor/bin/phpcbf --standard=phpcs.xml",
+        "phpunit": "vendor/bin/phpunit"
+    }
+}
