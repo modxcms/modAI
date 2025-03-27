@@ -163,11 +163,11 @@ class Claude extends BaseService
 
         if (!empty($tools)) {
             $input['tools'] = $tools;
-        }
 
-        $input['tool_choice'] = [
-            'type' => $config->getToolChoice()
-        ];
+            $input['tool_choice'] = [
+                'type' => $config->getToolChoice()
+            ];
+        }
 
         return AIResponse::new('claude')
             ->withStream($config->isStream())

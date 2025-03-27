@@ -82,6 +82,15 @@ export const streamHandlers: Record<string, StreamHandler> = {
           const parsedData = JSON.parse(data);
           if (parsedData.type === 'message_start') {
             currentData.id = parsedData.message.id;
+            currentData.usage = {
+              promptTokens: parsedData.message.usage.input_tokens,
+              completionTokens: 0,
+            };
+            continue;
+          }
+
+          if (parsedData.type === 'message_delta') {
+            currentData.usage.completionTokens = parsedData.usage.output_tokens;
             continue;
           }
 

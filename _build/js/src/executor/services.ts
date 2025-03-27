@@ -4,27 +4,34 @@ export type ServiceType = 'chatgpt' | 'claude' | 'gemini';
 export type BufferMode = 'buffered' | 'stream';
 export type ParserType = keyof ServiceHandlers[BufferMode][ServiceType];
 
+export type UsageData = {
+  usage: {
+    promptTokens: number;
+    completionTokens: number;
+  };
+};
+
 export type ToolCalls = {
   id: string;
   name: string;
   arguments: string;
 }[];
 
-export type TextDataMaybeTools = {
+export type TextDataMaybeTools = UsageData & {
   __type: 'TextDataMaybeTools';
   id: string;
   content: string;
   toolCalls?: ToolCalls;
 };
 
-export type ToolsData = {
+export type ToolsData = UsageData & {
   __type: 'ToolsData';
   id: string;
   content?: undefined;
   toolCalls: ToolCalls;
 };
 
-export type TextDataNoTools = {
+export type TextDataNoTools = UsageData & {
   __type: 'TextDataNoTools';
   id: string;
   content: string;
@@ -54,6 +61,10 @@ export type ChatGPTCompletionsData = {
       }[];
     };
   }[];
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+  };
 };
 
 export type ChatGPTStreamCompletionsData = {
@@ -72,6 +83,10 @@ export type ChatGPTStreamCompletionsData = {
       }[];
     };
   }[];
+  usage: null | {
+    prompt_tokens: number;
+    completion_tokens: number;
+  };
 };
 
 export type ChatGPTImageData = {
@@ -95,6 +110,10 @@ export type ClaudeCompletionsData = {
         input: Record<string, unknown>;
       }
   )[];
+  usage: {
+    input_tokens: number;
+    output_tokens: number;
+  };
 };
 
 export type ClaudeStreamCompletionsData =
@@ -140,6 +159,10 @@ export type GeminiCompletionsData = {
       }[];
     };
   }[];
+  usageMetadata: {
+    promptTokenCount: number;
+    candidatesTokenCount: number;
+  };
 };
 
 export type GeminiStreamCompletionsData = {
@@ -154,6 +177,10 @@ export type GeminiStreamCompletionsData = {
       }[];
     };
   }[];
+  usageMetadata: {
+    promptTokenCount: number;
+    candidatesTokenCount: number;
+  };
 };
 
 export type GeminiImageData = {
@@ -227,6 +254,10 @@ export const services: ServiceHandlers = {
             __type: 'TextDataNoTools',
             id,
             content: content as string,
+            usage: {
+              completionTokens: data?.usage.completion_tokens,
+              promptTokens: data?.usage.prompt_tokens,
+            },
           };
         }
 
@@ -239,6 +270,10 @@ export const services: ServiceHandlers = {
               name: tool.function.name,
               arguments: tool.function.arguments,
             })),
+            usage: {
+              completionTokens: data?.usage.completion_tokens,
+              promptTokens: data?.usage.prompt_tokens,
+            },
           };
         }
 
@@ -251,6 +286,10 @@ export const services: ServiceHandlers = {
             name: tool.function.name,
             arguments: tool.function.arguments,
           })),
+          usage: {
+            completionTokens: data?.usage.completion_tokens,
+            promptTokens: data?.usage.prompt_tokens,
+          },
         };
       },
       image: (data) => {
@@ -302,6 +341,10 @@ export const services: ServiceHandlers = {
             __type: 'TextDataNoTools',
             id,
             content: content as string,
+            usage: {
+              completionTokens: data?.usage.output_tokens,
+              promptTokens: data?.usage.input_tokens,
+            },
           };
         }
 
@@ -310,6 +353,10 @@ export const services: ServiceHandlers = {
             __type: 'ToolsData',
             id,
             toolCalls: tools,
+            usage: {
+              completionTokens: data?.usage.output_tokens,
+              promptTokens: data?.usage.input_tokens,
+            },
           };
         }
 
@@ -318,6 +365,10 @@ export const services: ServiceHandlers = {
           id,
           toolCalls: tools,
           content: content,
+          usage: {
+            completionTokens: data?.usage.output_tokens,
+            promptTokens: data?.usage.input_tokens,
+          },
         };
       },
     },
@@ -358,6 +409,10 @@ export const services: ServiceHandlers = {
             __type: 'TextDataNoTools',
             id: crypto.randomUUID(),
             content: content as string,
+            usage: {
+              completionTokens: data?.usageMetadata.candidatesTokenCount,
+              promptTokens: data?.usageMetadata.promptTokenCount,
+            },
           };
         }
 
@@ -366,6 +421,10 @@ export const services: ServiceHandlers = {
             __type: 'ToolsData',
             id: crypto.randomUUID(),
             toolCalls: tools,
+            usage: {
+              completionTokens: data?.usageMetadata.candidatesTokenCount,
+              promptTokens: data?.usageMetadata.promptTokenCount,
+            },
           };
         }
 
@@ -374,6 +433,10 @@ export const services: ServiceHandlers = {
           id: crypto.randomUUID(),
           content: content,
           toolCalls: tools,
+          usage: {
+            completionTokens: data?.usageMetadata.candidatesTokenCount,
+            promptTokens: data?.usageMetadata.promptTokenCount,
+          },
         };
       },
       image: (data) => {
@@ -394,6 +457,13 @@ export const services: ServiceHandlers = {
   stream: {
     chatgpt: {
       content: (newData, currentData) => {
+        if (newData?.usage) {
+          currentData.usage = {
+            completionTokens: newData?.usage?.completion_tokens || 0,
+            promptTokens: newData?.usage?.prompt_tokens || 0,
+          };
+        }
+
         if (!newData?.choices?.[0]?.delta?.tool_calls && !newData?.choices?.[0]?.delta?.content) {
           return currentData;
         }
@@ -438,6 +508,10 @@ export const services: ServiceHandlers = {
           id: currentData.id,
           content: (currentData.content ?? '') + content,
           toolCalls,
+          usage: {
+            completionTokens: currentData.usage.completionTokens ?? 0,
+            promptTokens: currentData.usage.promptTokens ?? 0,
+          },
         };
       },
     },
@@ -475,6 +549,10 @@ export const services: ServiceHandlers = {
           id: currentData.id,
           content: (currentData.content ?? '') + content,
           toolCalls,
+          usage: {
+            completionTokens: currentData.usage.completionTokens || 0,
+            promptTokens: currentData.usage.promptTokens || 0,
+          },
         };
       },
     },
@@ -509,6 +587,10 @@ export const services: ServiceHandlers = {
           id: currentData.id,
           content: (currentData.content || '') + content,
           toolCalls,
+          usage: {
+            completionTokens: newData?.usageMetadata.candidatesTokenCount,
+            promptTokens: newData?.usageMetadata.promptTokenCount,
+          },
         };
       },
     },
