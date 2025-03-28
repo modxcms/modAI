@@ -130,6 +130,10 @@ export const handleStream = async (
   let buffer = '';
   let currentData = {
     id: `${service}-${Date.now()}-${Math.round(Math.random() * 1000)}`,
+    usage: {
+      completionTokens: 0,
+      promptTokens: 0,
+    },
   } as TextData;
 
   const streamHandler = streamHandlers[service];

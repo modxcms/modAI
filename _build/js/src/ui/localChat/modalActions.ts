@@ -111,9 +111,9 @@ export const sendMessage = async (
           messages,
         },
         (data) => {
-          if (data.__type === 'ToolsData') return;
-
-          globalState.modal.history.updateAssistantMessage(data.id, data.content);
+          if (data.content) {
+            globalState.modal.history.updateAssistantMessage(data.id, data.content);
+          }
         },
         globalState.modal.abortController,
       );
