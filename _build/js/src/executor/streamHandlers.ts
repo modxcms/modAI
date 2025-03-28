@@ -1,4 +1,5 @@
 import { services } from './services';
+import { lng } from '../lng';
 
 import type { TextData } from './services';
 import type { ChunkStream } from './types';
@@ -138,7 +139,7 @@ export const handleStream = async (
 
   const streamHandler = streamHandlers[service];
   if (!streamHandler) {
-    throw new Error('Unsupported stream handler');
+    throw new Error(lng('modai.error.service_unsupported'));
   }
 
   while (true) {
