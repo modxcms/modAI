@@ -3,6 +3,7 @@
 namespace modAI\API\Tools;
 
 use modAI\API\API;
+use modAI\Model\Tool;
 use modAI\Tools\GetWeather;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -19,12 +20,15 @@ class Run extends API
 
         $content = [];
 
+        $tools = Tool::getAvailableTools($this->modx);
+
         foreach ($toolCalls as $toolCall) {
-            if ($toolCall['name'] === 'get_weather') {
-                $tool = new GetWeather();
+            if (isset($tools[$toolCall['name']])) {
+                $tool = $tools[$toolCall['name']]->getToolInstance();
+
                 $content[] = [
                     'id' => $toolCall['id'],
-                    'name' => $tool::getName(),
+                    'name' => $toolCall['name'],
                     'content' => $tool->runTool(json_decode($toolCall['arguments'], true)),
                 ];
             }

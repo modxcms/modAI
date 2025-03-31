@@ -7,6 +7,7 @@ use modAI\Services\Config\CompletionsConfig;
 use modAI\Services\Config\ImageConfig;
 use modAI\Services\Config\VisionConfig;
 use modAI\Services\Response\AIResponse;
+use modAI\Tools\ToolInterface;
 use MODX\Revolution\modX;
 
 class CustomChatGPT implements AIService
@@ -148,16 +149,20 @@ class CustomChatGPT implements AIService
         $input['messages'] = $messages;
 
         $tools = [];
-        foreach ($config->getTools() as $toolClass) {
+        foreach ($config->getTools() as $toolName => $tool) {
+            /** @var class-string<ToolInterface> $toolClass */
+            $toolClass = $tool->get('class');
+
             $tools[] = [
                 'type' => 'function',
                 'function' => [
-                    'name' => $toolClass::getName(),
+                    'name' => $toolName,
                     'description' => $toolClass::getDescription(),
                     'parameters' => (object)$toolClass::getParameters(),
                 ]
             ];
         }
+
         if (!empty($tools)) {
             $input['tools'] = $tools;
 

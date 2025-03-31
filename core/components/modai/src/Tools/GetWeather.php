@@ -2,16 +2,17 @@
 
 namespace modAI\Tools;
 
-class GetWeather
+use MODX\Revolution\modX;
+
+class GetWeather implements ToolInterface
 {
-    public static function getName(): string
+    public static function getSuggestedName(): string
     {
         return 'get_weather';
     }
 
     public static function getDescription(): string
     {
-        //Before calling this function, require the user to approve the tool call in a separate message.
         return 'Get the current weather in the provided location. Location must be provided as latitude and longitude, but don\'t ask users for that. Instead ask users for the location and then transform that to latitude/longitude. You will get this information: temperature. Don\'t list all variables in your output but use natural language.';
     }
 
@@ -29,6 +30,15 @@ class GetWeather
             ],
             "required" => ["latitude", "longitude"]
         ];
+    }
+
+    public static function getConfig(): array
+    {
+        return [];
+    }
+
+    public function __construct(modX $modx, array $config)
+    {
     }
 
     /**

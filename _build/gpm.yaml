@@ -162,13 +162,8 @@ systemSettings:
 build:
   scriptsAfter:
     - lit.gpm.php
+    - seed.gpm.php
 
 database:
   tables:
-    - "modAI\\Model\\Conversation"
-    - "modAI\\Model\\Message"
     - "modAI\\Model\\Tool"
-    - "modAI\\Model\\ContextProvider"
-    - "modAI\\Model\\Agent"
-    - "modAI\\Model\\AgentContextProvider"
-    - "modAI\\Model\\AgentTool"

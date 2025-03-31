@@ -2,6 +2,8 @@
 
 namespace modAI\Services\Config;
 
+use modAI\Model\Tool;
+
 class CompletionsConfig
 {
     use Model;
@@ -87,6 +89,9 @@ class CompletionsConfig
         return $this->messages;
     }
 
+    /**
+     * @return array<string, Tool>
+     */
     public function getTools(): array
     {
         return $this->tools;

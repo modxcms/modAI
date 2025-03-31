@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model package="modAI\Model\" baseClass="xPDO\Om\xPDOSimpleObject" platform="mysql" defaultEngine="InnoDB" version="3.0">
-    <object class="BaseObject" extends="xPDO\Om\xPDOSimpleObject" />
-
     <object class="Conversation" table="modai_conversation">
         <field key="title" dbtype="varchar" precision="190" phptype="string" null="false" default="New message" />
         <field key="started_by" dbtype="int" precision="10" phptype="int" null="false" default="0" attributes="unsigned" />
@@ -66,10 +64,15 @@
         </index>
     </object>
 
+    <object class="Tool" table="modai_tools">
+        <field key="name" dbtype="varchar" precision="200" phptype="string" null="false" />
+        <field key="class" dbtype="varchar" precision="200" phptype="string" null="false" />
+        <field key="config" dbtype="text" phptype="json" null="false" default="{}" />
+        <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
 
-    <object class="Tool" table="modai_tool">
-        <field key="class" dbtype="varchar" precision="200" phptype="string" null="false" default="" />
-
+        <index alias="name" name="name" primary="false" unique="true" type="BTREE">
+            <column key="name" length="" collation="A" null="false" />
+        </index>
         <index alias="enabled" name="enabled" primary="false" unique="false" type="BTREE">
             <column key="enabled" length="" collation="A" null="false" />
         </index>

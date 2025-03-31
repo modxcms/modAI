@@ -7,6 +7,8 @@
 
 require_once $namespace['path'] . 'vendor/autoload.php';
 
+$modx->addPackage('modAI\Model', $namespace['path'] . 'src/', null, 'modAI\\');
+
 if (!$modx->services->has('modai')) {
     $modx->services->add('modai', function ($c) use ($modx) {
         try {

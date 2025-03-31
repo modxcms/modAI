@@ -7,6 +7,7 @@ use modAI\Services\Config\CompletionsConfig;
 use modAI\Services\Config\ImageConfig;
 use modAI\Services\Config\VisionConfig;
 use modAI\Services\Response\AIResponse;
+use modAI\Tools\ToolInterface;
 use modAI\Utils;
 use MODX\Revolution\modX;
 
@@ -190,14 +191,16 @@ class Gemini implements AIService
         }
 
         $tools = [];
-        foreach ($config->getTools() as $toolClass) {
+        foreach ($config->getTools() as $toolName => $tool) {
+            /** @var class-string<ToolInterface> $toolClass */
+            $toolClass = $tool->get('class');
             $params = $toolClass::getParameters();
             if (empty($params)) {
                 $params = null;
             }
 
             $tools[] = [
-                'name' => $toolClass::getName(),
+                'name' => $toolName,
                 'description' => $toolClass::getDescription(),
                 'parameters' => $params,
             ];

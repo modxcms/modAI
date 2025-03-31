@@ -64,3 +64,6 @@ $_lang['modai.error.system_setting_required'] = 'System setting `[[+setting]]` i
 $_lang['modai.error.key_required'] = 'key is required';
 $_lang['modai.error.unknown_error'] = 'Unknown error';
 $_lang['modai.error.only_image_files_are_allowed'] = 'Only image files are allowed';
+$_lang['modai.error.tool_not_available'] = 'Tool class not available: [[+class]]';
+$_lang['modai.error.tool_wrong_interface'] = 'Tool does not implement the \modAI\Tools\ToolInterface';
+$_lang['modai.error.tool_instance_err'] = 'Tool could not be instantiated: [[+msg]]';

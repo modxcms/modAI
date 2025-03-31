@@ -1,5 +1,4 @@
 <?php
-
 namespace modAI\Model;
 
 use xPDO\xPDO;

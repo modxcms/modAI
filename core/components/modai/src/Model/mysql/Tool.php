@@ -9,28 +9,68 @@ class Tool extends \modAI\Model\Tool
     public static $metaMap = array (
         'package' => 'modAI\\Model\\',
         'version' => '3.0',
-        'table' => 'modai_tool',
+        'table' => 'modai_tools',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
         ),
         'fields' => 
         array (
-            'class' => '',
+            'name' => NULL,
+            'class' => NULL,
+            'config' => '{}',
+            'enabled' => 0,
         ),
         'fieldMeta' => 
         array (
+            'name' => 
+            array (
+                'dbtype' => 'varchar',
+                'precision' => '200',
+                'phptype' => 'string',
+                'null' => false,
+            ),
             'class' => 
             array (
                 'dbtype' => 'varchar',
                 'precision' => '200',
                 'phptype' => 'string',
                 'null' => false,
-                'default' => '',
+            ),
+            'config' => 
+            array (
+                'dbtype' => 'text',
+                'phptype' => 'json',
+                'null' => false,
+                'default' => '{}',
+            ),
+            'enabled' => 
+            array (
+                'dbtype' => 'tinyint',
+                'precision' => '1',
+                'phptype' => 'boolean',
+                'null' => false,
+                'default' => 0,
             ),
         ),
         'indexes' => 
         array (
+            'name' => 
+            array (
+                'alias' => 'name',
+                'primary' => false,
+                'unique' => true,
+                'type' => 'BTREE',
+                'columns' => 
+                array (
+                    'name' => 
+                    array (
+                        'length' => '',
+                        'collation' => 'A',
+                        'null' => false,
+                    ),
+                ),
+            ),
             'enabled' => 
             array (
                 'alias' => 'enabled',

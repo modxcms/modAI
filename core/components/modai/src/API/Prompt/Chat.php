@@ -4,6 +4,7 @@ namespace modAI\API\Prompt;
 
 use modAI\API\API;
 use modAI\Exceptions\LexiconException;
+use modAI\Model\Tool;
 use modAI\Services\AIServiceFactory;
 use modAI\Services\Config\CompletionsConfig;
 use modAI\Settings;
@@ -63,11 +64,13 @@ class Chat extends API
             $userMessages[] = $msg;
         }
 
+        $tools = Tool::getAvailableTools($this->modx);
+
         $aiService = AIServiceFactory::new($model, $this->modx);
         $result = $aiService->getCompletions(
             $userMessages,
             CompletionsConfig::new($model)
-            //                ->tools([GetWeather::class])
+                ->tools($tools)
                 ->messages($messages)
                 ->customOptions($customOptions)
                 ->maxTokens($maxTokens)
