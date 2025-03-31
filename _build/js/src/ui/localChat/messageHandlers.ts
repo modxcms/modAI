@@ -19,15 +19,13 @@ import type {
 export const addUserMessage = (msg: UserMessage) => {
   const messageElement: UpdatableHTMLElement<UserMessage> = createElement('div', 'message user');
 
-  let textContent;
-  let imagesContent = null;
+  const textContent = msg.content;
+  const imagesContent = [];
 
-  if (Array.isArray(msg.content)) {
-    const [text, ...images] = msg.content;
-    textContent = text.value;
-    imagesContent = images;
-  } else {
-    textContent = msg.content;
+  for (const attachment of msg.attachments ?? []) {
+    if (attachment.__type === 'image') {
+      imagesContent.push(attachment.value);
+    }
   }
 
   const textDiv = createElement('div');
@@ -41,7 +39,7 @@ export const addUserMessage = (msg: UserMessage) => {
       const imageWrapper = createElement('div');
 
       const img = createElement('img');
-      img.src = imgContent.value;
+      img.src = imgContent;
 
       imageWrapper.appendChild(img);
       imageRow.appendChild(imageWrapper);
@@ -50,6 +48,17 @@ export const addUserMessage = (msg: UserMessage) => {
   }
 
   const actionsContainer = createElement('div', 'actions');
+  actionsContainer.appendChild(
+    createActionButton({
+      message: msg,
+      disabled: globalState.modal.isLoading,
+      icon: icon(14, copy),
+      label: lng('modai.ui.copy'),
+      completedText: lng('modai.ui.copied'),
+      onClick: copyToClipboard,
+    }),
+  );
+
   actionsContainer.appendChild(
     createActionButton({
       message: msg,
@@ -68,20 +77,20 @@ export const addUserMessage = (msg: UserMessage) => {
           },
           onConfirm: () => {
             globalState.alertOpen = false;
-            globalState.modal.messageInput.setValue(
-              typeof msg.content === 'string' ? msg.content : msg.content[0].value,
-            );
+            globalState.modal.messageInput.setValue(msg.content);
 
-            if (typeof msg.content !== 'string') {
-              for (const el of msg.content) {
-                if (el.type === 'text') {
-                  continue;
-                }
+            if (msg.contexts) {
+              msg.contexts.forEach((ctx) => {
+                globalState.modal.context.addContext(ctx);
+              });
+            }
 
-                if (el.type === 'image') {
-                  globalState.modal.attachments.addImageAttachment(el.value);
+            if (msg.attachments) {
+              msg.attachments.forEach((ctx) => {
+                if (ctx.__type === 'image') {
+                  globalState.modal.attachments.addImageAttachment(ctx.value);
                 }
-              }
+              });
             }
 
             globalState.modal.history.clearHistoryFrom(msg.id);
@@ -277,19 +286,19 @@ export const renderMessage = (msg: Message, config: LocalChatConfig) => {
   return;
 };
 
-export const copyToClipboard = async (message: AssistantMessage) => {
-  const textContent = Array.isArray(message.content) ? message.content[0].value : message.content;
+export const copyToClipboard = async (message: AssistantMessage | UserMessage) => {
+  if (!message.content) return;
 
   if (navigator.clipboard && navigator.clipboard.writeText) {
     try {
-      await navigator.clipboard.writeText(textContent);
+      await navigator.clipboard.writeText(message.content);
     } catch {
       addErrorMessage(lng('modai.error.failed_copy'));
     }
   } else {
     try {
       const textarea = createElement('textarea');
-      textarea.value = textContent;
+      textarea.value = message.content;
       document.body.appendChild(textarea);
       textarea.select();
 

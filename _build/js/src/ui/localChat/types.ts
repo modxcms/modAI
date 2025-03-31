@@ -1,7 +1,8 @@
-import { UserInput } from './modalInput';
-import { AttachmentsWrapper } from './modalInputAttachments';
-import { ChatHistory, Message } from '../../chatHistory';
-import { Button } from '../dom/button';
+import type { UserInput } from './modalInput';
+import type { AttachmentsWrapper } from './modalInputAttachments';
+import type { Context, ContextWrapper } from './modalInputContext';
+import type { ChatHistory, Message, UserMessageContext } from '../../chatHistory';
+import type { Button } from '../dom/button';
 
 export type ModalType = 'text' | 'image';
 
@@ -14,6 +15,7 @@ export type Modal = HTMLDivElement & {
   loadingIndicator: HTMLDivElement;
 
   attachments: AttachmentsWrapper;
+  context: ContextWrapper;
   messageInput: UserInput;
 
   modeButtons: Button[];
@@ -41,7 +43,11 @@ export type LocalChatConfig = {
   type?: ModalType;
   availableTypes?: ModalType[];
   namespace?: string;
+  /**
+   * @deprecated use 'withContexts'
+   */
   context?: string;
+  withContexts?: UserMessageContext[];
   field?: string;
   resource?: number | string;
   customCSS?: string[];

@@ -151,7 +151,7 @@
                 max-width: 80%;
 
                 &.user {
-                    min-width: 60px;
+                    min-width: 100px;
                     align-self: flex-end;
                     background-color: var(--primary-dark);
                     color: var(--text-light);
@@ -440,17 +440,18 @@
 
             .attachmentsWrapper {
                 position: relative;
-                height: 70px;
                 display: none;
                 padding-bottom: var(--spacing-sm);
                 box-sizing: content-box;
+                width: fit-content;
+                height: fit-content;
+                gap: 5px;
 
                 &.visible {
-                    display: block;
+                    display: flex;
                 }
 
                 .imagePreview {
-                    position: absolute;
                     width: 65px;
                     height: 65px;
                     border-radius: 5px;

@@ -9,7 +9,7 @@ use modAI\Services\Config\VisionConfig;
 use modAI\Services\Response\AIResponse;
 use MODX\Revolution\modX;
 
-class ChatGPT extends BaseService
+class ChatGPT implements AIService
 {
     private modX $modx;
 
@@ -21,25 +21,94 @@ class ChatGPT extends BaseService
         $this->modx =& $modx;
     }
 
-    protected function formatMessageContentItem($item): array
+    private function formatMessageContexts(array &$messages, array $contexts, array &$currentMessage)
     {
-        if ($item['type'] === 'text') {
-            return [
-                'type' => 'text',
-                'text' => $item['value'],
-            ];
+        foreach ($contexts as $ctx) {
+            if ($ctx['__type'] === 'selection') {
+                $messages[] = [
+                    'role' => 'system',
+                    'content' => "Next user message should act only on this text: " . $ctx['value']
+                ];
+            }
+        }
+    }
+
+    private function formatMessageAttachments(array &$messages, array $attachments, array &$currentMessage)
+    {
+        foreach ($attachments as $attachment) {
+            if ($attachment['__type'] === 'image') {
+                $content = is_string($currentMessage['content']) ? [['type' => 'text', 'text' => $currentMessage['content']]] : $currentMessage['content'];
+
+                $content[] = [
+                    'type' => 'image_url',
+                    'image_url' => [
+                        'url' => $attachment['value']
+                    ]
+                ];
+
+                $currentMessage['content'] = $content;
+            }
+        }
+    }
+
+    private function addMessage(array &$messages, array $msg): void
+    {
+        if ($msg['role'] === 'tool') {
+            foreach ($msg['content'] as $toolResponse) {
+                $messages[] = [
+                    'role' => 'tool',
+                    'tool_call_id' => $toolResponse['id'],
+                    'content' => $toolResponse['content'],
+                ];
+            }
+            return;
         }
 
-        if ($item['type'] === 'image') {
-            return [
-                'type' => 'image_url',
-                'image_url' => [
-                    'url' => $item['value']
-                ],
+        if ($msg['role'] === 'assistant' && $msg['toolCalls']) {
+            $toolCalls = [];
+
+            foreach ($msg['toolCalls'] as $toolCall) {
+                $toolCalls[] = [
+                    'id' => $toolCall['id'],
+                    'type' => 'function',
+                    'function' => [
+                        "name" => $toolCall['name'],
+                        "arguments" => $toolCall['arguments']
+                    ]
+                ];
+            }
+
+            $messages[] = [
+                'role' => 'assistant',
+                'tool_calls' => $toolCalls
             ];
+
+            return;
         }
 
-        throw new LexiconException("modai.error.unsupported_content_type", ['type' => $item['type']]);
+        if ($msg['role'] === 'user') {
+            $currentMessage = [
+                'role' => 'user',
+                'content' => $msg['content']
+            ];
+
+            if (isset($msg['contexts']) && is_array($msg['contexts'])) {
+                $this->formatMessageContexts($messages, $msg['contexts'], $currentMessage);
+            }
+
+            if (isset($msg['attachments']) && is_array($msg['attachments'])) {
+                $this->formatMessageAttachments($messages, $msg['attachments'], $currentMessage);
+            }
+
+            $messages[] = $currentMessage;
+
+            return;
+        }
+
+        $messages[] = [
+            'role' => 'assistant',
+            'content' => $msg['content']
+        ];
     }
 
     public function getCompletions(array $data, CompletionsConfig $config): AIResponse
@@ -60,50 +129,11 @@ class ChatGPT extends BaseService
         }
 
         foreach ($config->getMessages() as $msg) {
-            if ($msg['role'] === 'tool') {
-                foreach ($msg['content'] as $toolResponse) {
-                    $messages[] = [
-                        'role' => 'tool',
-                        'tool_call_id' => $toolResponse['id'],
-                        'content' => $toolResponse['content'],
-                    ];
-                }
-                continue;
-            }
-
-            if ($msg['role'] === 'assistant' && $msg['toolCalls']) {
-                $toolCalls = [];
-
-                foreach ($msg['toolCalls'] as $toolCall) {
-                    $toolCalls[] = [
-                        'id' => $toolCall['id'],
-                        'type' => 'function',
-                        'function' => [
-                            "name" => $toolCall['name'],
-                            "arguments" => $toolCall['arguments']
-                        ]
-                    ];
-                }
-
-                $messages[] = [
-                    'role' => 'assistant',
-                    'tool_calls' => $toolCalls
-                ];
-
-                continue;
-            }
-
-            $messages[] = [
-                'role' => $msg['role'] === 'user' ? 'user' : 'assistant',
-                'content' => $this->formatUserMessageContent($msg['content'])
-            ];
+            $this->addMessage($messages, $msg);
         }
 
         foreach ($data as $msg) {
-            $messages[] = [
-                'role' => 'user',
-                'content' => $this->formatUserMessageContent($msg)
-            ];
+            $this->addMessage($messages, $msg);
         }
 
         $input = $config->getCustomOptions();
@@ -176,6 +206,10 @@ class ChatGPT extends BaseService
 
         if ($config->isStream()) {
             $input['stream'] = true;
+
+            $input['stream_options'] = [
+                'include_usage' => true,
+            ];
         }
 
         return AIResponse::new('chatgpt')

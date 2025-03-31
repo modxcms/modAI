@@ -13,7 +13,7 @@ export type AttachmentsWrapper = HTMLDivElement & {
 };
 
 export type Attachment = HTMLDivElement & {
-  type: 'image';
+  __type: 'image';
   value: string;
 };
 
@@ -81,7 +81,7 @@ const addImageAttachment = (src: string) => {
   }
 
   const attachment = createElement('div', 'imagePreview') as Attachment;
-  attachment.type = 'image';
+  attachment.__type = 'image';
   attachment.value = src;
 
   const img = createElement('img', undefined, '', { src });

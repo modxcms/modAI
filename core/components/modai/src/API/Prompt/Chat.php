@@ -10,7 +10,7 @@ use modAI\Settings;
 use modAI\Tools\GetWeather;
 use Psr\Http\Message\ServerRequestInterface;
 
-class FreeText extends API
+class Chat extends API
 {
     public function post(ServerRequestInterface $request): void
     {
@@ -20,7 +20,8 @@ class FreeText extends API
 
         $prompt = $this->modx->getOption('prompt', $data);
         $field = $this->modx->getOption('field', $data, '');
-        $context = $this->modx->getOption('context', $data, '');
+        $contexts = $this->modx->getOption('contexts', $data, null);
+        $attachments = $this->modx->getOption('attachments', $data, null);
         $namespace = $this->modx->getOption('namespace', $data, 'modai');
         $messages = $this->modx->getOption('messages', $data);
 
@@ -36,7 +37,6 @@ class FreeText extends API
         $maxTokens = (int)Settings::getTextSetting($this->modx, $field, 'max_tokens', $namespace);
         $output = Settings::getTextSetting($this->modx, $field, 'base_output', $namespace, false);
         $base = Settings::getTextSetting($this->modx, $field, 'base_prompt', $namespace, false);
-        $contextPrompt = Settings::getTextSetting($this->modx, $field, 'context_prompt', $namespace, false);
         $customOptions = Settings::getTextSetting($this->modx, $field, 'custom_options', $namespace, false);
 
         if (!empty($output)) {
@@ -49,12 +49,18 @@ class FreeText extends API
 
         $userMessages = [];
 
-        if (!empty($context) && !empty($contextPrompt)) {
-            $userMessages[] = str_replace('{context}', $context, $contextPrompt);
-        }
-
         if (!empty($prompt)) {
-            $userMessages[] = $prompt;
+            $msg = ['content' => $prompt, 'role' => 'user'];
+
+            if (!empty($contexts)) {
+                $msg['contexts'] = $contexts;
+            }
+
+            if (!empty($attachments)) {
+                $msg['attachments'] = $attachments;
+            }
+
+            $userMessages[] = $msg;
         }
 
         $aiService = AIServiceFactory::new($model, $this->modx);

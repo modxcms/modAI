@@ -4,7 +4,7 @@ import type { TextData, ImageData, ToolCalls, TextDataNoTools } from './services
 import type {
   ChunkStream,
   DownloadImageParams,
-  FreeTextParams,
+  ChatParams,
   ImageParams,
   TextParams,
   ToolResponseContent,
@@ -28,12 +28,22 @@ export const executor = {
       },
     },
     prompt: {
+      /**
+       * @deprecated use 'chat' instead
+       */
       freeText: async (
-        params: FreeTextParams,
+        params: ChatParams,
         onChunkStream?: ChunkStream<TextData>,
         controller?: AbortController,
       ) => {
-        return aiFetch<TextData>('Prompt\\FreeText', params, onChunkStream, controller);
+        return aiFetch<TextData>('Prompt\\Chat', params, onChunkStream, controller);
+      },
+      chat: async (
+        params: ChatParams,
+        onChunkStream?: ChunkStream<TextData>,
+        controller?: AbortController,
+      ) => {
+        return aiFetch<TextData>('Prompt\\Chat', params, onChunkStream, controller);
       },
       text: async (
         params: TextParams,

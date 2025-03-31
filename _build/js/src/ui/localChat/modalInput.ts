@@ -9,6 +9,7 @@ import {
   tryAgain,
 } from './modalActions';
 import { buildModalInputAttachments } from './modalInputAttachments';
+import { buildModalInputContexts } from './modalInputContext';
 import { button } from '../dom/button';
 import { icon } from '../dom/icon';
 import { image, refresh, arrowUp, square, text, trash } from '../icons';
@@ -92,6 +93,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
   inputWrapper.append(textarea, loading, sendBtn, stopBtn);
 
   inputSection.append(buildModalInputAttachments(), inputWrapper);
+  inputSection.append(buildModalInputContexts(), inputWrapper);
 
   const modeButtons: Button[] = [];
 

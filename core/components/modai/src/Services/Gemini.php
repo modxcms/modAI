@@ -10,7 +10,7 @@ use modAI\Services\Response\AIResponse;
 use modAI\Utils;
 use MODX\Revolution\modX;
 
-class Gemini extends BaseService
+class Gemini implements AIService
 {
     private modX $modx;
 
@@ -23,41 +23,121 @@ class Gemini extends BaseService
         $this->modx =& $modx;
     }
 
-    protected function formatMessageContentItem($item): array
+    private function formatMessageContexts(array &$messages, array $contexts, array &$currentMessage)
     {
-        if ($item['type'] === 'text') {
-            return [
-                'text' => $item['value']
-            ];
+        foreach ($contexts as $ctx) {
+            if ($ctx['__type'] === 'selection') {
+                $messages[] = [
+                    'role' => 'user',
+                    'parts' => [
+                        'text' => "User's selected text, user instructions should apply only on this text: " . $ctx['value']
+                    ]
+                ];
+            }
         }
+    }
 
-        if ($item['type'] === 'image') {
-            $data = Utils::parseDataURL($item['value']);
-            if (is_string($data)) {
-                return [
-                    'file_data' => [
-                        "mime_type" => "image/jpeg",
-                        "file_uri" => $data,
+    private function formatMessageAttachments(array &$messages, array $attachments, array &$currentMessage)
+    {
+        foreach ($attachments as $attachment) {
+            if ($attachment['__type'] === 'image') {
+                $data = Utils::parseDataURL($attachment['value']);
+                if (is_string($data)) {
+                    $currentMessage['parts'][] = [
+                        'file_data' => [
+                            "mime_type" => "image/jpeg",
+                            "file_uri" => $data,
+                        ]
+                    ];
+                    continue;
+                }
+
+                $currentMessage['parts'][] = [
+                    'inline_data' => [
+                        "mime_type" => $data['mimeType'],
+                        "data" => $data['base64'],
+                    ]
+                ];
+            }
+        }
+    }
+
+    private function addMessage(array &$messages, array $msg): void
+    {
+        if ($msg['role'] === 'tool') {
+            $content = [];
+
+            foreach ($msg['content'] as $toolResponse) {
+                $content[] = [
+                    'functionResponse' => [
+                        'name' => $toolResponse['name'],
+                        'response' => [
+                            'name' => $toolResponse['name'],
+                            'content' => json_decode($toolResponse['content'], true),
+                        ]
                     ]
                 ];
             }
 
-            return [
-                'inline_data' => [
-                    "mime_type" => $data['mimeType'],
-                    "data" => $data['base64'],
-                ]
+            $messages[] = [
+                'role' => 'user',
+                'parts' => $content
             ];
+
+            return;
         }
 
-        throw new LexiconException("modai.error.unsupported_content_type", ['type' => $item['type']]);
-    }
+        if ($msg['role'] === 'assistant' && $msg['toolCalls']) {
+            $content = [];
 
-    protected function formatStringMessageContent(string $item)
-    {
-        return [[
-            'text' => $item
-        ]];
+            foreach ($msg['toolCalls'] as $toolCall) {
+                $content[] = [
+                    'functionCall' => [
+                        "name" => $toolCall['name'],
+                        "args" => (object)json_decode($toolCall['arguments'], true)
+                    ]
+                ];
+            }
+
+            $messages[] = [
+                'role' => 'model',
+                'parts' => $content
+            ];
+
+            return;
+        }
+
+        if ($msg['role'] === 'user') {
+            $currentMessage = [
+                'role' => 'user',
+                'parts' => [
+                    [
+                        'text' => 'User instructions: ' . $msg['content']
+                    ]
+                ]
+            ];
+
+            if (isset($msg['contexts']) && is_array($msg['contexts'])) {
+                $this->formatMessageContexts($messages, $msg['contexts'], $currentMessage);
+            }
+
+            if (isset($msg['attachments']) && is_array($msg['attachments'])) {
+                $this->formatMessageAttachments($messages, $msg['attachments'], $currentMessage);
+            }
+
+            $messages[] = $currentMessage;
+
+            return;
+        }
+
+        $messages[] = [
+            'role' => 'model',
+            'parts' => [
+                [
+                    'text' => $msg['content']
+                ]
+            ]
+        ];
     }
 
     public function getCompletions(array $data, CompletionsConfig $config): AIResponse
@@ -88,57 +168,11 @@ class Gemini extends BaseService
         $messages = [];
 
         foreach ($config->getMessages() as $msg) {
-            if ($msg['role'] === 'tool') {
-                $content = [];
-                foreach ($msg['content'] as $toolResponse) {
-                    $content[] = [
-                        'functionResponse' => [
-                            'name' => $toolResponse['name'],
-                            'response' => [
-                                'name' => $toolResponse['name'],
-                                'content' => json_decode($toolResponse['content'], true),
-                            ]
-                        ]
-                    ];
-                }
-                $messages[] = [
-                    'role' => 'user',
-                    'parts' => $content
-                ];
-                continue;
-            }
-
-            if ($msg['role'] === 'assistant' && $msg['toolCalls']) {
-                $content = [];
-
-                foreach ($msg['toolCalls'] as $toolCall) {
-                    $content[] = [
-                        'functionCall' => [
-                            "name" => $toolCall['name'],
-                            "args" => (object)json_decode($toolCall['arguments'], true)
-                        ]
-                    ];
-                }
-
-                $messages[] = [
-                    'role' => 'model',
-                    'parts' => $content
-                ];
-
-                continue;
-            }
-
-            $messages[] = [
-                'role' => $msg['role'] === 'user' ? 'user' : 'model',
-                'parts' => $this->formatUserMessageContent($msg['content'])
-            ];
+            $this->addMessage($messages, $msg);
         }
 
         foreach ($data as $msg) {
-            $messages[] = [
-                'role' => 'user',
-                'parts' => $this->formatUserMessageContent($msg)
-            ];
+            $this->addMessage($messages, $msg);
         }
 
         $input = $config->getCustomOptions();

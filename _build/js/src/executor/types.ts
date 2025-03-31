@@ -1,4 +1,5 @@
-import { TextData, ImageData } from './services';
+import type { TextData, ImageData, ToolCalls } from './services';
+import type { UserAttachment, UserMessageContext } from '../chatHistory';
 
 export type ServiceResponse = TextData | ImageData;
 
@@ -17,25 +18,25 @@ export type ExecutorData =
     }
   | string;
 
-export type TextPrompt = { type: 'text'; value: string };
-export type ImagePrompt = { type: 'image'; value: string };
-
 export type ToolResponseContent = {
   tool_call_id: string;
   name: string;
   response: string;
 }[];
 
-export type Prompt = string | [TextPrompt, ...ImagePrompt[]];
-
-export type HistoryMessage = undefined | null | Prompt | ToolResponseContent;
-
-export type FreeTextParams = {
-  prompt: Prompt;
+export type ChatParams = {
+  prompt: string;
   field?: string;
-  context?: string;
+  contexts?: UserMessageContext[];
+  attachments?: UserAttachment[];
   namespace?: string;
-  messages: { role: string; content: HistoryMessage }[];
+  messages: {
+    role: 'user' | 'assistant' | 'tool';
+    content?: string | ToolResponseContent;
+    toolCalls?: ToolCalls;
+    contexts?: UserMessageContext[];
+    attachments?: UserAttachment[];
+  }[];
 };
 
 export type TextParams = {

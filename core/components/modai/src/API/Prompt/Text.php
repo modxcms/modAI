@@ -86,7 +86,7 @@ class Text extends API
 
         $aiService = AIServiceFactory::new($model, $this->modx);
         $result = $aiService->getCompletions(
-            [$content],
+            [['content' => $content]],
             CompletionsConfig::new($model)
                 ->customOptions($customOptions)
                 ->maxTokens($maxTokens)

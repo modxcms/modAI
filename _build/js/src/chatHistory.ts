@@ -1,5 +1,5 @@
 import type { ToolCalls } from './executor/services';
-import type { Prompt, ToolResponseContent } from './executor/types';
+import type { ToolResponseContent } from './executor/types';
 
 export type AssistantMessageContentType = 'text' | 'image';
 
@@ -7,11 +7,25 @@ export type UpdatableHTMLElement<M extends Message = Message> = HTMLElement & {
   update?: (msg: M) => void;
 };
 
+export type UserMessageContext = {
+  __type: string;
+  name: string;
+  renderer?: string;
+  value: string;
+};
+
+export type UserAttachment = {
+  __type: 'image';
+  value: string;
+};
+
 type BaseMessage = {
   id: string;
   hidden: boolean;
   ctx: Record<string, unknown>;
   toolCalls?: undefined;
+  contexts?: undefined;
+  attachments?: undefined;
 };
 
 export type ToolResponseMessage = BaseMessage & {
@@ -24,16 +38,18 @@ export type ToolResponseMessage = BaseMessage & {
 export type AssistantMessage = Omit<BaseMessage, 'toolCalls'> & {
   __type: 'AssistantMessage';
   role: 'assistant';
-  content: string | null | undefined;
+  content: string | undefined;
   contentType: AssistantMessageContentType;
   toolCalls?: ToolCalls;
   el?: UpdatableHTMLElement<AssistantMessage>;
 };
 
-export type UserMessage = BaseMessage & {
+export type UserMessage = Omit<BaseMessage, 'contexts' | 'attachments'> & {
   __type: 'UserMessage';
   role: 'user';
-  content: Prompt;
+  content: string;
+  contexts?: UserMessageContext[];
+  attachments?: UserAttachment[];
   el?: UpdatableHTMLElement<UserMessage>;
 };
 
@@ -47,15 +63,26 @@ type Namespace = {
 
 const _namespace: Record<string, Namespace> = {};
 
-const addUserMessage = (key: string, id: string, content: Prompt, hidden: boolean = false) => {
+const addUserMessage = (
+  key: string,
+  id: string,
+  content:
+    | string
+    | { content: string; contexts?: UserMessageContext[]; attachments?: UserAttachment[] },
+  hidden: boolean = false,
+) => {
   const namespace = _namespace[key];
   if (!namespace) {
     return;
   }
 
+  const stringContent = typeof content === 'string';
+
   const msgObject: UserMessage = {
     __type: 'UserMessage',
-    content,
+    content: stringContent ? content : content.content,
+    contexts: stringContent ? undefined : content.contexts,
+    attachments: stringContent ? undefined : content.attachments,
     role: 'user',
     id,
     hidden,
@@ -81,7 +108,7 @@ const addToolResponseMessage = (
     return;
   }
 
-  const msgObject: Message = {
+  const msgObject: ToolResponseMessage = {
     __type: 'ToolResponseMessage',
     content,
     role: 'tool',
@@ -101,7 +128,7 @@ const addToolResponseMessage = (
 const addAssistantMessage = (
   key: string,
   id: string,
-  content: string | null | undefined,
+  content: string | undefined,
   toolCalls: ToolCalls | undefined,
   contentType: AssistantMessageContentType,
   hidden: boolean = false,
@@ -111,7 +138,7 @@ const addAssistantMessage = (
     return;
   }
 
-  const msgObject: Message = {
+  const msgObject: AssistantMessage = {
     __type: 'AssistantMessage',
     content,
     toolCalls,
@@ -159,10 +186,15 @@ const getMessage = (key: string, id: string) => {
 };
 
 export type ChatHistory = {
-  addUserMessage: (content: Prompt, hidden?: boolean) => void;
+  addUserMessage: (
+    content:
+      | string
+      | { content: string; contexts?: UserMessageContext[]; attachments?: UserAttachment[] },
+    hidden?: boolean,
+  ) => void;
   addAssistantMessage: (
     id: string,
-    content: string | null | undefined,
+    content: string | undefined,
     toolCalls: ToolCalls | undefined,
     contentType: AssistantMessageContentType,
     hidden?: boolean,
@@ -175,7 +207,10 @@ export type ChatHistory = {
   updateAssistantMessage: (id: string, content: string) => void;
   getAssistantMessage: (id: string) => Message | undefined;
   getMessages: () => Message[];
-  getMessagesHistory: () => Pick<Message, 'role' | 'content' | 'toolCalls'>[];
+  getMessagesHistory: () => Pick<
+    Message,
+    'role' | 'content' | 'toolCalls' | 'contexts' | 'attachments'
+  >[];
   clearHistory: () => void;
   clearHistoryFrom: (id: string) => void;
 };
@@ -193,7 +228,7 @@ export const chatHistory = {
     _namespace[key].onAddMessage = onAddMessage;
 
     return {
-      addUserMessage: (content: Prompt, hidden = false) => {
+      addUserMessage: (content, hidden = false) => {
         const id = 'user-msg-' + Date.now() + Math.round(Math.random() * 1000);
         addUserMessage(key, id, content, hidden);
       },
@@ -217,6 +252,8 @@ export const chatHistory = {
           role: m.role,
           content: m.content,
           toolCalls: m.toolCalls,
+          contexts: m.contexts,
+          attachments: m.attachments,
         }));
       },
       clearHistory: () => {

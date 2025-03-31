@@ -8,7 +8,6 @@ import { lng } from '../../lng';
 
 import type { LocalChatConfig, ModalType } from './types';
 import type { ToolCalls } from '../../executor/services';
-import type { Prompt } from '../../executor/types';
 
 export const closeModal = () => {
   if (globalState.modal.isLoading) {
@@ -30,16 +29,21 @@ const callTools = async (
   toolCalls: ToolCalls,
   controller?: AbortController,
 ) => {
-  globalState.modal.history.addAssistantMessage(crypto.randomUUID(), null, toolCalls, 'text', true);
+  globalState.modal.history.addAssistantMessage(
+    crypto.randomUUID(),
+    undefined,
+    toolCalls,
+    'text',
+    true,
+  );
 
   const res = await executor.mgr.tools.run(toolCalls, controller);
 
   globalState.modal.history.addToolResponseMessage(res.id, res.content, true);
 
-  const aiRes = await executor.mgr.prompt.freeText(
+  const aiRes = await executor.mgr.prompt.chat(
     {
       namespace: config.namespace,
-      context: config.context,
       field: config.field || '',
       prompt: '',
       messages: globalState.modal.history.getMessagesHistory(),
@@ -66,7 +70,7 @@ export const sendMessage = async (
   providedMessage?: string,
   hidePrompt?: boolean,
 ) => {
-  const message: Prompt = providedMessage
+  const message = providedMessage
     ? providedMessage.trim()
     : globalState.modal.messageInput.value.trim();
 
@@ -82,31 +86,38 @@ export const sendMessage = async (
 
   globalState.modal.welcomeMessage.style.display = 'none';
 
-  let messageToSend: Prompt = message;
-  if (globalState.modal.attachments.attachments.length > 0 && config.type === 'text') {
-    messageToSend = [
-      {
-        type: 'text',
-        value: message as string,
-      },
-      ...globalState.modal.attachments.attachments.map((at) => ({
-        type: at.type,
-        value: at.value,
-      })),
-    ];
-  }
+  const attachments =
+    globalState.modal.attachments.attachments.length > 0
+      ? globalState.modal.attachments.attachments.map((at) => ({
+          __type: at.__type,
+          value: at.value,
+        }))
+      : undefined;
+
+  const contexts =
+    globalState.modal.context.contexts.length > 0
+      ? globalState.modal.context.contexts.map((at) => ({
+          __type: at.__type,
+          name: at.name,
+          renderer: at.renderer,
+          value: at.value,
+        }))
+      : undefined;
 
   globalState.modal.attachments.removeAttachments();
+  globalState.modal.context.removeContexts();
+
   const messages = globalState.modal.history.getMessagesHistory();
-  globalState.modal.history.addUserMessage(messageToSend, hidePrompt);
+  globalState.modal.history.addUserMessage({ content: message, attachments, contexts }, hidePrompt);
 
   try {
     if (config.type === 'text') {
-      const data = await executor.mgr.prompt.freeText(
+      const data = await executor.mgr.prompt.chat(
         {
           namespace: config.namespace,
-          context: config.context,
-          prompt: messageToSend,
+          contexts: contexts,
+          attachments: attachments,
+          prompt: message,
           field: config.field || '',
           messages,
         },
@@ -130,7 +141,7 @@ export const sendMessage = async (
     if (config.type === 'image') {
       const data = await executor.mgr.prompt.image(
         {
-          prompt: messageToSend as string,
+          prompt: message,
         },
         globalState.modal.abortController,
       );

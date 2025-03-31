@@ -12,6 +12,21 @@ export const createModal = (config: LocalChatConfig) => {
     return;
   }
 
+  if (config.context) {
+    if (!config.withContexts) {
+      config.withContexts = [];
+    }
+
+    config.withContexts.push({
+      __type: 'selection',
+      name: 'Selection',
+      renderer: 'selection',
+      value: config.context,
+    });
+
+    config.context = undefined;
+  }
+
   if (!config.key) {
     alert(lng('modai.error.key_required'));
     return;
@@ -41,6 +56,10 @@ export const createModal = (config: LocalChatConfig) => {
       closeModal();
     },
   };
+
+  if (config.withContexts) {
+    globalState.modal.context.addContexts(config.withContexts);
+  }
 
   globalState.modalOpen = true;
 
