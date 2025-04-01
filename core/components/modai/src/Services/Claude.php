@@ -38,6 +38,13 @@ class Claude implements AIService
                     'content' => $ctx['value']
                 ];
             }
+
+            if ($ctx['__type'] === 'ContextProvider') {
+                $messages[] = [
+                    'role' => 'user',
+                    'content' => $ctx['value']
+                ];
+            }
         }
     }
 

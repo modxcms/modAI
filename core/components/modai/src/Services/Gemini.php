@@ -44,6 +44,15 @@ class Gemini implements AIService
                     ]
                 ];
             }
+
+            if ($ctx['__type'] === 'ContextProvider') {
+                $messages[] = [
+                    'role' => 'user',
+                    'parts' => [
+                        'text' => $ctx['value']
+                    ]
+                ];
+            }
         }
     }
 

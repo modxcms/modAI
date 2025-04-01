@@ -30,6 +30,11 @@ export const executor = {
         );
       },
     },
+    context: {
+      get: async (params: { prompt: string; agent: string }, controller?: AbortController) => {
+        return await modxFetch<{ contexts: string[] }>('Context\\Get', params, controller);
+      },
+    },
     prompt: {
       /**
        * @deprecated use 'chat' instead

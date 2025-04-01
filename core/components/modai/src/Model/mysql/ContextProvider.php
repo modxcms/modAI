@@ -3,26 +3,34 @@ namespace modAI\Model\mysql;
 
 use xPDO\xPDO;
 
-class Agent extends \modAI\Model\Agent
+class ContextProvider extends \modAI\Model\ContextProvider
 {
 
     public static $metaMap = array (
         'package' => 'modAI\\Model\\',
         'version' => '3.0',
-        'table' => 'modai_agents',
+        'table' => 'modai_context_providers',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
         ),
         'fields' => 
         array (
+            'class' => NULL,
             'name' => NULL,
             'description' => '',
-            'prompt' => '',
+            'config' => '{}',
             'enabled' => 0,
         ),
         'fieldMeta' => 
         array (
+            'class' => 
+            array (
+                'dbtype' => 'varchar',
+                'precision' => '200',
+                'phptype' => 'string',
+                'null' => false,
+            ),
             'name' => 
             array (
                 'dbtype' => 'varchar',
@@ -35,15 +43,15 @@ class Agent extends \modAI\Model\Agent
                 'dbtype' => 'varchar',
                 'precision' => '500',
                 'phptype' => 'string',
-                'null' => false,
+                'null' => true,
                 'default' => '',
             ),
-            'prompt' => 
+            'config' => 
             array (
                 'dbtype' => 'text',
-                'phptype' => 'string',
+                'phptype' => 'json',
                 'null' => false,
-                'default' => '',
+                'default' => '{}',
             ),
             'enabled' => 
             array (
@@ -56,22 +64,6 @@ class Agent extends \modAI\Model\Agent
         ),
         'indexes' => 
         array (
-            'enabled' => 
-            array (
-                'alias' => 'enabled',
-                'primary' => false,
-                'unique' => false,
-                'type' => 'BTREE',
-                'columns' => 
-                array (
-                    'enabled' => 
-                    array (
-                        'length' => '',
-                        'collation' => 'A',
-                        'null' => false,
-                    ),
-                ),
-            ),
             'name' => 
             array (
                 'alias' => 'name',
@@ -88,22 +80,46 @@ class Agent extends \modAI\Model\Agent
                     ),
                 ),
             ),
+            'enabled' => 
+            array (
+                'alias' => 'enabled',
+                'primary' => false,
+                'unique' => false,
+                'type' => 'BTREE',
+                'columns' => 
+                array (
+                    'enabled' => 
+                    array (
+                        'length' => '',
+                        'collation' => 'A',
+                        'null' => false,
+                    ),
+                ),
+            ),
+            'class' => 
+            array (
+                'alias' => 'class',
+                'primary' => false,
+                'unique' => false,
+                'type' => 'BTREE',
+                'columns' => 
+                array (
+                    'class' => 
+                    array (
+                        'length' => '',
+                        'collation' => 'A',
+                        'null' => false,
+                    ),
+                ),
+            ),
         ),
         'composites' => 
         array (
-            'AgentTools' => 
-            array (
-                'cardinality' => 'many',
-                'class' => 'modAI\\Model\\AgentTool',
-                'foreign' => 'agent_id',
-                'local' => 'id',
-                'owner' => 'local',
-            ),
             'AgentContextProviders' => 
             array (
                 'cardinality' => 'many',
                 'class' => 'modAI\\Model\\AgentContextProvider',
-                'foreign' => 'agent_id',
+                'foreign' => 'context_provider_id',
                 'local' => 'id',
                 'owner' => 'local',
             ),

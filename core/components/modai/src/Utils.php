@@ -3,6 +3,7 @@
 namespace modAI;
 
 use modAI\Exceptions\LexiconException;
+use MODX\Revolution\modX;
 
 class Utils
 {
@@ -37,5 +38,15 @@ class Utils
         }
 
         throw new LexiconException('modai.error.invalid_data_url');
+    }
+
+    public static function getConfigValue(modX $modx, $name, $config, $default)
+    {
+        $value = $modx->getOption($name, $config, '');
+        if (strncmp($value, 'ss:', 3) === 0) {
+            $value = $modx->getOption(substr($value, 3), null, $default);
+        }
+
+        return $value;
     }
 }

@@ -180,13 +180,28 @@ class modAI
     public function getAvailableAgents()
     {
         $c = $this->modx->newQuery(\modAI\Model\Agent::class);
+        $c->leftJoin(\modAI\Model\AgentContextProvider::class, 'AgentContextProviders', 'AgentContextProviders.agent_id = Agent.id');
+        $c->leftJoin(\modAI\Model\ContextProvider::class, 'ContextProvider', 'AgentContextProviders.context_provider_id = ContextProvider.id AND ContextProvider.enabled = 1');
         $c->where([
             'enabled' => true,
         ]);
         $c->select($this->modx->getSelectColumns(\modAI\Model\Agent::class, 'Agent', '', ['name']));
+        $c->select([
+            "GROUP_CONCAT(ContextProvider.name SEPARATOR ',') AS context_providers"
+        ]);
+        $c->groupby('Agent.name');
         $c->prepare();
         $c->stmt->execute();
 
-        return $c->stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+        $output = [];
+
+        while ($row = $c->stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $output[$row['name']] = [
+                'name' => $row['name'],
+                'contextProviders' => empty($row['context_providers']) ? null : explode(',', $row['context_providers']),
+            ];
+        }
+
+        return $output;
     }
 }

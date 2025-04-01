@@ -74,9 +74,11 @@
         <index alias="name" name="name" primary="false" unique="true" type="BTREE">
             <column key="name" length="" collation="A" null="false" />
         </index>
+
         <index alias="enabled" name="enabled" primary="false" unique="false" type="BTREE">
             <column key="enabled" length="" collation="A" null="false" />
         </index>
+
         <index alias="class" name="class" primary="false" unique="false" type="BTREE">
             <column key="class" length="" collation="A" null="false" />
         </index>
@@ -84,14 +86,27 @@
         <composite alias="AgentTools" cardinality="many" class="modAI\Model\AgentTool" foreign="tool_id" local="id" owner="local" />
     </object>
 
-<!--    <object class="ContextProvider" table="modai_context_provider">-->
-<!--        <field key="class" dbtype="varchar" precision="200" phptype="string" null="false" default="" />-->
-<!--        <field key="name" dbtype="varchar" precision="200" phptype="string" null="false" default="" />-->
-<!--        <field key="description" dbtype="varchar" precision="500" phptype="string" null="true" default="" />-->
-<!--        <field key="properties" dbtype="text" phptype="array" null="true" default="" />-->
+    <object class="ContextProvider" table="modai_context_providers">
+        <field key="class" dbtype="varchar" precision="200" phptype="string" null="false" />
+        <field key="name" dbtype="varchar" precision="200" phptype="string" null="false" />
+        <field key="description" dbtype="varchar" precision="500" phptype="string" null="true" default="" />
+        <field key="config" dbtype="text" phptype="json" null="false" default="{}" />
+        <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
 
-<!--        <composite alias="Agents" cardinality="many" class="modAI\Model\AgentContextProvider" foreign="context_provider_id" local="id" owner="local" />-->
-<!--    </object>-->
+        <index alias="name" name="name" primary="false" unique="true" type="BTREE">
+            <column key="name" length="" collation="A" null="false" />
+        </index>
+
+        <index alias="enabled" name="enabled" primary="false" unique="false" type="BTREE">
+            <column key="enabled" length="" collation="A" null="false" />
+        </index>
+
+        <index alias="class" name="class" primary="false" unique="false" type="BTREE">
+            <column key="class" length="" collation="A" null="false" />
+        </index>
+
+        <composite alias="AgentContextProviders" cardinality="many" class="modAI\Model\AgentContextProvider" foreign="context_provider_id" local="id" owner="local" />
+    </object>
 
     <object class="Agent" table="modai_agents">
         <field key="name" dbtype="varchar" precision="200" phptype="string" null="false" />
@@ -108,25 +123,29 @@
         </index>
 
         <composite alias="AgentTools" cardinality="many" class="modAI\Model\AgentTool" foreign="agent_id" local="id" owner="local" />
-<!--        <composite alias="ContextProviders" cardinality="many" class="modAI\Model\AgentContextProvider" foreign="agent_id" local="id" owner="local" />-->
+        <composite alias="AgentContextProviders" cardinality="many" class="modAI\Model\AgentContextProvider" foreign="agent_id" local="id" owner="local" />
     </object>
 
-<!--    <object class="AgentContextProvider" table="modai_agent_context_provider">-->
-<!--        <field key="agent_id" dbtype="int" precision="10" phptype="int" null="false" default="0"-->
-<!--               attributes="unsigned"/>-->
-<!--        <field key="context_provider_id" dbtype="int" precision="10" phptype="int" null="false" default="0"-->
-<!--               attributes="unsigned"/>-->
+    <object class="AgentContextProvider" table="modai_agent_context_providers" extends="xPDO\Om\xPDOObject">
+        <field key="agent_id" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" index="pk" />
+        <field key="context_provider_id" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" index="pk" />
 
-<!--        <index alias="agent_id" name="agent_id" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="agent_id" length="" collation="A" null="false"/>-->
-<!--        </index>-->
-<!--        <index alias="context_provider_id" name="context_provider_id" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="context_provider_id" length="" collation="A" null="false"/>-->
-<!--        </index>-->
+        <index alias="PRIMARY" name="PRIMARY" primary="true" unique="true" type="BTREE">
+            <column key="agent_id" length="" collation="A" null="false" />
+            <column key="context_provider_id" length="" collation="A" null="false" />
+        </index>
 
-<!--        <aggregate alias="Agent" cardinality="one" class="modAI\Model\Agent" foreign="id" local="agent_id" owner="foreign" />-->
-<!--        <aggregate alias="ContextProvider" cardinality="one" class="modAI\Model\ContextProvider" foreign="id" local="context_provider_id" owner="foreign" />-->
-<!--    </object>-->
+        <index alias="agent_id" name="agent_id" primary="false" unique="false" type="BTREE">
+            <column key="agent_id" length="" collation="A" null="false"/>
+        </index>
+
+        <index alias="context_provider_id" name="context_provider_id" primary="false" unique="false" type="BTREE">
+            <column key="context_provider_id" length="" collation="A" null="false"/>
+        </index>
+
+        <aggregate alias="Agent" cardinality="one" class="modAI\Model\Agent" foreign="id" local="agent_id" owner="foreign" />
+        <aggregate alias="ContextProvider" cardinality="one" class="modAI\Model\ContextProvider" foreign="id" local="context_provider_id" owner="foreign" />
+    </object>
 
     <object class="AgentTool" table="modai_agent_tools" extends="xPDO\Om\xPDOObject">
         <field key="agent_id" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" index="pk" />

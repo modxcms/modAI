@@ -45,6 +45,32 @@ return new class() {
             $toolObjects->save();
         }
 
+        $contextProviders = [
+            [
+                'name' => 'resources',
+                'description' => 'Pinecone instance for storing resources',
+                'class' => \modAI\ContextProviders\Pinecone::class,
+                'config' => [
+                    'endpoint' => 'ss:pinecone_url',
+                    'api_key' => 'ss:pinecone_key',
+                    'namespace' => 'resources',
+                    'fields' => 'pagetitle,introtext,content',
+                    'intro_msg' => 'Potential relevant context from resource {id}:',
+                ],
+                'enabled' => true,
+            ]
+        ];
+
+        foreach ($contextProviders as $contextProvider) {
+            $exists = $this->modx->getCount(\modAI\Model\ContextProvider::class, ['name' => $contextProvider['name']]);
+            if ($exists > 0) {
+                continue;
+            }
+
+            $contextProviderObjects = $this->modx->newObject(\modAI\Model\ContextProvider::class, $contextProvider);
+            $contextProviderObjects->save();
+        }
+
         $agents = [
             [
                 'name' => 'RedneckWeatherMan',
@@ -53,6 +79,18 @@ return new class() {
                 'enabled' => true,
                 'tools' => [
                     \modAI\Tools\GetWeather::getSuggestedName(),
+                ]
+            ],
+            [
+                'name' => 'ContentWriter',
+                'description' => 'Writes a decent content',
+                'prompt' => '',
+                'enabled' => true,
+                'tools' => [
+                    \modAI\Tools\GetWeather::getSuggestedName(),
+                ],
+                'contextProviders' => [
+                    'resources'
                 ]
             ]
         ];
@@ -84,6 +122,20 @@ return new class() {
                     $agentTool->set('agent_id', $agentObject->id);
                     $agentTool->set('tool_id', $tool->id);
                     $agentTool->save();
+                }
+            }
+
+            if (!empty($agent['contextProviders'])) {
+                foreach ($agent['contextProviders'] as $contextProviderName) {
+                    $contextProvider = $this->modx->getObject(\modAI\Model\ContextProvider::class, ['name' => $contextProviderName]);
+                    if (!$contextProvider) {
+                        continue;
+                    }
+
+                    $agentContextProvider = $this->modx->newObject(\modAI\Model\AgentContextProvider::class);
+                    $agentContextProvider->set('agent_id', $agentObject->id);
+                    $agentContextProvider->set('context_provider_id', $contextProvider->id);
+                    $agentContextProvider->save();
                 }
             }
         }

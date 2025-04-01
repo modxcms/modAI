@@ -104,13 +104,26 @@ export const sendMessage = async (
           renderer: at.renderer,
           value: at.value,
         }))
-      : undefined;
+      : [];
 
   globalState.modal.attachments.removeAttachments();
   globalState.modal.context.removeContexts();
 
   const messages = globalState.modal.history.getMessagesHistory();
   globalState.modal.history.addUserMessage({ content: message, attachments, contexts }, hidePrompt);
+
+  const agent = globalState.config.availableAgents[globalState.modal.agent.value];
+  if (agent && agent.contextProviders && agent.contextProviders.length > 0) {
+    const remoteContexts = await executor.mgr.context.get({ prompt: message, agent: agent.name });
+    remoteContexts.contexts.map((ctx) => {
+      contexts.push({
+        __type: 'ContextProvider',
+        name: 'ContextProvider',
+        renderer: undefined,
+        value: ctx,
+      });
+    });
+  }
 
   try {
     if (config.type === 'text') {

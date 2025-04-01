@@ -38,6 +38,13 @@ class ChatGPT implements AIService
                     'content' => $ctx['value']
                 ];
             }
+
+            if ($ctx['__type'] === 'ContextProvider') {
+                $messages[] = [
+                    'role' => 'system',
+                    'content' => $ctx['value']
+                ];
+            }
         }
     }
 

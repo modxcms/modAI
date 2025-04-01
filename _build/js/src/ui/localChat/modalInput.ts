@@ -176,7 +176,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
   const agent = createElement('select', undefined, [
     createElement('option', undefined, 'No Agent', { value: '' }),
     ...Object.values(globalState.config.availableAgents).map((agent) =>
-      createElement('option', undefined, agent, { value: agent }),
+      createElement('option', undefined, agent.name, { value: agent.name }),
     ),
   ]);
 

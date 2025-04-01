@@ -74,3 +74,6 @@ $_lang['setting_modai.api.execute_on_server_desc'] = 'If enabled, allAI requests
 
 $_lang['setting_modai.cache.lit'] = 'Last Install Time';
 $_lang['setting_modai.cache.lit_desc'] = '';
+
+$_lang['setting_modai.contexts.resources.name'] = 'Context Provider Name';
+$_lang['setting_modai.contexts.resources.name_desc'] = 'Name of the context provider that will be used to index resources. It has to be enabled.';

@@ -8,6 +8,12 @@ plugins:
     file: modai.php
     events:
       - OnManagerPageBeforeRender
+  - name: modAIContext
+    file: modaiContext.php
+    events:
+      - OnDocFormSave
+      - OnDocFormDelete
+      - OnResourceUndelete
 
 systemSettings:
   - key: cache.lit
@@ -159,6 +165,10 @@ systemSettings:
     area: tvs
     value: ''
 
+  - key: contexts.resources.name
+    area: contexts
+    value: ''
+
 build:
   scriptsAfter:
     - lit.gpm.php
@@ -169,3 +179,5 @@ database:
     - "modAI\\Model\\Tool"
     - "modAI\\Model\\Agent"
     - "modAI\\Model\\AgentTool"
+    - "modAI\\Model\\ContextProvider"
+    - "modAI\\Model\\AgentContextProvider"

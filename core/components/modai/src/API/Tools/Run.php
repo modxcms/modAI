@@ -6,7 +6,6 @@ use modAI\API\API;
 use modAI\Exceptions\LexiconException;
 use modAI\Model\Agent;
 use modAI\Model\Tool;
-use modAI\Tools\GetWeather;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Run extends API

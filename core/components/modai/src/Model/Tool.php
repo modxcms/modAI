@@ -4,7 +4,6 @@ namespace modAI\Model;
 use modAI\Exceptions\LexiconException;
 use modAI\Tools\ToolInterface;
 use MODX\Revolution\modX;
-use PDO;
 
 /**
  * Class Tool
@@ -38,17 +37,15 @@ class Tool extends \xPDO\Om\xPDOSimpleObject
             $agentToolsCriteria->prepare();
             $agentToolsCriteria->stmt->execute();
 
-            $agentTools = $agentToolsCriteria->stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            $agentTools = $agentToolsCriteria->stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
             $agentTools = array_map('intval', $agentTools);
 
-            if (empty($agentTools)) {
-                return [];
+            if (!empty($agentTools)) {
+                $where[] = [
+                    'OR:id:IN' => $agentTools,
+                    'enabled' => true,
+                ];
             }
-
-            $where[] = [
-                'OR:id:IN' => $agentTools,
-                'enabled' => true,
-            ];
         }
 
         $output = [];
