@@ -72,3 +72,4 @@ $_lang['modai.error.context_provider_wrong_interface'] = 'Context Provider does 
 $_lang['modai.error.context_provider_instance_err'] = 'Context Provider could not be instantiated: [[+msg]]';
 $_lang['modai.error.invalid_agent'] = 'Invalid agent.';
 $_lang['modai.error.invalid_context_provider_config'] = 'Invalid configuration for context provider [[+name]] ([[+class]]).';
+$_lang['modai.error.invalid_model_name'] = 'Invalid model name: [[+model]].';

@@ -10,7 +10,7 @@ use modAI\Services\Response\AIResponse;
 use modAI\Tools\ToolInterface;
 use MODX\Revolution\modX;
 
-class CustomChatGPT implements AIService
+class CustomOpenAI implements AIService
 {
     private modX $modx;
 
@@ -194,7 +194,7 @@ class CustomChatGPT implements AIService
         $url = self::COMPLETIONS_API;
         $url = str_replace('{url}', $baseUrl, $url);
 
-        return AIResponse::new('chatgpt')
+        return AIResponse::new(self::getServiceName())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl($url)
@@ -246,7 +246,7 @@ class CustomChatGPT implements AIService
         $url = self::COMPLETIONS_API;
         $url = str_replace('{url}', $baseUrl, $url);
 
-        return AIResponse::new('chatgpt')
+        return AIResponse::new(self::getServiceName())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl($url)
@@ -281,7 +281,7 @@ class CustomChatGPT implements AIService
         $url = self::IMAGES_API;
         $url = str_replace('{url}', $baseUrl, $url);
 
-        return AIResponse::new('chatgpt')
+        return AIResponse::new(self::getServiceName())
             ->withParser('image')
             ->withUrl($url)
             ->withHeaders([
@@ -289,5 +289,17 @@ class CustomChatGPT implements AIService
                 'Authorization' => 'Bearer ' . $apiKey
             ])
             ->withBody($input);
+    }
+
+    public static function getServiceName(): string
+    {
+        return 'openai';
+    }
+
+    public static function isMyModel(string $model): bool
+    {
+        $prefix = 'custom/';
+
+        return strncmp($model, $prefix, strlen($prefix)) === 0;
     }
 }

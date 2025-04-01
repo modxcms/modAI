@@ -18,8 +18,10 @@ trait Model
 
     public function getModel(): string
     {
-        if (strncmp($this->model, 'custom_', strlen('custom_')) === 0) {
-            return substr($this->model, 7);
+        $firstSlashPosition = strpos($this->model, '/');
+
+        if ($firstSlashPosition !== false) {
+            return substr($this->model, $firstSlashPosition + 1);
         }
 
         return $this->model;

@@ -1,17 +1,17 @@
 <?php
 
-$_lang['setting_modai.api.chatgpt.key'] = 'ChatGPT API Key';
-$_lang['setting_modai.api.chatgpt.key_desc'] = 'Your API key found at https://platform.openai.com/api-keys';
-$_lang['setting_modai.api.gemini.key'] = 'Gemini API Key';
-$_lang['setting_modai.api.gemini.key_desc'] = 'Your API key found at https://ai.google.dev/gemini-api/docs/api-key';
-$_lang['setting_modai.api.claude.key'] = 'Claude API Key';
-$_lang['setting_modai.api.claude.key_desc'] = 'Your API key found at https://console.anthropic.com/settings/keys';
+$_lang['setting_modai.api.openai.key'] = 'OpenAI API Key';
+$_lang['setting_modai.api.openai.key_desc'] = 'Your API key found at https://platform.openai.com/api-keys';
+$_lang['setting_modai.api.google.key'] = 'Google API Key';
+$_lang['setting_modai.api.google.key_desc'] = 'Your API key found at https://ai.google.dev/gemini-api/docs/api-key';
+$_lang['setting_modai.api.anthropic.key'] = 'Anthropic API Key';
+$_lang['setting_modai.api.anthropic.key_desc'] = 'Your API key found at https://console.anthropic.com/settings/keys';
 $_lang['setting_modai.api.custom.key'] = 'Custom API Key';
 $_lang['setting_modai.api.custom.key_desc'] = '';
 $_lang['setting_modai.api.custom.url'] = 'Custom API URL';
 $_lang['setting_modai.api.custom.url_desc'] = '';
 $_lang['setting_modai.api.custom.compatibility'] = 'Custom API Compatibility';
-$_lang['setting_modai.api.custom.compatibility_desc'] = 'API compatibility type. Available options: openapi';
+$_lang['setting_modai.api.custom.compatibility_desc'] = 'API compatibility type. Available options: openai';
 
 $_lang['setting_modai.global.text.base_output'] = 'Base Output Instructions';
 $_lang['setting_modai.global.text.base.output_desc'] = 'This tells the model how to ouptut the results to remove commentary, wrapping quotes, etc.';

@@ -1,8 +1,7 @@
 import { globalState } from '../globalState';
-import { lng } from '../lng';
 import { serviceExecutor } from './serviceExecutor';
 import { services, validateServiceParser } from './services';
-import { handleStream } from './streamHandlers';
+import { handleStream, validStreamingService } from './streamHandlers';
 
 import type { TextData } from './services';
 import type { ChunkStream, ServiceResponse } from './types';
@@ -71,20 +70,12 @@ export const aiFetch = async <D extends ServiceResponse>(
     return serviceExecutor<D>(data, onChunkStream, controller);
   }
 
-  const service = res.headers.get('x-modai-service') ?? 'chatgpt';
+  const service = res.headers.get('x-modai-service') ?? 'openai';
   const parser = res.headers.get('x-modai-parser') ?? 'content';
 
   try {
-    const {
-      service: validService,
-      parser: validParser,
-      mode,
-    } = validateServiceParser(service, parser, stream);
-
-    if (mode === 'stream') {
-      if (validParser !== 'content') {
-        throw new Error(lng('modai.error.service_unsupported'));
-      }
+    if (stream) {
+      const { service: validService } = validStreamingService(service, parser);
 
       return (await handleStream(
         res,
@@ -94,9 +85,11 @@ export const aiFetch = async <D extends ServiceResponse>(
       )) as D;
     }
 
+    const { service: validService, parser: validParser } = validateServiceParser(service, parser);
+
     const data = await res.json();
 
-    return services.buffered[validService][validParser](data) as D;
+    return services[validService][validParser](data) as D;
   } catch (error) {
     controller.abort();
     throw error;

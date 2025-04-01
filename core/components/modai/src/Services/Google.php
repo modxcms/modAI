@@ -11,8 +11,10 @@ use modAI\Tools\ToolInterface;
 use modAI\Utils;
 use MODX\Revolution\modX;
 
-class Gemini implements AIService
+class Google implements AIService
 {
+    use ApiKey;
+
     private modX $modx;
 
     const COMPLETIONS_API = 'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}';
@@ -161,10 +163,7 @@ class Gemini implements AIService
 
     public function getCompletions(array $data, CompletionsConfig $config): AIResponse
     {
-        $apiKey = $this->modx->getOption('modai.api.gemini.key');
-        if (empty($apiKey)) {
-            throw new LexiconException('modai.error.invalid_api_key', ['service' => 'gemini']);
-        }
+        $apiKey = $this->getApiKey();
 
         $url = self::COMPLETIONS_API;
 
@@ -236,7 +235,7 @@ class Gemini implements AIService
             ]
         ];
 
-        return AIResponse::new('gemini')
+        return AIResponse::new(self::getServiceName())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl($url)
@@ -248,10 +247,7 @@ class Gemini implements AIService
 
     public function getVision(string $prompt, string $image, VisionConfig $config): AIResponse
     {
-        $apiKey = $this->modx->getOption('modai.api.gemini.key');
-        if (empty($apiKey)) {
-            throw new LexiconException('modai.error.invalid_api_key', ['service' => 'gemini']);
-        }
+        $apiKey = $this->getApiKey();
 
         $image = str_replace('data:image/png;base64,', '', $image);
 
@@ -283,7 +279,7 @@ class Gemini implements AIService
         $url = str_replace("{model}", $config->getModel(), $url);
         $url = str_replace("{apiKey}", $apiKey, $url);
 
-        return AIResponse::new('gemini')
+        return AIResponse::new(self::getServiceName())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl($url)
@@ -295,10 +291,7 @@ class Gemini implements AIService
 
     public function generateImage(string $prompt, ImageConfig $config): AIResponse
     {
-        $apiKey = $this->modx->getOption('modai.api.gemini.key');
-        if (empty($apiKey)) {
-            throw new LexiconException('modai.error.invalid_api_key', ['service' => 'gemini']);
-        }
+        $apiKey = $this->getApiKey();
 
         $url = self::IMAGES_API;
         $url = str_replace("{model}", $config->getModel(), $url);
@@ -312,12 +305,24 @@ class Gemini implements AIService
             "sampleCount" => $config->getN()
         ];
 
-        return AIResponse::new('gemini')
+        return AIResponse::new(self::getServiceName())
             ->withParser('image')
             ->withUrl($url)
             ->withHeaders([
                 'Content-Type' => 'application/json',
             ])
             ->withBody($input);
+    }
+
+    public static function getServiceName(): string
+    {
+        return 'google';
+    }
+
+    public static function isMyModel(string $model): bool
+    {
+        $prefix = 'google/';
+
+        return strncmp($model, $prefix, strlen($prefix)) === 0;
     }
 }

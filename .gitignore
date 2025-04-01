@@ -5,3 +5,4 @@ _packages
 config.core.php
 node_modules
 vendor/
+_build/migrations/migrations.lock

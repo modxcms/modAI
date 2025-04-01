@@ -8,14 +8,16 @@ use modAI\Services\Config\ImageConfig;
 use modAI\Services\Config\VisionConfig;
 use modAI\Services\Response\AIResponse;
 use modAI\Tools\ToolInterface;
+use modAI\Utils;
 use MODX\Revolution\modX;
 
-class ChatGPT implements AIService
+class Anthropic implements AIService
 {
+    use ApiKey;
+
     private modX $modx;
 
-    const COMPLETIONS_API = 'https://api.openai.com/v1/chat/completions';
-    const IMAGES_API = 'https://api.openai.com/v1/images/generations';
+    const COMPLETIONS_API = 'https://api.anthropic.com/v1/messages';
 
     public function __construct(modX &$modx)
     {
@@ -27,21 +29,21 @@ class ChatGPT implements AIService
         foreach ($contexts as $ctx) {
             if ($ctx['__type'] === 'selection') {
                 $messages[] = [
-                    'role' => 'system',
-                    'content' => "Next user message should act only on this text: " . $ctx['value']
+                    'role' => 'user',
+                    'content' => "User's selected text, user instructions should apply only on this text: " . $ctx['value']
                 ];
             }
 
             if ($ctx['__type'] === 'agent') {
                 $messages[] = [
-                    'role' => 'system',
+                    'role' => 'user',
                     'content' => $ctx['value']
                 ];
             }
 
             if ($ctx['__type'] === 'ContextProvider') {
                 $messages[] = [
-                    'role' => 'system',
+                    'role' => 'user',
                     'content' => $ctx['value']
                 ];
             }
@@ -54,12 +56,34 @@ class ChatGPT implements AIService
             if ($attachment['__type'] === 'image') {
                 $content = is_string($currentMessage['content']) ? [['type' => 'text', 'text' => $currentMessage['content']]] : $currentMessage['content'];
 
-                $content[] = [
-                    'type' => 'image_url',
-                    'image_url' => [
-                        'url' => $attachment['value']
-                    ]
-                ];
+                $data = Utils::parseDataURL($attachment['value']);
+                if (is_string($data)) {
+                    $imageData = file_get_contents($data);
+                    if ($imageData === false) {
+                        throw new LexiconException("modai.error.failed_to_fetch_image");
+                    }
+                    $info = new \finfo(FILEINFO_MIME_TYPE);
+                    $mimeType = $info->buffer($imageData);
+                    $base64 = base64_encode($imageData);
+
+                    $content[] = [
+                        'type' => 'image',
+                        'source' => [
+                            'type' => 'base64',
+                            'media_type' => $mimeType,
+                            'data' => $base64,
+                        ],
+                    ];
+                } else {
+                    $content[] = [
+                        'type' => 'image',
+                        'source' => [
+                            'type' => 'base64',
+                            'media_type' => $data['mimeType'],
+                            'data' => $data['base64'],
+                        ],
+                    ];
+                }
 
                 $currentMessage['content'] = $content;
             }
@@ -69,33 +93,37 @@ class ChatGPT implements AIService
     private function addMessage(array &$messages, array $msg): void
     {
         if ($msg['role'] === 'tool') {
+            $content = [];
             foreach ($msg['content'] as $toolResponse) {
-                $messages[] = [
-                    'role' => 'tool',
-                    'tool_call_id' => $toolResponse['id'],
+                $content[] = [
+                    'type' => 'tool_result',
+                    'tool_use_id' => $toolResponse['id'],
                     'content' => $toolResponse['content'],
                 ];
             }
+            $messages[] = [
+                'role' => 'user',
+                'content' => $content
+            ];
+
             return;
         }
 
         if ($msg['role'] === 'assistant' && $msg['toolCalls']) {
-            $toolCalls = [];
+            $content = [];
 
             foreach ($msg['toolCalls'] as $toolCall) {
-                $toolCalls[] = [
+                $content[] = [
                     'id' => $toolCall['id'],
-                    'type' => 'function',
-                    'function' => [
-                        "name" => $toolCall['name'],
-                        "arguments" => $toolCall['arguments']
-                    ]
+                    'type' => 'tool_use',
+                    "name" => $toolCall['name'],
+                    "input" => (object)json_decode($toolCall['arguments'], true)
                 ];
             }
 
             $messages[] = [
                 'role' => 'assistant',
-                'tool_calls' => $toolCalls
+                'content' => $content
             ];
 
             return;
@@ -104,7 +132,7 @@ class ChatGPT implements AIService
         if ($msg['role'] === 'user') {
             $currentMessage = [
                 'role' => 'user',
-                'content' => $msg['content']
+                'content' => 'User instructions: ' . $msg['content']
             ];
 
             if (isset($msg['contexts']) && is_array($msg['contexts'])) {
@@ -128,20 +156,9 @@ class ChatGPT implements AIService
 
     public function getCompletions(array $data, CompletionsConfig $config): AIResponse
     {
-        $apiKey = $this->modx->getOption('modai.api.chatgpt.key');
-        if (empty($apiKey)) {
-            throw new LexiconException('modai.error.invalid_api_key', ['service' => 'chatgpt']);
-        }
+        $apiKey = $this->getApiKey();
 
         $messages = [];
-
-        $system = $config->getSystemInstructions();
-        if (!empty($system)) {
-            $messages[] = [
-                'role' => 'system',
-                'content' => $system
-            ];
-        }
 
         foreach ($config->getMessages() as $msg) {
             $this->addMessage($messages, $msg);
@@ -152,61 +169,67 @@ class ChatGPT implements AIService
         }
 
         $input = $config->getCustomOptions();
-        $input['model'] = $config->getModel();
-        $input['max_tokens'] = $config->getMaxTokens();
-        $input['temperature'] = $config->getTemperature();
-        $input['messages'] = $messages;
+        $input["model"] = $config->getModel();
+        $input["max_tokens"] = $config->getMaxTokens();
+        $input["temperature"] = $config->getTemperature();
+        $input["messages"] = $messages;
+
+        if ($config->isStream()) {
+            $input['stream'] = true;
+        }
+
+        $system = $config->getSystemInstructions();
+        if (!empty($system)) {
+            $input['system'] = $system;
+        }
 
         $tools = [];
         foreach ($config->getTools() as $toolName => $tool) {
             /** @var class-string<ToolInterface> $toolClass */
             $toolClass = $tool->get('class');
+            $params = $toolClass::getParameters();
+
+            if (empty($params)) {
+                $params = [
+                    'type' => 'object',
+                    'properties' => null,
+                ];
+            }
 
             $tools[] = [
-                'type' => 'function',
-                'function' => [
-                    'name' => $toolName,
-                    'description' => $toolClass::getDescription(),
-                    'parameters' => (object)$toolClass::getParameters(),
-                ]
+                'name' => $toolName,
+                'description' => $toolClass::getDescription(),
+                'input_schema' => (object)$params,
             ];
         }
 
         if (!empty($tools)) {
             $input['tools'] = $tools;
 
-            $input['tool_choice'] = $config->getToolChoice();
-        }
-
-        if ($config->isStream()) {
-            $input['stream'] = true;
-
-            $input['stream_options'] = [
-                'include_usage' => true,
+            $input['tool_choice'] = [
+                'type' => $config->getToolChoice()
             ];
         }
 
-        return AIResponse::new('chatgpt')
+        return AIResponse::new(self::getServiceName())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)
             ->withHeaders([
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $apiKey
+                'anthropic-version' => '2023-06-01',
+                'x-api-key' =>  $apiKey
             ])
             ->withBody($input);
     }
 
     public function getVision(string $prompt, string $image, VisionConfig $config): AIResponse
     {
-        $apiKey = $this->modx->getOption('modai.api.chatgpt.key');
-        if (empty($apiKey)) {
-            throw new LexiconException('modai.error.invalid_api_key', ['service' => 'chatgpt']);
-        }
+        $apiKey = $this->getApiKey();
 
         $input = $config->getCustomOptions();
         $input['model'] = $config->getModel();
-        $input['max_tokens'] = $config->getMaxTokens();
+        $input["max_tokens"] = $config->getMaxTokens();
         $input['messages'] = [
             [
                 'role' => 'user',
@@ -215,57 +238,40 @@ class ChatGPT implements AIService
                         "type" => "text",
                         "text" => $prompt,
                     ],
-                    [
-                        "type" => "image_url",
-                        "image_url" => ["url" => $image],
-                    ],
+                    $this->formatImageMessage($image),
                 ]
             ]
         ];
 
         if ($config->isStream()) {
             $input['stream'] = true;
-
-            $input['stream_options'] = [
-                'include_usage' => true,
-            ];
         }
-
-        return AIResponse::new('chatgpt')
+        return AIResponse::new(self::getServiceName())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)
             ->withHeaders([
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $apiKey
+                'anthropic-version' => '2023-06-01',
+                'x-api-key' =>  $apiKey
             ])
             ->withBody($input);
     }
 
-
     public function generateImage(string $prompt, ImageConfig $config): AIResponse
     {
-        $apiKey = $this->modx->getOption('modai.api.chatgpt.key');
-        if (empty($apiKey)) {
-            throw new LexiconException('modai.error.invalid_api_key', ['service' => 'chatgpt']);
-        }
+        throw new LexiconException('modai.error.not_implemented');
+    }
 
-        $input = $config->getCustomOptions();
-        $input['prompt'] = $prompt;
-        $input['model'] = $config->getModel();
-        $input['n'] = $config->getN();
-        $input['size'] = $config->getSize();
-        $input['quality'] = $config->getQuality();
-        $input['style'] = $config->getStyle();
-        $input['response_format'] = 'url';
+    public static function getServiceName(): string
+    {
+        return 'anthropic';
+    }
 
-        return AIResponse::new('chatgpt')
-            ->withParser('image')
-            ->withUrl(self::IMAGES_API)
-            ->withHeaders([
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $apiKey
-            ])
-            ->withBody($input);
+    public static function isMyModel(string $model): bool
+    {
+        $prefix = 'anthropic/';
+
+        return strncmp($model, $prefix, strlen($prefix)) === 0;
     }
 }

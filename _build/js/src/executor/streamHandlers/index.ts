@@ -1,0 +1,81 @@
+import { lng } from '../../lng';
+import { anthropic } from './handlers/anthropic';
+import { google } from './handlers/google';
+import { openai } from './handlers/openai';
+
+import type { TextData } from '../services';
+import type { ChunkStream } from '../types';
+import type { StreamHandler } from './types';
+
+const streamHandlers: Record<string, StreamHandler> = {
+  openai,
+  google,
+  anthropic,
+};
+
+export const validStreamingService = (
+  service: string | undefined,
+  parser: string | undefined,
+): { service: string; parser: string } => {
+  if (!service || !parser) {
+    throw new Error(lng('modai.error.service_required'));
+  }
+
+  if (parser !== 'content') {
+    throw new Error(lng('modai.error.service_unsupported'));
+  }
+
+  if (!streamHandlers[service]) {
+    throw new Error(lng('modai.error.service_unsupported'));
+  }
+
+  return { service: service, parser: parser };
+};
+
+export const handleStream = async (
+  res: Response,
+  service: string,
+  onChunkStream?: ChunkStream<TextData>,
+  signal?: AbortSignal,
+): Promise<TextData> => {
+  if (!res.body) {
+    throw new Error('Response body is empty');
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  let buffer = '';
+  let currentData = {
+    id: `${service}-${Date.now()}-${Math.round(Math.random() * 1000)}`,
+    usage: {
+      completionTokens: 0,
+      promptTokens: 0,
+    },
+  } as TextData;
+
+  const streamHandler = streamHandlers[service];
+  if (!streamHandler) {
+    throw new Error(lng('modai.error.service_unsupported'));
+  }
+
+  while (true) {
+    if (signal?.aborted) {
+      break;
+    }
+
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value, { stream: true });
+
+    const result = streamHandler(chunk, buffer, currentData, onChunkStream);
+    buffer = result.buffer;
+    currentData = result.currentData;
+  }
+
+  if (currentData.toolCalls) {
+    currentData.toolCalls = currentData.toolCalls.filter(Boolean);
+  }
+
+  return currentData;
+};

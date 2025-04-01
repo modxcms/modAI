@@ -1,6 +1,5 @@
-import { lng } from '../lng';
 import { services, validateServiceParser } from './services';
-import { handleStream } from './streamHandlers';
+import { handleStream, validStreamingService } from './streamHandlers';
 
 import type { TextData } from './services';
 import type { ChunkStream, ExecutorData, ForExecutor, ServiceResponse } from './types';
@@ -50,10 +49,6 @@ export const serviceExecutor = async <D extends ServiceResponse>(
   };
 
   const callStreamService = async (details: ForExecutor) => {
-    if (executorDetails.parser !== 'content') {
-      throw new Error(lng('modai.error.service_unsupported'));
-    }
-
     const res = await fetch(details.url, {
       signal,
       method: 'POST',
@@ -71,17 +66,18 @@ export const serviceExecutor = async <D extends ServiceResponse>(
     );
   };
 
-  const { service, parser, mode } = validateServiceParser(
-    executorDetails.service,
-    executorDetails.parser,
-    executorDetails.stream,
-  );
+  if (executorDetails.stream) {
+    validStreamingService(executorDetails.service, executorDetails.parser);
 
-  if (mode === 'stream') {
     return (await callStreamService(executorDetails)) as D;
   }
 
+  const { service, parser } = validateServiceParser(
+    executorDetails.service,
+    executorDetails.parser,
+  );
+
   const data = await callService(executorDetails);
 
-  return services[mode][service][parser](data) as D;
+  return services[service][parser](data) as D;
 };

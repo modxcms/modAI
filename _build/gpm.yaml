@@ -1,5 +1,5 @@
 name: modAI
-version: 0.11.0-pl
+version: 0.12.0-alpha
 lowCaseName: modai
 namespace: modAI
 author: 'John Peca'
@@ -24,15 +24,15 @@ systemSettings:
     area: api
     type: combo-boolean
     value: 0
-  - key: api.chatgpt.key
+  - key: api.openai.key
     type: text-password
     area: api
 
-  - key: api.gemini.key
+  - key: api.google.key
     type: text-password
     area: api
 
-  - key: api.claude.key
+  - key: api.anthropic.key
     type: text-password
     area: api
 
@@ -66,7 +66,7 @@ systemSettings:
     value: 2048
   - key: global.text.model
     area: text
-    value: gpt-4o-mini
+    value: openai/gpt-4o-mini
   - key: global.text.temperature
     area: text
     value: 0.7
@@ -81,7 +81,7 @@ systemSettings:
 
   - key: global.vision.model
     area: vision
-    value: gpt-4o-mini
+    value: openai/gpt-4o-mini
   - key: global.vision.prompt
     area: vision
     value: |-
@@ -100,7 +100,7 @@ systemSettings:
 
   - key: global.image.model
     area: image
-    value: dall-e-3
+    value: openai/dall-e-3
   - key: global.image.style
     area: image
     value: natural
