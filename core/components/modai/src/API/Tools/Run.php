@@ -3,6 +3,8 @@
 namespace modAI\API\Tools;
 
 use modAI\API\API;
+use modAI\Exceptions\LexiconException;
+use modAI\Model\Agent;
 use modAI\Model\Tool;
 use modAI\Tools\GetWeather;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,14 +15,22 @@ class Run extends API
     {
         $data = $request->getParsedBody();
         $toolCalls = $this->modx->getOption('toolCalls', $data);
+        $agent = $this->modx->getOption('agent', $data, null);
 
         if (!is_array($toolCalls)) {
             throw new \Exception('Invalid args');
         }
 
+        if (!empty($agent)) {
+            $agent = $this->modx->getObject(Agent::class, ['name' => $agent]);
+            if (!$agent) {
+                throw new LexiconException('modai.error.invalid_agent');
+            }
+        }
+
         $content = [];
 
-        $tools = Tool::getAvailableTools($this->modx);
+        $tools = Tool::getAvailableTools($this->modx, $agent ? $agent->id : null);
 
         foreach ($toolCalls as $toolCall) {
             if (isset($tools[$toolCall['name']])) {

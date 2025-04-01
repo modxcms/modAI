@@ -173,10 +173,22 @@ export const buildModalInput = (config: LocalChatConfig) => {
   );
   clearChatBtn.disable();
 
-  const options = createElement('div', 'options', [...modeButtons, tryAgainBtn, clearChatBtn], {
-    ariaLabel: lng('modai.ui.clear_options'),
-    role: 'toolbar',
-  });
+  const agent = createElement('select', undefined, [
+    createElement('option', undefined, 'No Agent', { value: '' }),
+    ...Object.values(globalState.config.availableAgents).map((agent) =>
+      createElement('option', undefined, agent, { value: agent }),
+    ),
+  ]);
+
+  const options = createElement(
+    'div',
+    'options',
+    [...modeButtons, tryAgainBtn, clearChatBtn, agent],
+    {
+      ariaLabel: lng('modai.ui.clear_options'),
+      role: 'toolbar',
+    },
+  );
 
   const scrollWrapper = buildScrollToBottom();
   container.append(scrollWrapper);
@@ -300,6 +312,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
   globalState.modal.stopBtn = stopBtn;
   globalState.modal.modeButtons = modeButtons;
   globalState.modal.actionButtons = [tryAgainBtn, clearChatBtn];
+  globalState.modal.agent = agent;
 
   return container;
 };

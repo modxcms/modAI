@@ -11,6 +11,7 @@ export type Config = {
   apiURL: string;
   cssURL: string;
   translateFn?: (key: string, params?: Record<string, string>) => string;
+  availableAgents: string[];
 };
 
 export const init = (config: Config) => {

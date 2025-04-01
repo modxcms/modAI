@@ -11,6 +11,6 @@ use xPDO\xPDO;
  *
  * @package modAI\Model
  */
-class AgentTool extends \xPDO\Om\xPDOSimpleObject
+class AgentTool extends \xPDO\Om\xPDOObject
 {
 }

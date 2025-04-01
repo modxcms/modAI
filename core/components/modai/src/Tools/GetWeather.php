@@ -13,7 +13,7 @@ class GetWeather implements ToolInterface
 
     public static function getDescription(): string
     {
-        return 'Get the current weather in the provided location. Location must be provided as latitude and longitude, but don\'t ask users for that. Instead ask users for the location and then transform that to latitude/longitude. You will get this information: temperature. Don\'t list all variables in your output but use natural language.';
+        return "Get the current weather in the provided location. Location must be provided as latitude and longitude, but don't ask users for that. Instead ask users for the location and then transform that to latitude/longitude. You will get this information: temperature, apparent temperature, humidity, wind speed, wind direction, cloud cover, precipitation, rain, snowfall. Don't list all variables in your output but use natural language.";
     }
 
     public static function getParameters(): array
@@ -47,12 +47,23 @@ class GetWeather implements ToolInterface
      */
     public function runTool($parameters): string
     {
-        $res = file_get_contents("https://api.open-meteo.com/v1/forecast?latitude={$parameters['latitude']}&longitude={$parameters['longitude']}&current=temperature_2m");
-        $data = json_decode($res, true);
+        try {
+            $res = file_get_contents(
+                "https://api.open-meteo.com/v1/forecast?latitude={$parameters['latitude']}&longitude={$parameters['longitude']}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto&forecast_days=1"
+            );
+            $data = json_decode($res, true);
 
-        return json_encode([
-            'temperature_2m' => $data['current']['temperature_2m'],
-            'unit' => $data['current_units']['temperature_2m']
-        ]);
+            $output = [];
+            foreach ($data['current'] as $key => $value) {
+                $output[$key] = [
+                    'value' => $value,
+                    'unit' => $data['current_units'][$key] ?? '',
+                ];
+            }
+
+            return json_encode($output, JSON_THROW_ON_ERROR);
+        } catch (\Throwable $e) {
+            return "Received an error looking up the weather: {$e->getMessage()}";
+        }
     }
 }

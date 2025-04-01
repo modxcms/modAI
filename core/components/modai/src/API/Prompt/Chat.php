@@ -4,6 +4,7 @@ namespace modAI\API\Prompt;
 
 use modAI\API\API;
 use modAI\Exceptions\LexiconException;
+use modAI\Model\Agent;
 use modAI\Model\Tool;
 use modAI\Services\AIServiceFactory;
 use modAI\Services\Config\CompletionsConfig;
@@ -25,9 +26,17 @@ class Chat extends API
         $attachments = $this->modx->getOption('attachments', $data, null);
         $namespace = $this->modx->getOption('namespace', $data, 'modai');
         $messages = $this->modx->getOption('messages', $data);
+        $agent = $this->modx->getOption('agent', $data, null);
 
         if (empty($prompt) && empty($messages)) {
             throw new LexiconException('modai.error.prompt_required');
+        }
+
+        if (!empty($agent)) {
+            $agent = $this->modx->getObject(Agent::class, ['name' => $agent]);
+            if (!$agent) {
+                throw new LexiconException('modai.error.invalid_agent');
+            }
         }
 
         $systemInstructions = [];
@@ -53,6 +62,14 @@ class Chat extends API
         if (!empty($prompt)) {
             $msg = ['content' => $prompt, 'role' => 'user'];
 
+            if (!empty($agent) && !empty($agent->prompt)) {
+                $contexts = is_array($contexts) ? $contexts : [];
+                $contexts[] = [
+                    '__type' => 'agent',
+                    'value' => $agent->prompt,
+                ];
+            }
+
             if (!empty($contexts)) {
                 $msg['contexts'] = $contexts;
             }
@@ -62,9 +79,25 @@ class Chat extends API
             }
 
             $userMessages[] = $msg;
+        } else {
+            if (!empty($agent) && !empty($agent->prompt)) {
+                for ($i = count($messages) - 1; $i >= 0; $i--) {
+                    if ($messages[$i]['role'] === 'user') {
+                        if (!is_array($messages[$i]['contexts'])) {
+                            $messages[$i]['contexts'] = [];
+                        }
+
+                        $messages[$i]['contexts'][] = [
+                            '__type' => 'agent',
+                            'value' => $agent->prompt,
+                        ];
+                        break;
+                    }
+                }
+            }
         }
 
-        $tools = Tool::getAvailableTools($this->modx);
+        $tools = Tool::getAvailableTools($this->modx, $agent ? $agent->id : null);
 
         $aiService = AIServiceFactory::new($model, $this->modx);
         $result = $aiService->getCompletions(

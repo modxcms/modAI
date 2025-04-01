@@ -167,3 +167,5 @@ build:
 database:
   tables:
     - "modAI\\Model\\Tool"
+    - "modAI\\Model\\Agent"
+    - "modAI\\Model\\AgentTool"

@@ -20,6 +20,7 @@ class Tool extends \modAI\Model\Tool
             'class' => NULL,
             'config' => '{}',
             'enabled' => 0,
+            'default' => 0,
         ),
         'fieldMeta' => 
         array (
@@ -45,6 +46,14 @@ class Tool extends \modAI\Model\Tool
                 'default' => '{}',
             ),
             'enabled' => 
+            array (
+                'dbtype' => 'tinyint',
+                'precision' => '1',
+                'phptype' => 'boolean',
+                'null' => false,
+                'default' => 0,
+            ),
+            'default' => 
             array (
                 'dbtype' => 'tinyint',
                 'precision' => '1',
@@ -102,6 +111,17 @@ class Tool extends \modAI\Model\Tool
                         'null' => false,
                     ),
                 ),
+            ),
+        ),
+        'composites' => 
+        array (
+            'AgentTools' => 
+            array (
+                'cardinality' => 'many',
+                'class' => 'modAI\\Model\\AgentTool',
+                'foreign' => 'tool_id',
+                'local' => 'id',
+                'owner' => 'local',
             ),
         ),
     );

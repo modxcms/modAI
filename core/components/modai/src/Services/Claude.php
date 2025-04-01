@@ -31,6 +31,13 @@ class Claude implements AIService
                     'content' => "User's selected text, user instructions should apply only on this text: " . $ctx['value']
                 ];
             }
+
+            if ($ctx['__type'] === 'agent') {
+                $messages[] = [
+                    'role' => 'user',
+                    'content' => $ctx['value']
+                ];
+            }
         }
     }
 

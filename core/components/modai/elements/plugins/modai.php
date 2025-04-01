@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @var \MODX\Revolution\modX $modx
  */

@@ -158,6 +158,7 @@ class modAI
             'name' => $firstName,
             'apiURL' => $this->getAPIUrl(),
             'cssURL' => $this->getCSSFile(),
+            'availableAgents' => $this->getAvailableAgents(),
         ];
     }
 
@@ -174,5 +175,18 @@ class modAI
     public function getLexiconTopics()
     {
         return ['modai:default', 'modai:setting'];
+    }
+
+    public function getAvailableAgents()
+    {
+        $c = $this->modx->newQuery(\modAI\Model\Agent::class);
+        $c->where([
+            'enabled' => true,
+        ]);
+        $c->select($this->modx->getSelectColumns(\modAI\Model\Agent::class, 'Agent', '', ['name']));
+        $c->prepare();
+        $c->stmt->execute();
+
+        return $c->stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
     }
 }

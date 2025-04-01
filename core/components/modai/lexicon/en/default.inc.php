@@ -67,3 +67,4 @@ $_lang['modai.error.only_image_files_are_allowed'] = 'Only image files are allow
 $_lang['modai.error.tool_not_available'] = 'Tool class not available: [[+class]]';
 $_lang['modai.error.tool_wrong_interface'] = 'Tool does not implement the \modAI\Tools\ToolInterface';
 $_lang['modai.error.tool_instance_err'] = 'Tool could not be instantiated: [[+msg]]';
+$_lang['modai.error.invalid_agent'] = 'Invalid agent.';

@@ -27,6 +27,7 @@ export type ToolResponseContent = {
 export type ChatParams = {
   prompt: string;
   field?: string;
+  agent?: string;
   contexts?: UserMessageContext[];
   attachments?: UserAttachment[];
   namespace?: string;

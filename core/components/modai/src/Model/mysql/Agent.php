@@ -9,49 +9,31 @@ class Agent extends \modAI\Model\Agent
     public static $metaMap = array (
         'package' => 'modAI\\Model\\',
         'version' => '3.0',
-        'table' => 'modai_agent',
+        'table' => 'modai_agents',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
         ),
         'fields' => 
         array (
-            'enabled' => 0,
-            'name' => '',
+            'name' => NULL,
             'description' => '',
-            'model' => '',
             'prompt' => '',
+            'enabled' => 0,
         ),
         'fieldMeta' => 
         array (
-            'enabled' => 
-            array (
-                'dbtype' => 'tinyint',
-                'precision' => '1',
-                'phptype' => 'boolean',
-                'null' => false,
-                'default' => 0,
-            ),
             'name' => 
             array (
                 'dbtype' => 'varchar',
                 'precision' => '200',
                 'phptype' => 'string',
                 'null' => false,
-                'default' => '',
             ),
             'description' => 
             array (
                 'dbtype' => 'varchar',
                 'precision' => '500',
-                'phptype' => 'string',
-                'null' => false,
-                'default' => '',
-            ),
-            'model' => 
-            array (
-                'dbtype' => 'varchar',
-                'precision' => '200',
                 'phptype' => 'string',
                 'null' => false,
                 'default' => '',
@@ -62,6 +44,14 @@ class Agent extends \modAI\Model\Agent
                 'phptype' => 'string',
                 'null' => false,
                 'default' => '',
+            ),
+            'enabled' => 
+            array (
+                'dbtype' => 'tinyint',
+                'precision' => '1',
+                'phptype' => 'boolean',
+                'null' => false,
+                'default' => 0,
             ),
         ),
         'indexes' => 
@@ -86,7 +76,7 @@ class Agent extends \modAI\Model\Agent
             array (
                 'alias' => 'name',
                 'primary' => false,
-                'unique' => false,
+                'unique' => true,
                 'type' => 'BTREE',
                 'columns' => 
                 array (
@@ -101,10 +91,10 @@ class Agent extends \modAI\Model\Agent
         ),
         'composites' => 
         array (
-            'ContextProviders' => 
+            'AgentTools' => 
             array (
                 'cardinality' => 'many',
-                'class' => 'modAI\\Model\\AgentContextProvider',
+                'class' => 'modAI\\Model\\AgentTool',
                 'foreign' => 'agent_id',
                 'local' => 'id',
                 'owner' => 'local',

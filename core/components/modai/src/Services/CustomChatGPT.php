@@ -31,6 +31,13 @@ class CustomChatGPT implements AIService
                     'content' => "Next user message should act only on this text: " . $ctx['value']
                 ];
             }
+
+            if ($ctx['__type'] === 'agent') {
+                $messages[] = [
+                    'role' => 'system',
+                    'content' => $ctx['value']
+                ];
+            }
         }
     }
 

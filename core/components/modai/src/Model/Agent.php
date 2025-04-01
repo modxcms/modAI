@@ -6,13 +6,12 @@ use xPDO\xPDO;
 /**
  * Class Agent
  *
- * @property boolean $enabled
  * @property string $name
  * @property string $description
- * @property string $model
  * @property string $prompt
+ * @property boolean $enabled
  *
- * @property \modAI\Model\AgentContextProvider[] $ContextProviders
+ * @property \modAI\Model\AgentTool[] $AgentTools
  *
  * @package modAI\Model
  */

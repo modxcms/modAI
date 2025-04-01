@@ -35,6 +35,15 @@ class Gemini implements AIService
                     ]
                 ];
             }
+
+            if ($ctx['__type'] === 'agent') {
+                $messages[] = [
+                    'role' => 'user',
+                    'parts' => [
+                        'text' => $ctx['value']
+                    ]
+                ];
+            }
         }
     }
 

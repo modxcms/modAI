@@ -9,39 +9,62 @@ class AgentTool extends \modAI\Model\AgentTool
     public static $metaMap = array (
         'package' => 'modAI\\Model\\',
         'version' => '3.0',
-        'table' => 'modai_agent_tool',
+        'table' => 'modai_agent_tools',
+        'extends' => 'xPDO\\Om\\xPDOObject',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
         ),
         'fields' => 
         array (
-            'agent_id' => 0,
-            'tool_id' => 0,
+            'agent_id' => NULL,
+            'tool_id' => NULL,
         ),
         'fieldMeta' => 
         array (
             'agent_id' => 
             array (
                 'dbtype' => 'int',
+                'attributes' => 'unsigned',
                 'precision' => '10',
                 'phptype' => 'int',
                 'null' => false,
-                'default' => 0,
-                'attributes' => 'unsigned',
+                'index' => 'pk',
             ),
             'tool_id' => 
             array (
                 'dbtype' => 'int',
+                'attributes' => 'unsigned',
                 'precision' => '10',
                 'phptype' => 'int',
                 'null' => false,
-                'default' => 0,
-                'attributes' => 'unsigned',
+                'index' => 'pk',
             ),
         ),
         'indexes' => 
         array (
+            'PRIMARY' => 
+            array (
+                'alias' => 'PRIMARY',
+                'primary' => true,
+                'unique' => true,
+                'type' => 'BTREE',
+                'columns' => 
+                array (
+                    'agent_id' => 
+                    array (
+                        'length' => '',
+                        'collation' => 'A',
+                        'null' => false,
+                    ),
+                    'tool_id' => 
+                    array (
+                        'length' => '',
+                        'collation' => 'A',
+                        'null' => false,
+                    ),
+                ),
+            ),
             'agent_id' => 
             array (
                 'alias' => 'agent_id',

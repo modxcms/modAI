@@ -27,6 +27,7 @@ export const closeModal = () => {
 const callTools = async (
   config: LocalChatConfig,
   toolCalls: ToolCalls,
+  agent?: string,
   controller?: AbortController,
 ) => {
   globalState.modal.history.addAssistantMessage(
@@ -37,13 +38,14 @@ const callTools = async (
     true,
   );
 
-  const res = await executor.mgr.tools.run(toolCalls, controller);
+  const res = await executor.mgr.tools.run({ toolCalls, agent }, controller);
 
   globalState.modal.history.addToolResponseMessage(res.id, res.content, true);
 
   const aiRes = await executor.mgr.prompt.chat(
     {
       namespace: config.namespace,
+      agent,
       field: config.field || '',
       prompt: '',
       messages: globalState.modal.history.getMessagesHistory(),
@@ -61,7 +63,7 @@ const callTools = async (
   }
 
   if (aiRes.toolCalls) {
-    await callTools(config, aiRes.toolCalls, globalState.modal.abortController);
+    await callTools(config, aiRes.toolCalls, agent, globalState.modal.abortController);
   }
 };
 
@@ -114,6 +116,7 @@ export const sendMessage = async (
     if (config.type === 'text') {
       const data = await executor.mgr.prompt.chat(
         {
+          agent: globalState.modal.agent.value || undefined,
           namespace: config.namespace,
           contexts: contexts,
           attachments: attachments,
@@ -134,7 +137,12 @@ export const sendMessage = async (
       }
 
       if (data.toolCalls) {
-        await callTools(config, data.toolCalls, globalState.modal.abortController);
+        await callTools(
+          config,
+          data.toolCalls,
+          globalState.modal.agent.value || undefined,
+          globalState.modal.abortController,
+        );
       }
     }
 

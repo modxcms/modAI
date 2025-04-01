@@ -1,6 +1,6 @@
 import type { UserInput } from './modalInput';
 import type { AttachmentsWrapper } from './modalInputAttachments';
-import type { Context, ContextWrapper } from './modalInputContext';
+import type { ContextWrapper } from './modalInputContext';
 import type { ChatHistory, Message, UserMessageContext } from '../../chatHistory';
 import type { Button } from '../dom/button';
 
@@ -13,6 +13,7 @@ export type Modal = HTMLDivElement & {
   chatContainer: HTMLDivElement;
   scrollWrapper: HTMLDivElement;
   loadingIndicator: HTMLDivElement;
+  agent: HTMLSelectElement;
 
   attachments: AttachmentsWrapper;
   context: ContextWrapper;

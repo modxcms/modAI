@@ -19,10 +19,13 @@ export const executor = {
       },
     },
     tools: {
-      run: async (toolCalls: ToolCalls, controller?: AbortController) => {
+      run: async (
+        params: { toolCalls: ToolCalls; agent?: string },
+        controller?: AbortController,
+      ) => {
         return await modxFetch<{ id: string; content: ToolResponseContent }>(
           'Tools\\Run',
-          { toolCalls },
+          params,
           controller,
         );
       },
