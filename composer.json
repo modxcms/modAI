@@ -21,10 +21,7 @@
         "ext-pcntl": "*"
     },
     "scripts": {
-        "build-schema": "vendor/bin/xpdo parse-schema mysql core/components/modai/schema/modai.mysql.schema.xml core/components/modai/src/ -v --update=1 --psr4=modAI",
-        "bootstrap": "php _bootstrap/index.php",
         "phpcs": "vendor/bin/phpcs --standard=phpcs.xml",
-        "phpcbf": "vendor/bin/phpcbf --standard=phpcs.xml",
-        "phpunit": "vendor/bin/phpunit"
+        "phpcbf": "vendor/bin/phpcbf --standard=phpcs.xml"
     }
 }
