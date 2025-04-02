@@ -2,6 +2,7 @@
 
 namespace modAI\API;
 
+use modAI\Exceptions\APIException;
 use modAI\Exceptions\LexiconException;
 use modAI\modAI;
 use modAI\Services\Response\AIResponse;

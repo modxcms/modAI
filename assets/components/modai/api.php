@@ -9,7 +9,7 @@ $request = \GuzzleHttp\Psr7\ServerRequest::fromGlobals();
 $action = $modx->getOption('action', $_REQUEST, '');
 
 if (empty($action)) {
-    \modAI\API\API::returnErrorFromAPIException(\modAI\API\APIException::badRequest());
+    \modAI\API\API::returnErrorFromAPIException(\modAI\Exceptions\APIException::badRequest());
     exit;
 }
 
@@ -17,7 +17,7 @@ $action = str_replace('/', '\\', $action);
 
 $className = "\\modAI\\API\\$action";
 if (class_exists($className) !== true) {
-    \modAI\API\API::returnErrorFromAPIException(\modAI\API\APIException::notFound());
+    \modAI\API\API::returnErrorFromAPIException(\modAI\Exceptions\APIException::notFound());
     exit;
 }
 

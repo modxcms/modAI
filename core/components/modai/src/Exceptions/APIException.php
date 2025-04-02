@@ -1,6 +1,6 @@
 <?php
 
-namespace modAI\API;
+namespace modAI\Exceptions;
 
 use Throwable;
 
