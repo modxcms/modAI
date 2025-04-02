@@ -19,6 +19,7 @@ class Agent extends \modAI\Model\Agent
             'name' => NULL,
             'description' => '',
             'prompt' => '',
+            'model' => '',
             'enabled' => 0,
         ),
         'fieldMeta' => 
@@ -41,6 +42,14 @@ class Agent extends \modAI\Model\Agent
             'prompt' => 
             array (
                 'dbtype' => 'text',
+                'phptype' => 'string',
+                'null' => false,
+                'default' => '',
+            ),
+            'model' => 
+            array (
+                'dbtype' => 'varchar',
+                'precision' => '200',
                 'phptype' => 'string',
                 'null' => false,
                 'default' => '',

@@ -77,6 +77,7 @@ return new class() {
                 'description' => 'Presents weather in a funny form',
                 'prompt' => 'You are a weather man! Report on weather in a funny redneck way.',
                 'enabled' => true,
+                'model' => '',
                 'tools' => [
                     \modAI\Tools\GetWeather::getSuggestedName(),
                 ]
@@ -86,6 +87,7 @@ return new class() {
                 'description' => 'Writes a decent content',
                 'prompt' => '',
                 'enabled' => true,
+                'model' => '',
                 'tools' => [
                     \modAI\Tools\GetWeather::getSuggestedName(),
                 ],

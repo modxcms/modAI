@@ -27,22 +27,28 @@ class Chat extends API
         $namespace = $this->modx->getOption('namespace', $data, 'modai');
         $messages = $this->modx->getOption('messages', $data);
         $agent = $this->modx->getOption('agent', $data, null);
+        $model = $this->modx->getOption('model', $data, '');
 
         if (empty($prompt) && empty($messages)) {
             throw new LexiconException('modai.error.prompt_required');
         }
 
         if (!empty($agent)) {
+            /** @var Agent $agent */
             $agent = $this->modx->getObject(Agent::class, ['name' => $agent]);
             if (!$agent) {
                 throw new LexiconException('modai.error.invalid_agent');
+            }
+
+            if (!empty($agent->model)) {
+                $model = $agent->model;
             }
         }
 
         $systemInstructions = [];
 
         $stream = intval(Settings::getTextSetting($this->modx, $field, 'stream', $namespace)) === 1;
-        $model = Settings::getTextSetting($this->modx, $field, 'model', $namespace);
+        $model = !empty($model) ? $model : Settings::getTextSetting($this->modx, $field, 'model', $namespace);
         $temperature = (float)Settings::getTextSetting($this->modx, $field, 'temperature', $namespace);
         $maxTokens = (int)Settings::getTextSetting($this->modx, $field, 'max_tokens', $namespace);
         $output = Settings::getTextSetting($this->modx, $field, 'base_output', $namespace, false);

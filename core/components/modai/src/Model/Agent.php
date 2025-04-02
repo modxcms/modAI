@@ -9,6 +9,7 @@ use xPDO\xPDO;
  * @property string $name
  * @property string $description
  * @property string $prompt
+ * @property string $model
  * @property boolean $enabled
  *
  * @property \modAI\Model\AgentTool[] $AgentTools
