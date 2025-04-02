@@ -8,9 +8,6 @@ plugins:
     file: modai.php
     events:
       - OnManagerPageBeforeRender
-  - name: modAIContext
-    file: modaiContext.php
-    events:
       - OnDocFormSave
       - OnDocFormDelete
       - OnResourceUndelete
