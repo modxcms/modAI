@@ -34,8 +34,9 @@ class modAI
                 'srcPath'   => $corePath . 'src/',
                 'modelPath' => $corePath . 'src/Model/',
                 'assetsUrl' => $assetsUrl,
-                'cssUrl'    => $assetsUrl . 'css/',
-                'jsUrl'     => $assetsUrl . 'js/',
+
+                'mgrCssUrl'    => $assetsUrl . 'mgr/css/',
+                'mgrJsUrl'     => $assetsUrl . 'mgr/js/',
 
                 'templatesPath' => $corePath . 'templates/',
             ],
@@ -169,12 +170,12 @@ class modAI
 
     public function getUILexiconTopics()
     {
-        return ['modai:default'];
+        return ['modai:ui'];
     }
 
     public function getLexiconTopics()
     {
-        return ['modai:default', 'modai:setting'];
+        return ['modai:ui', 'modai:setting'];
     }
 
     public function getAvailableAgents()

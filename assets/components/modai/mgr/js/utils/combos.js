@@ -1,0 +1,146 @@
+modAIAdmin.combo.ExtendedBoolean = function (config) {
+    config.useInt = config.useInt || false;
+
+    var data = [
+        [
+            _('modai.admin.global.any'),
+            null,
+            _('modai.admin.global.any')
+        ],
+        [
+            _('yes'),
+            (config.useInt ? 1 : true),
+            _('yes')
+        ],
+        [
+            _('no'),
+            (config.useInt ? 0 : false),
+            _('no')
+        ]
+    ];
+
+    if (config.dataLabel) {
+        data = [
+            [
+                config.dataLabel + ': ' + _('modai.admin.global.any'),
+                null,
+                _('modai.admin.global.any')
+            ],
+            [
+                config.dataLabel + ': ' + _('yes'),
+                (config.useInt ? 1 : true),
+                _('yes')
+            ],
+            [
+                config.dataLabel + ': ' + _('no'),
+                (config.useInt ? 0 : false),
+                _('no')
+            ]
+        ];
+    }
+
+    config = config || {};
+    Ext.applyIf(config, {
+        store: new Ext.data.SimpleStore({
+            fields: ['d', 'v', 'cleanLabel'],
+            data: data
+        }),
+        displayField: 'd',
+        valueField: 'v',
+        mode: 'local',
+        triggerAction: 'all',
+        editable: false,
+        selectOnFocus: false,
+        preventRender: true,
+        forceSelection: true,
+        enableKeyEvents: true,
+        tpl: new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item">{cleanLabel}</div></tpl>')
+    });
+    modAIAdmin.combo.ExtendedBoolean.superclass.constructor.call(this, config);
+};
+Ext.extend(modAIAdmin.combo.ExtendedBoolean, MODx.combo.ComboBox);
+Ext.reg('modai-combo-extended_boolean', modAIAdmin.combo.ExtendedBoolean);
+
+modAIAdmin.combo.Boolean = function (config) {
+    config.useInt = config.useInt || false;
+
+    var data = [
+        [
+            _('yes'),
+            (config.useInt ? 1 : true),
+            _('yes')
+        ],
+        [
+            _('no'),
+            (config.useInt ? 0 : false),
+            _('no')
+        ]
+    ];
+
+    if (config.dataLabel) {
+        data = [
+            [
+                config.dataLabel + ': ' + _('yes'),
+                (config.useInt ? 1 : true), _('yes')
+            ],
+            [
+                config.dataLabel + ': ' + _('no'),
+                (config.useInt ? 0 : false), _('no')
+            ]
+        ];
+    }
+
+    config = config || {};
+    Ext.applyIf(config, {
+        store: new Ext.data.SimpleStore({
+            fields: ['d', 'v', 'cleanLabel'],
+            data: data
+        }),
+        displayField: 'd',
+        valueField: 'v',
+        mode: 'local',
+        triggerAction: 'all',
+        editable: false,
+        selectOnFocus: false,
+        preventRender: true,
+        forceSelection: true,
+        enableKeyEvents: true,
+        tpl: new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item">{cleanLabel}</div></tpl>')
+    });
+    modAIAdmin.combo.Boolean.superclass.constructor.call(this, config);
+};
+Ext.extend(modAIAdmin.combo.Boolean, MODx.combo.ComboBox, {
+    setValue: function (value) {
+        if ((value !== undefined) && (this.config.useInt === true)) {
+            if (value === '') {
+                value = null;
+            }
+
+            if (value !== '') {
+                value = +value;
+            }
+        }
+
+        modAIAdmin.combo.Boolean.superclass.setValue.call(this, value);
+    }
+});
+Ext.reg('modai-combo-boolean', modAIAdmin.combo.Boolean);
+
+modAIAdmin.combo.ContextProviderClass = function (config) {
+    config = config || {};
+    Ext.applyIf(config, {
+        name: 'class',
+        hiddenName: 'class',
+        displayField: 'class',
+        valueField: 'class',
+        fields: ['class', 'config'],
+        pageSize: 20,
+        url: MODx.config.connector_url,
+        baseParams: {
+            action: 'modAI\\Processors\\Combos\\ContextProviderClass',
+        }
+    });
+    modAIAdmin.combo.ContextProviderClass.superclass.constructor.call(this, config);
+};
+Ext.extend(modAIAdmin.combo.ContextProviderClass, MODx.combo.ComboBox);
+Ext.reg('modai-combo-context_provider_class', modAIAdmin.combo.ContextProviderClass);
