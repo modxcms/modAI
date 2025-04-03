@@ -17,6 +17,7 @@ plugins:
       - OnDocFormDelete
       - OnResourceUndelete
       - modAIOnContextProviderRegister
+      - modAIOnToolRegister
 
 systemSettings:
   - key: cache.lit

@@ -144,3 +144,22 @@ modAIAdmin.combo.ContextProviderClass = function (config) {
 };
 Ext.extend(modAIAdmin.combo.ContextProviderClass, MODx.combo.ComboBox);
 Ext.reg('modai-combo-context_provider_class', modAIAdmin.combo.ContextProviderClass);
+
+modAIAdmin.combo.ToolClass = function (config) {
+    config = config || {};
+    Ext.applyIf(config, {
+        name: 'class',
+        hiddenName: 'class',
+        displayField: 'class',
+        valueField: 'class',
+        fields: ['class', 'config', 'suggestedName'],
+        pageSize: 20,
+        url: MODx.config.connector_url,
+        baseParams: {
+            action: 'modAI\\Processors\\Combos\\ToolClass',
+        }
+    });
+    modAIAdmin.combo.ToolClass.superclass.constructor.call(this, config);
+};
+Ext.extend(modAIAdmin.combo.ToolClass, MODx.combo.ComboBox);
+Ext.reg('modai-combo-tool_class', modAIAdmin.combo.ToolClass);

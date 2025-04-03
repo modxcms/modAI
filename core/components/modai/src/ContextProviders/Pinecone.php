@@ -152,6 +152,7 @@ class Pinecone implements ContextProviderInterface
 
     public static function getConfig(): array
     {
+        return [];
         return [
             'api_key' => [
                 'name' => 'API Key',

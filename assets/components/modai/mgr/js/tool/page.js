@@ -1,16 +1,16 @@
-modAIAdmin.page.ContextProvider = function (config) {
+modAIAdmin.page.Tool = function (config) {
   config = config || {};
 
   config.isUpdate = (MODx.request.id) ? true : false;
 
   Ext.applyIf(config, {
-    formpanel: 'modai-panel-context_provider',
+    formpanel: 'modai-panel-tool',
     buttons: [
       {
         text: _('save'),
         method: 'remote',
         cls:'primary-button',
-        process: config.isUpdate ? 'modAI\\Processors\\ContextProviders\\Update' : 'modAI\\Processors\\ContextProviders\\Create',
+        process: config.isUpdate ? 'modAI\\Processors\\Tools\\Update' : 'modAI\\Processors\\Tools\\Create',
         keys: [
           {
             key: MODx.config.keymap_save || 's',
@@ -28,13 +28,13 @@ modAIAdmin.page.ContextProvider = function (config) {
     ],
     components: [
       {
-        xtype: 'modai-panel-context_provider',
+        xtype: 'modai-panel-tool',
         isUpdate: config.isUpdate,
         record: config.record || {},
       }
     ]
   });
-  modAIAdmin.page.ContextProvider.superclass.constructor.call(this, config);
+  modAIAdmin.page.Tool.superclass.constructor.call(this, config);
 };
-Ext.extend(modAIAdmin.page.ContextProvider, MODx.Component);
-Ext.reg('modai-page-context_provider', modAIAdmin.page.ContextProvider);
+Ext.extend(modAIAdmin.page.Tool, MODx.Component);
+Ext.reg('modai-page-tool', modAIAdmin.page.Tool);

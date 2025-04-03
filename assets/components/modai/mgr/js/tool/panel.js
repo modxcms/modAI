@@ -1,7 +1,7 @@
-modAIAdmin.panel.ContextProvider = function (config) {
+modAIAdmin.panel.Tool = function (config) {
   config = config || {};
 
-  config.id = config.id || 'modai-panel-context_provider';
+  config.id = config.id || 'modai-panel-tool';
 
   const configItems = [];
 
@@ -24,19 +24,19 @@ modAIAdmin.panel.ContextProvider = function (config) {
 
     if (configItems.length === 0) {
       configItems.push({
-        html: _('modai.admin.context_provider.no_config')
+        html: _('modai.admin.tool.no_config')
       });
     }
 
   } else {
     configItems.push({
-      html: _('modai.admin.context_provider.select_class_for_config')
+      html: _('modai.admin.tool.select_class_for_config')
     });
   }
 
 
   this.configSection = new Ext.Panel({
-    title: _('modai.admin.context_provider.config'),
+    title: _('modai.admin.tool.config'),
     headerCfg: {
       cls: 'modai-admin-section_header x-panel-header',
     },
@@ -57,7 +57,7 @@ modAIAdmin.panel.ContextProvider = function (config) {
     baseCls: 'modx-formpanel',
     url: MODx.config.connector_url,
     baseParams: {
-      action: 'modAI\\Processors\\ContextProviders\\Update'
+      action: 'modAI\\Processors\\Tools\\Update'
     },
     items: this.getItems(config),
     listeners: {
@@ -68,22 +68,22 @@ modAIAdmin.panel.ContextProvider = function (config) {
     }
   });
 
-  modAIAdmin.panel.ContextProvider.superclass.constructor.call(this, config);
+  modAIAdmin.panel.Tool.superclass.constructor.call(this, config);
 };
 
-Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
+Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
   configSection: null,
 
   success: function (o, r) {
     if (this.config.isUpdate === false) {
-      modAIAdmin.loadPage('context_provider/update', { id: o.result.object.id });
+      modAIAdmin.loadPage('tool/update', { id: o.result.object.id });
     }
   },
 
   getItems: function (config) {
     return [
       MODx.util.getHeaderBreadCrumbs({
-        html: ((config.isUpdate === true) ? _('modai.admin.context_provider.update') : _('modai.admin.context_provider.create')),
+        html: ((config.isUpdate === true) ? _('modai.admin.tool.update') : _('modai.admin.tool.create')),
         xtype: "modx-header"
       }, [
         {
@@ -91,7 +91,7 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
           href: '?a=home&namespace=modai',
         },
         {
-          text: _('modai.admin.home.context_providers'),
+          text: _('modai.admin.home.tools'),
           href: null,
         }
       ]),
@@ -131,7 +131,7 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
             },
             items: [
               {
-                title: _('modai.admin.context_provider.context_provider'),
+                title: _('modai.admin.tool.tool'),
                 headerCfg: {
                   cls: 'modai-admin-section_header x-panel-header',
                 },
@@ -146,11 +146,16 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                 hideMode: 'offsets',
                 items: [
                   {
-                    fieldLabel: _('modai.admin.context_provider.class'),
-                    xtype: 'modai-combo-context_provider_class',
+                    fieldLabel: _('modai.admin.tool.class'),
+                    xtype: 'modai-combo-tool_class',
                     value: config.record.class,
                     listeners: {
                       select: (self, record) => {
+                        const name = this.getForm().findField('name');
+                        if (name && !name.getValue()) {
+                          name.setValue(record.data.suggestedName);
+                        }
+
                         this.configSection.removeAll();
                         const configOptions = Object.entries(record.data.config);
                         configOptions.forEach(([key, config]) => {
@@ -170,7 +175,7 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
 
                         if (configOptions.length === 0) {
                           this.configSection.add({
-                            html: _('modai.admin.context_provider.no_config')
+                            html: _('modai.admin.tool.no_config')
                           });
                         }
 
@@ -179,7 +184,7 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                     }
                   },
                   {
-                    fieldLabel: _('modai.admin.context_provider.name'),
+                    fieldLabel: _('modai.admin.tool.name'),
                     xtype: 'textfield',
                     name: 'name',
                     msgTarget: 'under',
@@ -187,15 +192,15 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                     value: config.record.name,
                   },
                   {
-                    fieldLabel: _('modai.admin.context_provider.description'),
-                    xtype: 'textarea',
-                    name: 'description',
-                    msgTarget: 'under',
-                    value: config.record.description,
-                    allowBlank: true
+                    fieldLabel: _('modai.admin.tool.default'),
+                    xtype: 'modai-combo-boolean',
+                    useInt: true,
+                    name: 'default',
+                    hiddenName: 'default',
+                    value: config.record.default ?? 0,
                   },
                   {
-                    fieldLabel: _('modai.admin.context_provider.enabled'),
+                    fieldLabel: _('modai.admin.tool.enabled'),
                     xtype: 'modai-combo-boolean',
                     useInt: true,
                     name: 'enabled',
@@ -218,4 +223,4 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
     ];
   }
 });
-Ext.reg('modai-panel-context_provider', modAIAdmin.panel.ContextProvider);
+Ext.reg('modai-panel-tool', modAIAdmin.panel.Tool);

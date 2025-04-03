@@ -52,7 +52,13 @@ Ext.extend(modAIAdmin.panel.Home, MODx.Panel, {
 
         output.push({
             title: _('modai.admin.home.tools'),
-            items: []
+            items: [
+                {
+                    xtype: 'modai-grid-tools',
+                    preventRender: true,
+                    cls: 'main-wrapper'
+                }
+            ]
         });
 
         output.push({
