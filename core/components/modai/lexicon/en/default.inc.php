@@ -24,8 +24,10 @@ $_lang['modai.admin.context_provider.no_config'] = "Context Provider Class doesn
 $_lang['modai.admin.context_provider.config'] = "Config";
 $_lang['modai.admin.context_provider.context_provider'] = "Context Provider";
 $_lang['modai.admin.context_provider.class'] = "Context Provider Class";
+$_lang['modai.admin.context_provider.agents'] = 'Agents';
 
 $_lang['modai.admin.tool.name'] = 'Name';
+$_lang['modai.admin.tool.description'] = 'Description';
 $_lang['modai.admin.tool.enabled'] = 'Enabled';
 $_lang['modai.admin.tool.default'] = 'Default';
 $_lang['modai.admin.tool.create'] = 'Create Tool';
@@ -39,11 +41,55 @@ $_lang['modai.admin.tool.config'] = "Config";
 $_lang['modai.admin.tool.context_provider'] = "Tool";
 $_lang['modai.admin.tool.class'] = "Tool Class";
 $_lang['modai.admin.tool.tool'] = 'Tool';
+$_lang['modai.admin.tool.agents'] = 'Agents';
+
+$_lang['modai.admin.agent.name'] = 'Name';
+$_lang['modai.admin.agent.description'] = 'Description';
+$_lang['modai.admin.agent.enabled'] = 'Enabled';
+$_lang['modai.admin.agent.create'] = 'Create Agent';
+$_lang['modai.admin.agent.update'] = 'Update Agent';
+$_lang['modai.admin.agent.remove'] = 'Remove Agent';
+$_lang['modai.admin.agent.remove_confirm'] = 'Are you sure you want to permanently delete "[[+name]]" agent?';
+$_lang['modai.admin.agent.search'] = 'Search by name';
+$_lang['modai.admin.agent.agent'] = "Agent";
+$_lang['modai.admin.agent.model'] = "Model";
+$_lang['modai.admin.agent.description'] = "Description";
+$_lang['modai.admin.agent.config'] = "Config";
+$_lang['modai.admin.agent.prompt'] = "Prompt";
+$_lang['modai.admin.agent.tools'] = 'Tools';
+$_lang['modai.admin.agent.context_providers'] = 'Context Providers';
+
+$_lang['modai.admin.agent_tool.create'] = 'Assign Tool';
+$_lang['modai.admin.agent_tool.remove'] = 'Unassign Tool';
+$_lang['modai.admin.agent_tool.view'] = 'View Tool';
+$_lang['modai.admin.agent_tool.remove_confirm'] = 'Are you sure you want to unassign "[[+name]]" tool from this agent?';
+
+$_lang['modai.admin.agent_context_provider.create'] = 'Assign Context Provider';
+$_lang['modai.admin.agent_context_provider.remove'] = 'Unassign Context Provider';
+$_lang['modai.admin.agent_context_provider.view'] = 'View Context Provider';
+$_lang['modai.admin.agent_context_provider.remove_confirm'] = 'Are you sure you want to unassign "[[+name]]" context provider from this agent?';
+
+$_lang['modai.admin.related_agent.agents'] = 'Agents';
+$_lang['modai.admin.related_agent.create'] = 'Assign Agent';
+$_lang['modai.admin.related_agent.view'] = 'View Agent';
+$_lang['modai.admin.related_agent.remove'] = 'Unassign Agent';
+$_lang['modai.admin.related_agent.remove_confirm'] = 'Are you sure you want to unassign "[[+name]]" agent?';
 
 $_lang['modai.admin.error.required'] = 'Field is required.';
+
 $_lang['modai.admin.error.context_provider_name_already_exists'] = 'Context Provider with this name already exists.';
 $_lang['modai.admin.error.context_provider_wrong_interface'] = 'Context Provider class does not implement the \modAI\ContextProviders\ContextProviderInterface';
 $_lang['modai.admin.error.context_provider_not_found'] = 'Context Provider was not found.';
+
 $_lang['modai.admin.error.tool_name_already_exists'] = 'Tool with this name already exists.';
 $_lang['modai.admin.error.tool_wrong_interface'] = 'Context Provider class does not implement the \modAI\Tools\ToolInterface';
 $_lang['modai.admin.error.tool_not_found'] = 'Context Provider was not found.';
+
+$_lang['modai.admin.error.agent_name_already_exists'] = 'Agent with this name already exists.';
+$_lang['modai.admin.error.agent_not_found'] = 'Agent was not found.';
+
+$_lang['modai.admin.error.agent_tool_not_found'] = "Agent's Tool was not found.";
+$_lang['modai.admin.error.agent_context_provider_not_found'] = "Agent's Context Provider was not found.";
+$_lang['modai.admin.error.agent_id_required'] = 'Agent id is required.';
+$_lang['modai.admin.error.related_agent_tool_context_provider_required'] = 'Tool id or Context provider id is required.';
+$_lang['modai.admin.error.related_agent_not_found'] = 'Related agent not found.';

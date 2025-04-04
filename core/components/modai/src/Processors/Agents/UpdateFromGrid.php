@@ -1,17 +1,17 @@
 <?php
 
-namespace modAI\Processors\Tools;
+namespace modAI\Processors\Agents;
 
-use modAI\Model\Tool;
+use modAI\Model\Agent;
 use MODX\Revolution\Processors\Model\UpdateProcessor;
 
 class UpdateFromGrid extends UpdateProcessor
 {
-    public $classKey = Tool::class;
+    public $classKey = Agent::class;
     public $languageTopics = ['modai:default'];
-    public $objectType = 'modai.admin.tool';
+    public $objectType = 'modai.admin.agent';
 
-    private static $allowedKeys = ['id', 'name', 'description', 'default', 'enabled'];
+    private static $allowedKeys = ['id', 'name', 'description', 'model', 'enabled'];
 
     public function initialize()
     {
@@ -44,7 +44,7 @@ class UpdateFromGrid extends UpdateProcessor
         }
 
         if ($this->doesAlreadyExist(['name' => $name, 'id:!=' => $this->object->id])) {
-            $this->addFieldError('name', $this->modx->lexicon('modai.admin.error.tool_name_already_exists'));
+            $this->addFieldError('name', $this->modx->lexicon('modai.admin.error.agent_name_already_exists'));
             return false;
         }
 

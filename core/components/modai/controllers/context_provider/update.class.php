@@ -33,6 +33,9 @@ class ModAIContextProviderUpdateManagerController extends ModAIBaseManagerContro
     {
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/combos.js');
 
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'related_agents/grid.js');
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'related_agents/window.js');
+
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'context_provider/panel.js');
         $this->addLastJavascript($this->modAI->getOption('mgrJsUrl') . 'context_provider/page.js');
 

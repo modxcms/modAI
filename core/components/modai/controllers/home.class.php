@@ -17,6 +17,7 @@ class ModAIHomeManagerController extends ModAIBaseManagerController
 
     public function loadCustomCssJs()
     {
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/agents.grid.js');
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/tools.grid.js');
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/context_providers.grid.js');
 

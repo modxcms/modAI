@@ -21,31 +21,15 @@ modAIAdmin.panel.Tool = function (config) {
         cls: 'desc-under'
       });
     }));
-
-    if (configItems.length === 0) {
-      configItems.push({
-        html: _('modai.admin.tool.no_config')
-      });
-    }
-
-  } else {
-    configItems.push({
-      html: _('modai.admin.tool.select_class_for_config')
-    });
   }
 
 
   this.configSection = new Ext.Panel({
-    title: _('modai.admin.tool.config'),
-    headerCfg: {
-      cls: 'modai-admin-section_header x-panel-header',
-    },
     defaults: {
       msgTarget: 'under',
       anchor: '100%'
     },
     layout: 'form',
-    bodyCssClass: 'main-wrapper',
     autoHeight: true,
     hideMode: 'offsets',
     items: configItems
@@ -157,8 +141,7 @@ Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
                         }
 
                         this.configSection.removeAll();
-                        const configOptions = Object.entries(record.data.config);
-                        configOptions.forEach(([key, config]) => {
+                        Object.entries(record.data.config).forEach(([key, config]) => {
                           this.configSection.add({
                             fieldLabel: config.name,
                             allowBlank: !config.required,
@@ -173,12 +156,6 @@ Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
                           });
                         })
 
-                        if (configOptions.length === 0) {
-                          this.configSection.add({
-                            html: _('modai.admin.tool.no_config')
-                          });
-                        }
-
                         this.configSection.doLayout();
                       }
                     }
@@ -192,20 +169,39 @@ Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
                     value: config.record.name,
                   },
                   {
-                    fieldLabel: _('modai.admin.tool.default'),
-                    xtype: 'modai-combo-boolean',
-                    useInt: true,
-                    name: 'default',
-                    hiddenName: 'default',
-                    value: config.record.default ?? 0,
-                  },
+                    fieldLabel: _('modai.admin.context_provider.description'),
+                    xtype: 'textarea',
+                    name: 'description',
+                    msgTarget: 'under',
+                    value: config.record.description,
+                    allowBlank: true
+                  }
+                ]
+              },
+
+              config.isUpdate && {
+                title: _('modai.admin.tool.agents'),
+                headerCfg: {
+                  cls: 'modai-admin-section_header x-panel-header',
+                },
+                style: {
+                  marginTop: '20px'
+                },
+                defaults: {
+                  msgTarget: 'under',
+                  anchor: '100%'
+                },
+                layout: 'form',
+                msgTarget: 'under',
+                bodyCssClass: 'main-wrapper',
+                autoHeight: true,
+                hideMode: 'offsets',
+                items: [
                   {
-                    fieldLabel: _('modai.admin.tool.enabled'),
-                    xtype: 'modai-combo-boolean',
-                    useInt: true,
-                    name: 'enabled',
-                    hiddenName: 'enabled',
-                    value: config.record.enabled ?? 1,
+                    xtype: 'modai-grid-related_agents',
+                    relatedObject: {
+                      tool_id: MODx.request.id
+                    }
                   }
                 ]
               },
@@ -215,7 +211,39 @@ Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
             columnWidth: .4,
             border: false,
             items: [
-              this.configSection,
+              {
+                title: _('modai.admin.tool.config'),
+                headerCfg: {
+                  cls: 'modai-admin-section_header x-panel-header',
+                },
+                defaults: {
+                  msgTarget: 'under',
+                  anchor: '100%'
+                },
+                layout: 'form',
+                bodyCssClass: 'main-wrapper',
+                autoHeight: true,
+                hideMode: 'offsets',
+                items: [
+                  {
+                    fieldLabel: _('modai.admin.tool.enabled'),
+                    xtype: 'modai-combo-boolean',
+                    useInt: true,
+                    name: 'enabled',
+                    hiddenName: 'enabled',
+                    value: config.record.enabled ?? 1,
+                  },
+                  {
+                    fieldLabel: _('modai.admin.tool.default'),
+                    xtype: 'modai-combo-boolean',
+                    useInt: true,
+                    name: 'default',
+                    hiddenName: 'default',
+                    value: config.record.default ?? 0,
+                  },
+                  this.configSection,
+                ]
+              }
             ]
           }
         ]

@@ -16,14 +16,22 @@ class Tool extends \modAI\Model\Tool
         ),
         'fields' => 
         array (
-            'name' => NULL,
             'class' => NULL,
+            'name' => NULL,
+            'description' => '',
             'config' => '{}',
             'enabled' => 0,
             'default' => 0,
         ),
         'fieldMeta' => 
         array (
+            'class' => 
+            array (
+                'dbtype' => 'varchar',
+                'precision' => '200',
+                'phptype' => 'string',
+                'null' => false,
+            ),
             'name' => 
             array (
                 'dbtype' => 'varchar',
@@ -31,12 +39,13 @@ class Tool extends \modAI\Model\Tool
                 'phptype' => 'string',
                 'null' => false,
             ),
-            'class' => 
+            'description' => 
             array (
                 'dbtype' => 'varchar',
-                'precision' => '200',
+                'precision' => '500',
                 'phptype' => 'string',
-                'null' => false,
+                'null' => true,
+                'default' => '',
             ),
             'config' => 
             array (

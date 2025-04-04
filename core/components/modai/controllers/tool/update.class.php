@@ -33,6 +33,9 @@ class ModAIToolUpdateManagerController extends ModAIBaseManagerController
     {
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/combos.js');
 
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'related_agents/grid.js');
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'related_agents/window.js');
+
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'tool/panel.js');
         $this->addLastJavascript($this->modAI->getOption('mgrJsUrl') . 'tool/page.js');
 

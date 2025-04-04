@@ -9,7 +9,7 @@ modAIAdmin.grid.Tools = function (config) {
         save_action: 'modAI\\Processors\\Tools\\UpdateFromGrid',
         autosave: true,
         preventSaveRefresh: false,
-        fields: ['id', 'name', 'default', 'enabled'],
+        fields: ['id', 'name', 'description', 'default', 'enabled'],
         paging: true,
         remoteSort: true,
         emptyText: _('modai.admin.global.no_records'),
@@ -24,7 +24,17 @@ modAIAdmin.grid.Tools = function (config) {
             {
                 header: _('modai.admin.tool.name'),
                 dataIndex: 'name',
-                width: 0.8,
+                width: 0.2,
+                sortable: true,
+                hidden: false,
+                editor: {
+                    xtype: 'textfield',
+                }
+            },
+            {
+                header: _('modai.admin.tool.description'),
+                dataIndex: 'description',
+                width: 0.7,
                 sortable: true,
                 hidden: false,
                 editor: {
