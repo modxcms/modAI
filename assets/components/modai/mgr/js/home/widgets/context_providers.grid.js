@@ -45,9 +45,10 @@ modAIAdmin.grid.ContextProviders = function (config) {
                 dataIndex: 'enabled',
                 width: 0.05,
                 hidden: false,
+                renderer: this.rendYesNo,
                 editor: {
                     xtype: 'modx-combo-boolean',
-                    renderer: true,
+                    renderer: this.rendYesNo
                 }
             }
         ],

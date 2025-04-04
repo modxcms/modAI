@@ -36,9 +36,10 @@ modAIAdmin.grid.Tools = function (config) {
                 dataIndex: 'default',
                 width: 0.1,
                 hidden: false,
+                renderer: this.rendYesNo,
                 editor: {
                     xtype: 'modx-combo-boolean',
-                    renderer: true,
+                    renderer: this.rendYesNo
                 }
             },
             {
@@ -46,9 +47,10 @@ modAIAdmin.grid.Tools = function (config) {
                 dataIndex: 'enabled',
                 width: 0.1,
                 hidden: false,
+                renderer: this.rendYesNo,
                 editor: {
                     xtype: 'modx-combo-boolean',
-                    renderer: true,
+                    renderer: this.rendYesNo
                 }
             }
         ],
