@@ -122,7 +122,7 @@ export const confirmDialog = (config: ConfirmDialogOptions) => {
     }
   };
 
-  document.addEventListener('keydown', handleDialogKeyDown);
+  overlay.addEventListener('keydown', handleDialogKeyDown);
 
   shadowRoot.appendChild(overlay);
   document.body.append(shadow);

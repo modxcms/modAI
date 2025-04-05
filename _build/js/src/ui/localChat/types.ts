@@ -1,3 +1,5 @@
+import { AvailableAgent } from '../../index';
+
 import type { UserInput } from './modalInput';
 import type { AttachmentsWrapper } from './modalInputAttachments';
 import type { ContextWrapper } from './modalInputContext';
@@ -13,11 +15,11 @@ export type Modal = HTMLDivElement & {
   chatContainer: HTMLDivElement;
   scrollWrapper: HTMLDivElement;
   loadingIndicator: HTMLDivElement;
-  agent: HTMLSelectElement;
 
   attachments: AttachmentsWrapper;
   context: ContextWrapper;
   messageInput: UserInput;
+  selectedAgent?: AvailableAgent;
 
   modeButtons: Button[];
   actionButtons: Button[];

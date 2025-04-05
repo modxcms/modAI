@@ -112,9 +112,15 @@ export const sendMessage = async (
   const messages = globalState.modal.history.getMessagesHistory();
   globalState.modal.history.addUserMessage({ content: message, attachments, contexts }, hidePrompt);
 
-  const agent = globalState.config.availableAgents[globalState.modal.agent.value];
-  if (agent && agent.contextProviders && agent.contextProviders.length > 0) {
-    const remoteContexts = await executor.mgr.context.get({ prompt: message, agent: agent.name });
+  if (
+    globalState.modal.selectedAgent &&
+    globalState.modal.selectedAgent.contextProviders &&
+    globalState.modal.selectedAgent.contextProviders.length > 0
+  ) {
+    const remoteContexts = await executor.mgr.context.get({
+      prompt: message,
+      agent: globalState.modal.selectedAgent.name,
+    });
     remoteContexts.contexts.map((ctx) => {
       contexts.push({
         __type: 'ContextProvider',
@@ -129,7 +135,7 @@ export const sendMessage = async (
     if (config.type === 'text') {
       const data = await executor.mgr.prompt.chat(
         {
-          agent: globalState.modal.agent.value || undefined,
+          agent: globalState.modal.selectedAgent?.name,
           namespace: config.namespace,
           contexts: contexts,
           attachments: attachments,
@@ -153,7 +159,7 @@ export const sendMessage = async (
         await callTools(
           config,
           data.toolCalls,
-          globalState.modal.agent.value || undefined,
+          globalState.modal.selectedAgent?.name,
           globalState.modal.abortController,
         );
       }

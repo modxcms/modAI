@@ -6,12 +6,18 @@ import { lng } from './lng';
 import { initOnResource } from './resource';
 import { ui } from './ui';
 
+export type AvailableAgent = {
+  id: string;
+  name: string;
+  contextProviders: string[] | null;
+};
+
 export type Config = {
   name?: string;
   apiURL: string;
   cssURL: string;
   translateFn?: (key: string, params?: Record<string, string>) => string;
-  availableAgents: Record<string, { name: string; contextProviders: string[] | null }>;
+  availableAgents: Record<string, AvailableAgent>;
 };
 
 export const init = (config: Config) => {

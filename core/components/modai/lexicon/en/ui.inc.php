@@ -34,6 +34,10 @@ $_lang['modai.ui.retry_last_message'] = 'Retry last message';
 $_lang['modai.ui.clear_chat'] = 'Clear chat';
 $_lang['modai.ui.clear_options'] = 'Chat options';
 $_lang['modai.ui.scroll_to_bottom'] = 'Scroll to bottom';
+$_lang['modai.ui.select_agent'] = 'Select Agent';
+$_lang['modai.ui.select_item'] = 'Select Item';
+$_lang['modai.ui.no_agent'] = 'No Agent';
+$_lang['modai.ui.options_toolbar'] = 'Chat options';
 
 $_lang['modai.error.failed'] = 'Failed';
 $_lang['modai.error.failed_request'] = 'Failed to process your request.';

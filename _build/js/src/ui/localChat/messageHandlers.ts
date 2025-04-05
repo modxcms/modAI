@@ -67,16 +67,11 @@ export const addUserMessage = (msg: UserMessage) => {
       icon: icon(14, edit),
       label: lng('modai.ui.edit'),
       onClick: (msg) => {
-        globalState.alertOpen = true;
         confirmDialog({
           title: lng('modai.ui.confirm_edit'),
           content: lng('modai.ui.confirm_edit_content'),
           confirmText: lng('modai.ui.edit_message'),
-          onCancel: () => {
-            globalState.alertOpen = false;
-          },
           onConfirm: () => {
-            globalState.alertOpen = false;
             globalState.modal.messageInput.setValue(msg.content);
 
             if (msg.contexts) {

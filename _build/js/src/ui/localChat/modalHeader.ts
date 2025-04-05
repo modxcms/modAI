@@ -33,10 +33,6 @@ export const buildModalHeader = () => {
   });
 
   document.addEventListener('keydown', (e) => {
-    if (globalState.alertOpen) {
-      return;
-    }
-
     if (e.key === 'Escape') {
       e.preventDefault();
       closeModal();

@@ -198,6 +198,7 @@ class modAI
 
         while ($row = $c->stmt->fetch(\PDO::FETCH_ASSOC)) {
             $output[$row['name']] = [
+                'id' => $row['name'],
                 'name' => $row['name'],
                 'contextProviders' => empty($row['context_providers']) ? null : explode(',', $row['context_providers']),
             ];

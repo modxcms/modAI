@@ -12,10 +12,11 @@ import { buildModalInputAttachments } from './modalInputAttachments';
 import { buildModalInputContexts } from './modalInputContext';
 import { button } from '../dom/button';
 import { icon } from '../dom/icon';
-import { image, refresh, arrowUp, square, text, trash } from '../icons';
+import { image, refresh, arrowUp, square, text, trash, bot } from '../icons';
 import { buildScrollToBottom } from './scrollBottom';
 import { globalState } from '../../globalState';
 import { lng } from '../../lng';
+import { buildSelect } from '../dom/select';
 
 import type { LocalChatConfig } from './types';
 import type { Button } from '../dom/button';
@@ -173,19 +174,28 @@ export const buildModalInput = (config: LocalChatConfig) => {
   );
   clearChatBtn.disable();
 
-  const agent = createElement('select', undefined, [
-    createElement('option', undefined, 'No Agent', { value: '' }),
-    ...Object.values(globalState.config.availableAgents).map((agent) =>
-      createElement('option', undefined, agent.name, { value: agent.name }),
-    ),
-  ]);
+  const agentSelectComponent = buildSelect(
+    globalState.config.availableAgents,
+    globalState.modal.selectedAgent?.id,
+    (selectedAgent) => {
+      globalState.modal.selectedAgent = selectedAgent ?? undefined;
+    },
+    {
+      idProperty: 'id',
+      displayProperty: 'name',
+      noSelectionText: '',
+      selectText: lng('modai.ui.select_agent'),
+      nullOptionDisplayText: lng('modai.ui.no_agent'),
+      icon: bot,
+    },
+  );
 
   const options = createElement(
     'div',
     'options',
-    [...modeButtons, tryAgainBtn, clearChatBtn, agent],
+    [...modeButtons, tryAgainBtn, clearChatBtn, agentSelectComponent],
     {
-      ariaLabel: lng('modai.ui.clear_options'),
+      ariaLabel: lng('modai.ui.options_toolbar'),
       role: 'toolbar',
     },
   );
@@ -312,7 +322,6 @@ export const buildModalInput = (config: LocalChatConfig) => {
   globalState.modal.stopBtn = stopBtn;
   globalState.modal.modeButtons = modeButtons;
   globalState.modal.actionButtons = [tryAgainBtn, clearChatBtn];
-  globalState.modal.agent = agent;
 
   return container;
 };
