@@ -1,26 +1,20 @@
 <?php
 
-namespace modAI\Processors\ContextProviders;
+namespace modAI\Processors\Agents;
 
 use modAI\ContextProviders\ContextProviderInterface;
+use modAI\Model\Agent;
 use modAI\Model\ContextProvider;
 use MODX\Revolution\Processors\Model\CreateProcessor;
 
 class Create extends CreateProcessor
 {
-    public $classKey = ContextProvider::class;
+    public $classKey = Agent::class;
     public $languageTopics = ['modai:default'];
-    public $objectType = 'modai.admin.context_provider';
+    public $objectType = 'modai.admin.agent';
 
     public function beforeSet()
     {
-        /** @var class-string<ContextProviderInterface> $class */
-        $class = $this->getProperty('class');
-        if (empty($class)) {
-            $this->addFieldError('class', $this->modx->lexicon('modai.admin.error.required'));
-            return false;
-        }
-
         $name = $this->getProperty('name');
         if (empty($name)) {
             $this->addFieldError('name', $this->modx->lexicon('modai.admin.error.required'));
@@ -31,23 +25,6 @@ class Create extends CreateProcessor
             $this->addFieldError('name', $this->modx->lexicon('modai.admin.error.context_provider_name_already_exists'));
             return false;
         }
-
-        if (!class_implements($class, ContextProviderInterface::class)) {
-            $this->addFieldError('class', $this->modx->lexicon('modai.admin.error.context_provider_wrong_interface'));
-            return false;
-        }
-
-        $config = $class::getConfig();
-        $configValues = [];
-        foreach ($config as $key => $options) {
-            $configValues[$key] = $this->getProperty("config_$key");
-            if ($options['required'] === true && empty($configValues[$key])) {
-                $this->addFieldError("config_$key", $this->modx->lexicon('modai.admin.error.required'));
-                return false;
-            }
-        }
-
-        $this->setProperty('config', $configValues);
 
         return parent::beforeSet();
     }

@@ -1,13 +1,13 @@
 <?php
 
-namespace modAI\Processors\ContextProviders;
+namespace modAI\Processors\Agents;
 
-use modAI\Model\ContextProvider;
+use modAI\Model\Agent;
 use MODX\Revolution\Processors\Model\RemoveProcessor;
 
 class Remove extends RemoveProcessor
 {
-    public $classKey = ContextProvider::class;
+    public $classKey = Agent::class;
     public $languageTopics = ['modai:default'];
-    public $objectType = 'modai.admin.context_provider';
+    public $objectType = 'modai.admin.agent';
 }
