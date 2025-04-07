@@ -14,6 +14,7 @@ export type AvailableAgent = {
 
 export type Config = {
   name?: string;
+  assetsURL: string;
   apiURL: string;
   cssURL: string;
   translateFn?: (key: string, params?: Record<string, string>) => string;

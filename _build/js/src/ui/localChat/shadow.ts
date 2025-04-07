@@ -1,5 +1,6 @@
 import { createElement, nlToBr } from '../utils';
 import { checkScroll } from './scrollBottom';
+import { globalState } from '../../globalState';
 
 type ShadowElement = HTMLDivElement & {
   updateContent: (content: string) => void;
@@ -98,6 +99,14 @@ export const createShadowElement = (content: string, customCSS: string[] = []) =
       }),
     );
   });
+
+  const highlightStyles = createElement('link', undefined, '', {
+    rel: 'stylesheet',
+    type: 'text/css',
+    href: `${globalState.config.assetsURL}css/highlight.css`,
+  });
+
+  shadowRoot.appendChild(highlightStyles);
 
   shadowRoot.append(textDiv);
 

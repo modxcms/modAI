@@ -157,6 +157,7 @@ class modAI
 
         return [
             'name' => $firstName,
+            'assetsURL' => $this->getOption('assetsUrl'),
             'apiURL' => $this->getAPIUrl(),
             'cssURL' => $this->getCSSFile(),
             'availableAgents' => $this->getAvailableAgents(),

@@ -11,7 +11,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@types/markdown-it": "^14.1.2",
     "esbuild": "^0.25.1",
+    "esbuild-copy-static-files": "^0.1.0",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-import": "^2.31.0",
@@ -20,6 +22,8 @@
     "typescript-eslint": "^8.26.1"
   },
   "dependencies": {
-    "@jgoz/esbuild-plugin-typecheck": "^4.0.3"
+    "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
+    "highlight.js": "^11.11.1",
+    "markdown-it": "^14.1.0"
   }
 }

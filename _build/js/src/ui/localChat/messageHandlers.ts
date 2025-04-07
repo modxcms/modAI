@@ -1,3 +1,6 @@
+import hljs from 'highlight.js';
+import markdownit from 'markdown-it';
+
 import { createActionButton } from './actionButton';
 import { createShadowElement } from './shadow';
 import { executor } from '../../executor';
@@ -130,9 +133,28 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
   const messageElement: UpdatableHTMLElement<AssistantMessage> = createElement('div', 'message ai');
   messageElement.dataset.id = msg.id;
 
-  let textContent = Array.isArray(msg.content) ? msg.content[0].value : msg.content;
+  const md = markdownit({
+    linkify: true,
+    typographer: true,
+    breaks: true,
+    highlight: function (str, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          return hljs.highlight(str, { language: lang }).value;
+        } catch {
+          /* not needed */
+        }
+      }
+
+      return ''; // use external default escaping
+    },
+  });
+
+  let textContent = msg.content || '';
   if (msg.contentType === 'image') {
     textContent = `<img src="${textContent}" />`;
+  } else {
+    textContent = md.render(textContent);
   }
 
   const shadow = createShadowElement(textContent, config.customCSS ?? []);
@@ -250,9 +272,8 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
   globalState.modal.chatMessages.appendChild(messageElement);
 
   messageElement.update = (msg) => {
-    const textContent = Array.isArray(msg.content) ? msg.content[0].value : msg.content;
     const content =
-      msg.contentType === 'image' ? `<img src="${textContent}" />` : nlToBr(textContent);
+      msg.contentType === 'image' ? `<img src="${textContent}" />` : md.render(msg.content ?? '');
     shadow.updateContent(content);
   };
 
