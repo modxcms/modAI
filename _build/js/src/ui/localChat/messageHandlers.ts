@@ -134,6 +134,8 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
   messageElement.dataset.id = msg.id;
 
   const md = markdownit({
+    html: true,
+    xhtmlOut: true,
     linkify: true,
     typographer: true,
     breaks: true,
