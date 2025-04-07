@@ -213,7 +213,7 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
               handler(msg, modal);
               return;
             }
-            const data = await executor.mgr.download.image({
+            const data = await executor.download.image({
               url: msg.content as string,
               field: config.field,
               namespace: config.namespace,
@@ -247,7 +247,7 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
               insertCb(msg, modal);
               return;
             }
-            const data = await executor.mgr.download.image({
+            const data = await executor.download.image({
               url: msg.content as string,
               field: config.field,
               namespace: config.namespace,

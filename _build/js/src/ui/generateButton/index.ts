@@ -141,7 +141,7 @@ const createForcedTextPrompt = ({
     const done = createLoadingOverlay(input);
 
     try {
-      const result = await executor.mgr.prompt.text(
+      const result = await executor.prompt.text(
         {
           field,
           ...rest,
@@ -246,7 +246,7 @@ const createVisionPrompt = (config: VisionConfig & Target) => {
     const done = createLoadingOverlay(config.input);
 
     try {
-      const result = await executor.mgr.prompt.vision(
+      const result = await executor.prompt.vision(
         {
           image: base64Data,
           field: config.field,

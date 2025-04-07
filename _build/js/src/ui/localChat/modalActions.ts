@@ -38,11 +38,11 @@ const callTools = async (
     true,
   );
 
-  const res = await executor.mgr.tools.run({ toolCalls, agent }, controller);
+  const res = await executor.tools.run({ toolCalls, agent }, controller);
 
   globalState.modal.history.addToolResponseMessage(res.id, res.content, true);
 
-  const aiRes = await executor.mgr.prompt.chat(
+  const aiRes = await executor.prompt.chat(
     {
       namespace: config.namespace,
       agent,
@@ -117,7 +117,7 @@ export const sendMessage = async (
     globalState.modal.selectedAgent.contextProviders &&
     globalState.modal.selectedAgent.contextProviders.length > 0
   ) {
-    const remoteContexts = await executor.mgr.context.get({
+    const remoteContexts = await executor.context.get({
       prompt: message,
       agent: globalState.modal.selectedAgent.name,
     });
@@ -133,7 +133,7 @@ export const sendMessage = async (
 
   try {
     if (config.type === 'text') {
-      const data = await executor.mgr.prompt.chat(
+      const data = await executor.prompt.chat(
         {
           agent: globalState.modal.selectedAgent?.name,
           namespace: config.namespace,
@@ -166,7 +166,7 @@ export const sendMessage = async (
     }
 
     if (config.type === 'image') {
-      const data = await executor.mgr.prompt.image(
+      const data = await executor.prompt.image(
         {
           prompt: message,
         },
