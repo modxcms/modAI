@@ -64,6 +64,24 @@ Ext.extend(ModAIAdmin, Ext.Component, {
 
         return parts.join('&');
     },
+
+    formatConfigItem: function (key, cfg, value = undefined) {
+        return [
+            {
+                fieldLabel: cfg.name,
+                allowBlank: !cfg.required,
+                xtype: cfg.type,
+                name: `config_${key}`,
+                hiddenName: `config_${key}`,
+                value: value ?? cfg.defaultValue
+            },
+            {
+                xtype: 'label',
+                html: cfg.description,
+                cls: 'desc-under'
+            }
+        ];
+    }
 });
 Ext.reg('modai-admin', ModAIAdmin);
 modAIAdmin = new ModAIAdmin();

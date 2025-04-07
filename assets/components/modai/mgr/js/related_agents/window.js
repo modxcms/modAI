@@ -1,7 +1,7 @@
 modAIAdmin.window.RelatedAgents = function (config) {
   config = config || {};
   Ext.applyIf(config, {
-    title: _('modai.admin.agent_context_provider.create'),
+    title: _('modai.admin.related_agent.create'),
     closeAction: 'close',
     url: MODx.config.connector_url,
     action: 'modAI\\Processors\\RelatedAgents\\Create',

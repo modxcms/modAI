@@ -1,0 +1,97 @@
+<?php
+
+namespace modAI\Tools;
+
+use MODX\Revolution\modChunk;
+use MODX\Revolution\modX;
+
+class CreateChunk implements ToolInterface
+{
+    private $modx;
+
+    public static function getSuggestedName(): string
+    {
+        return 'create_chunk';
+    }
+
+    public static function getDescription(): string
+    {
+        return "ALWAYS ask for explicit user confirmation in a separate message before calling this function, even if user asks directly for creating chunk, you HAVE TO ask for their confirmation in a separate message, provide a list of name, description and category name, DON'T output content, that you want to create. If needed, use an appropriate tool to first create categories, wait for it's response and then continue with calling this tool. Creates new MODX chunks. Don't ask for the parameters, unless they were already provided.";
+    }
+
+    public static function getParameters(): array
+    {
+        return [
+            'type' => 'object',
+            'properties' => [
+                'chunks' => [
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'name' => [
+                                'type' => 'string',
+                                "description" => 'Name of the chunk'
+                            ],
+                            'description' => [
+                                'type' => 'string',
+                                "description" => 'Description of the chunk, summary of what the chunk renders'
+                            ],
+                            'category_id' => [
+                                'type' => 'number',
+                                "description" => 'ID of a category, it MUST be obtained from an appropriate tool, DON\'T guess this value.'
+                            ],
+                            'content' => [
+                                'type' => 'string',
+                                "description" => 'HTML content of the chunk'
+                            ],
+                        ],
+                        "required" => ["name", "description", 'content']
+                    ],
+                    "description" => "List of chunks to create"
+                ],
+            ],
+            "required" => ["chunks"]
+        ];
+    }
+
+    public static function getConfig(): array
+    {
+        return [];
+    }
+
+    public function __construct(modX $modx, array $config)
+    {
+        $this->modx = $modx;
+    }
+
+    /**
+     * @param array $parameters
+     * @return string
+     */
+    public function runTool($parameters): string
+    {
+        if (empty($parameters)) {
+            throw new \Exception('Parameters are required.');
+        }
+
+        $output = [];
+
+        foreach ($parameters['chunks'] as $data) {
+            $chunk = $this->modx->newObject(modChunk::class);
+            $chunk->set('name', $data['name']);
+            $chunk->set('description', $data['description']);
+            $chunk->set('category', $data['category_id']);
+            $chunk->set('snippet', $data['content']);
+            $chunk->save();
+
+            $output[] = [
+                'id' => $chunk->get('id'),
+                'name' => $chunk->get('name'),
+            ];
+        }
+
+
+        return json_encode($output);
+    }
+}

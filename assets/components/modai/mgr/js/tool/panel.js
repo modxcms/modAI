@@ -7,19 +7,21 @@ modAIAdmin.panel.Tool = function (config) {
 
   if (config.record.classConfig) {
     Object.entries(config.record.classConfig).map((([key, cfg]) => {
-      configItems.push({
-        fieldLabel: cfg.name,
-        allowBlank: !cfg.required,
-        xtype: cfg.type,
-        name: `config_${key}`,
-        value: config.record.config[key]
-      });
+      configItems.push(...modAIAdmin.formatConfigItem(key, cfg, config.record.config[key]));
 
-      configItems.push({
-        xtype: 'label',
-        html: cfg.description,
-        cls: 'desc-under'
-      });
+      // configItems.push({
+      //   fieldLabel: cfg.name,
+      //   allowBlank: !cfg.required,
+      //   xtype: cfg.type,
+      //   name: `config_${key}`,
+      //   value: config.record.config[key]
+      // });
+      //
+      // configItems.push({
+      //   xtype: 'label',
+      //   html: cfg.description,
+      //   cls: 'desc-under'
+      // });
     }));
   }
 
@@ -142,18 +144,7 @@ Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
 
                         this.configSection.removeAll();
                         Object.entries(record.data.config).forEach(([key, config]) => {
-                          this.configSection.add({
-                            fieldLabel: config.name,
-                            allowBlank: !config.required,
-                            xtype: config.type,
-                            name: `config_${key}`,
-                          });
-
-                          this.configSection.add({
-                            xtype: 'label',
-                            html: config.description,
-                            cls: 'desc-under'
-                          });
+                          this.configSection.add(modAIAdmin.formatConfigItem(key, config));
                         })
 
                         this.configSection.doLayout();
