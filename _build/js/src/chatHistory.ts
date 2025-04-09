@@ -1,5 +1,4 @@
-import type { ToolCalls } from './executor/services';
-import type { ToolResponseContent } from './executor/types';
+import type { ToolResponseContent, ToolCalls } from './executor/types';
 
 export type AssistantMessageContentType = 'text' | 'image';
 

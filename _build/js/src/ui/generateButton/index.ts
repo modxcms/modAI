@@ -1,7 +1,5 @@
 import { executor } from '../../executor';
-import { TextData } from '../../executor/services';
-import { TextParams } from '../../executor/types';
-import { DataOutput, history } from '../../history';
+import { history } from '../../history';
 import { lng } from '../../lng';
 import { confirmDialog } from '../cofirmDialog';
 import { button } from '../dom/button';
@@ -9,9 +7,12 @@ import { icon } from '../dom/icon';
 import { createModAIShadow } from '../dom/modAIShadow';
 import { arrowLeft, arrowRight, sparkle } from '../icons';
 import { ui } from '../index';
-import { LocalChatConfig } from '../localChat/types';
 import { createLoadingOverlay } from '../overlay';
 import { createElement } from '../utils';
+
+import type { TextParams, TextData } from '../../executor/types';
+import type { DataOutput } from '../../history';
+import type { LocalChatConfig } from '../localChat/types';
 
 type HistoryButton = HTMLButtonElement & {
   enable: () => void;

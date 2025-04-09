@@ -4,20 +4,16 @@ import importPlugin from 'eslint-plugin-import';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import tseslint from 'typescript-eslint';
 
-// Export an array for flat config
 export default [
-  // Global ignores
   {
     ignores: [
-      'vendor/**', // Ignore the vendor directory
-      'node_modules/**', // Usually good to ignore node_modules too
-      'dist/**', // Ignore build output if applicable
+      'vendor/**',
+      'node_modules/**',
+      'assets/components/modai/js/**',
     ],
   },
-  // Main configuration object for TS files
   ...tseslint.config({
     files: ['_build/js/src/**/*.ts'],
-    // No ignores here, handled globally
     extends: [
       pluginJs.configs.recommended,
       eslintConfigPrettier,

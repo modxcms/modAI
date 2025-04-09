@@ -1,8 +1,7 @@
-import { services, validateServiceParser } from './services';
-import { handleStream, validStreamingService } from './streamHandlers';
+import { getServiceParser } from './services';
+import { getStreamHandler } from './streamHandlers';
 
-import type { TextData } from './services';
-import type { ChunkStream, ExecutorData, ForExecutor, ServiceResponse } from './types';
+import type { TextData, ChunkStream, ExecutorData, ForExecutor, ServiceResponse } from './types';
 
 const errorHandler = async (res: Response) => {
   if (!res.ok) {
@@ -13,6 +12,44 @@ const errorHandler = async (res: Response) => {
 
     throw new Error(`${res.status} ${res.statusText}`);
   }
+};
+
+const callService = async (details: ForExecutor, signal?: AbortSignal) => {
+  const res = await fetch(details.url, {
+    signal,
+    method: 'POST',
+    body: details.body,
+    headers: details.headers,
+  });
+
+  await errorHandler(res);
+
+  const data = await res.json();
+
+  if (data.error) {
+    throw new Error(data.error.message);
+  }
+
+  return data;
+};
+
+const callStreamService = async <D extends ServiceResponse>(
+  executorDetails: ForExecutor,
+  onChunkStream?: ChunkStream<D>,
+  signal?: AbortSignal,
+) => {
+  const streamHandler = getStreamHandler(executorDetails.service, executorDetails.parser);
+
+  const res = await fetch(executorDetails.url, {
+    signal,
+    method: 'POST',
+    body: executorDetails.body,
+    headers: executorDetails.headers,
+  });
+
+  await errorHandler(res);
+
+  return streamHandler(res, onChunkStream as ChunkStream<TextData>, signal);
 };
 
 export const serviceExecutor = async <D extends ServiceResponse>(
@@ -29,55 +66,13 @@ export const serviceExecutor = async <D extends ServiceResponse>(
 
   const { forExecutor: executorDetails } = details;
 
-  const callService = async (details: ForExecutor) => {
-    const res = await fetch(details.url, {
-      signal,
-      method: 'POST',
-      body: details.body,
-      headers: details.headers,
-    });
-
-    await errorHandler(res);
-
-    const data = await res.json();
-
-    if (data.error) {
-      throw new Error(data.error.message);
-    }
-
-    return data;
-  };
-
-  const callStreamService = async (details: ForExecutor) => {
-    const res = await fetch(details.url, {
-      signal,
-      method: 'POST',
-      body: details.body,
-      headers: details.headers,
-    });
-
-    await errorHandler(res);
-
-    return handleStream(
-      res,
-      executorDetails.service,
-      onChunkStream as ChunkStream<TextData>,
-      signal,
-    );
-  };
-
   if (executorDetails.stream) {
-    validStreamingService(executorDetails.service, executorDetails.parser);
-
-    return (await callStreamService(executorDetails)) as D;
+    return (await callStreamService(executorDetails, onChunkStream, signal)) as D;
   }
 
-  const { service, parser } = validateServiceParser(
-    executorDetails.service,
-    executorDetails.parser,
-  );
+  const serviceParser = getServiceParser(executorDetails.service, executorDetails.parser);
 
-  const data = await callService(executorDetails);
+  const data = await callService(executorDetails, signal);
 
-  return services[service][parser](data) as D;
+  return serviceParser(data) as D;
 };

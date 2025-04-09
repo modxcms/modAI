@@ -1,4 +1,4 @@
-import type { StreamHandler } from '../types';
+import type { StreamHandler } from '../../types';
 
 type StreamData = {
   id: string;

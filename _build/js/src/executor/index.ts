@@ -1,7 +1,10 @@
 import { aiFetch, modxFetch } from './apiClient';
 
-import type { TextData, ImageData, ToolCalls, TextDataNoTools } from './services';
 import type {
+  TextData,
+  ImageData,
+  ToolCalls,
+  TextDataNoTools,
   ChunkStream,
   DownloadImageParams,
   ChatParams,

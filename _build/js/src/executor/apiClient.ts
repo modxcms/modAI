@@ -1,10 +1,9 @@
 import { globalState } from '../globalState';
 import { serviceExecutor } from './serviceExecutor';
-import { services, validateServiceParser } from './services';
-import { handleStream, validStreamingService } from './streamHandlers';
+import { getServiceParser } from './services';
+import { getStreamHandler } from './streamHandlers';
 
-import type { TextData } from './services';
-import type { ChunkStream, ServiceResponse } from './types';
+import type { TextData, ChunkStream, ServiceResponse } from './types';
 
 export const modxFetch = async <R>(
   action: string,
@@ -75,21 +74,16 @@ export const aiFetch = async <D extends ServiceResponse>(
 
   try {
     if (stream) {
-      const { service: validService } = validStreamingService(service, parser);
+      const streamHandler = getStreamHandler(service, parser);
 
-      return (await handleStream(
-        res,
-        validService,
-        onChunkStream as ChunkStream<TextData>,
-        signal,
-      )) as D;
+      return (await streamHandler(res, onChunkStream as ChunkStream<TextData>, signal)) as D;
     }
 
-    const { service: validService, parser: validParser } = validateServiceParser(service, parser);
+    const serviceParser = getServiceParser(service, parser);
 
     const data = await res.json();
 
-    return services[validService][validParser](data) as D;
+    return serviceParser(data) as D;
   } catch (error) {
     controller.abort();
     throw error;

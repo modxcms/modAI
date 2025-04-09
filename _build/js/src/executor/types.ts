@@ -1,7 +1,60 @@
-import type { TextData, ImageData, ToolCalls } from './services';
 import type { UserAttachment, UserMessageContext } from '../chatHistory';
 
+export type UsageData = {
+  usage: {
+    promptTokens: number;
+    completionTokens: number;
+  };
+};
+
+export type ToolCalls = {
+  id: string;
+  name: string;
+  arguments: string;
+}[];
+
+export type TextDataMaybeTools = UsageData & {
+  __type: 'TextDataMaybeTools';
+  id: string;
+  content: string;
+  toolCalls?: ToolCalls;
+};
+
+export type ToolsData = UsageData & {
+  __type: 'ToolsData';
+  id: string;
+  content?: undefined;
+  toolCalls: ToolCalls;
+};
+
+export type TextDataNoTools = UsageData & {
+  __type: 'TextDataNoTools';
+  id: string;
+  content: string;
+  toolCalls?: undefined;
+};
+
+export type TextData = TextDataNoTools | TextDataMaybeTools | ToolsData;
+
+export type ImageData = {
+  __type: 'ImageData';
+  id: string;
+  url: string;
+};
+
+export type ServiceHandler<CData, IData> = {
+  content?: (data: CData) => TextData;
+  image?: (data: IData) => ImageData;
+};
+
 export type ServiceResponse = TextData | ImageData;
+
+export type StreamHandler = (
+  chunk: string,
+  buffer: string,
+  currentData: TextData,
+  onChunkStream?: ChunkStream<TextData>,
+) => { buffer: string; currentData: TextData };
 
 export type ForExecutor = {
   url: string;

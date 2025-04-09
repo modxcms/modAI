@@ -1,13 +1,14 @@
 import { drag, endDrag } from './dragHandlers';
 import { addErrorMessage, renderMessage } from './messageHandlers';
 import { setLoadingState } from './state';
-import { chatHistory, UpdatableHTMLElement } from '../../chatHistory';
+import { chatHistory } from '../../chatHistory';
 import { executor } from '../../executor';
 import { globalState } from '../../globalState';
 import { lng } from '../../lng';
 
 import type { LocalChatConfig, ModalType } from './types';
-import type { ToolCalls } from '../../executor/services';
+import type { UpdatableHTMLElement } from '../../chatHistory';
+import type { ToolCalls } from '../../executor/types';
 
 export const closeModal = () => {
   if (globalState.modal.isLoading) {

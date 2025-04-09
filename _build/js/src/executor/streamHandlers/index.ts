@@ -3,9 +3,7 @@ import { anthropic } from './handlers/anthropic';
 import { google } from './handlers/google';
 import { openai } from './handlers/openai';
 
-import type { TextData } from '../services';
-import type { ChunkStream } from '../types';
-import type { StreamHandler } from './types';
+import type { StreamHandler, ChunkStream, TextData } from '../types';
 
 const streamHandlers: Record<string, StreamHandler> = {
   openai,
@@ -13,28 +11,10 @@ const streamHandlers: Record<string, StreamHandler> = {
   anthropic,
 };
 
-export const validStreamingService = (
-  service: string | undefined,
-  parser: string | undefined,
-): { service: string; parser: string } => {
-  if (!service || !parser) {
-    throw new Error(lng('modai.error.service_required'));
-  }
-
-  if (parser !== 'content') {
-    throw new Error(lng('modai.error.service_unsupported'));
-  }
-
-  if (!streamHandlers[service]) {
-    throw new Error(lng('modai.error.service_unsupported'));
-  }
-
-  return { service: service, parser: parser };
-};
-
-export const handleStream = async (
+const handleStream = async (
   res: Response,
   service: string,
+  streamHandler: StreamHandler,
   onChunkStream?: ChunkStream<TextData>,
   signal?: AbortSignal,
 ): Promise<TextData> => {
@@ -52,11 +32,6 @@ export const handleStream = async (
       promptTokens: 0,
     },
   } as TextData;
-
-  const streamHandler = streamHandlers[service];
-  if (!streamHandler) {
-    throw new Error(lng('modai.error.service_unsupported'));
-  }
 
   while (true) {
     if (signal?.aborted) {
@@ -78,4 +53,21 @@ export const handleStream = async (
   }
 
   return currentData;
+};
+
+export const getStreamHandler = (service: string | undefined, parser: string | undefined) => {
+  if (!service || !parser) {
+    throw new Error(lng('modai.error.service_required'));
+  }
+
+  if (parser !== 'content') {
+    throw new Error(lng('modai.error.service_unsupported'));
+  }
+
+  if (!streamHandlers[service]) {
+    throw new Error(lng('modai.error.service_unsupported'));
+  }
+
+  return (res: Response, onChunkStream?: ChunkStream<TextData>, signal?: AbortSignal) =>
+    handleStream(res, service, streamHandlers[service], onChunkStream, signal);
 };
