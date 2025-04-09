@@ -224,7 +224,9 @@ export const chatHistory = {
       };
     }
 
-    _namespace[key].onAddMessage = onAddMessage;
+    if (onAddMessage) {
+      _namespace[key].onAddMessage = onAddMessage;
+    }
 
     return {
       addUserMessage: (content, hidden = false) => {

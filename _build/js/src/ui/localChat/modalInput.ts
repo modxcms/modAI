@@ -176,9 +176,10 @@ export const buildModalInput = (config: LocalChatConfig) => {
 
   const agentSelectComponent = buildSelect(
     globalState.config.availableAgents,
-    globalState.modal.selectedAgent?.id,
+    globalState.selectedAgent[config.key]?.id,
     (selectedAgent) => {
       globalState.modal.selectedAgent = selectedAgent ?? undefined;
+      globalState.selectedAgent[config.key] = selectedAgent ?? undefined;
     },
     {
       idProperty: 'id',
