@@ -11,19 +11,21 @@ class ContextProviderClass extends Processor
 
     public function process()
     {
+        $query = $this->getProperty('query');
+
         /** @var class-string<ContextProviderInterface>[] $classes */
         $classes = [];
 
         $registeredContextProviders = $this->modx->invokeEvent('modAIOnContextProviderRegister');
         foreach ($registeredContextProviders as $registeredContextProvider) {
-            if (is_string($registeredContextProvider) && class_implements($registeredContextProvider, ContextProviderInterface::class)) {
+            if ($this->validateClassName($registeredContextProvider, $query)) {
                 $classes[] = $registeredContextProvider;
                 continue;
             }
 
             if (is_array($registeredContextProvider)) {
                 foreach ($registeredContextProvider as $contextProvider) {
-                    if (class_implements($contextProvider, ContextProviderInterface::class)) {
+                    if ($this->validateClassName($contextProvider, $query)) {
                         $classes[] = $contextProvider;
                     }
                 }
@@ -41,5 +43,18 @@ class ContextProviderClass extends Processor
     public function getLanguageTopics()
     {
         return $this->languageTopics;
+    }
+
+    private function validateClassName($class, $query)
+    {
+        if (!class_implements($class, ContextProviderInterface::class)) {
+            return false;
+        }
+
+        if (!empty($query) && stripos($class, $query) === false) {
+            return false;
+        }
+
+        return true;
     }
 }

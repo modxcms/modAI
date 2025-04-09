@@ -11,19 +11,21 @@ class ToolClass extends Processor
 
     public function process()
     {
+        $query = $this->getProperty('query');
+
         /** @var class-string<ToolInterface>[] $classes */
         $classes = [];
 
         $registeredTools = $this->modx->invokeEvent('modAIOnToolRegister');
         foreach ($registeredTools as $registeredTool) {
-            if (is_string($registeredTool) && class_implements($registeredTool, ToolInterface::class)) {
+            if ($this->validateClassName($registeredTool, $query)) {
                 $classes[] = $registeredTool;
                 continue;
             }
 
             if (is_array($registeredTool)) {
                 foreach ($registeredTool as $tool) {
-                    if (class_implements($tool, ToolInterface::class)) {
+                    if ($this->validateClassName($tool, $query)) {
                         $classes[] = $tool;
                     }
                 }
@@ -42,5 +44,18 @@ class ToolClass extends Processor
     public function getLanguageTopics()
     {
         return $this->languageTopics;
+    }
+
+    private function validateClassName($class, $query)
+    {
+        if (!class_implements($class, ToolInterface::class)) {
+            return false;
+        }
+
+        if (!empty($query) && stripos($class, $query) === false) {
+            return false;
+        }
+
+        return true;
     }
 }
