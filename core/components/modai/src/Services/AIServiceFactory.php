@@ -20,6 +20,7 @@ class AIServiceFactory
             OpenAI::class,
             Google::class,
             Anthropic::class,
+            OpenRouter::class,
             CustomOpenAI::class
         ];
 

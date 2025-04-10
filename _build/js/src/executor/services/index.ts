@@ -2,6 +2,7 @@ import { anthropic } from './handlers/anthropic';
 import { google } from './handlers/google';
 import { openai } from './handlers/openai';
 import { lng } from '../../lng';
+import { openrouter } from './handlers/openrouter';
 
 import type { ServiceHandler } from '../types';
 
@@ -9,6 +10,7 @@ const services = {
   openai,
   google,
   anthropic,
+  openrouter,
 };
 
 export const getServiceParser = (service: string | undefined, parser: string | undefined) => {

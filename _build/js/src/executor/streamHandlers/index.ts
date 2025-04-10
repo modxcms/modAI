@@ -2,6 +2,7 @@ import { lng } from '../../lng';
 import { anthropic } from './handlers/anthropic';
 import { google } from './handlers/google';
 import { openai } from './handlers/openai';
+import { openrouter } from './handlers/openrouter';
 
 import type { StreamHandler, ChunkStream, TextData } from '../types';
 
@@ -9,6 +10,7 @@ const streamHandlers: Record<string, StreamHandler> = {
   openai,
   google,
   anthropic,
+  openrouter,
 };
 
 const handleStream = async (

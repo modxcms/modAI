@@ -7,6 +7,24 @@ use MODX\Revolution\modX;
 
 class Settings
 {
+    /**
+     * Get model setting based on namespace.field.area
+     *
+     * The waterfall is as follows for namespace: custom_namespace, field: res.content, area: text and setting: model
+     * {#sys}.{res.content}.{text}.{model}
+     * {#sys}.{global}.{text}.{model}
+     * {custom_namespace}.{res.content}.{text}.{model}
+     * {custom_namespace}.{global}.{text}.{model}
+     * {modai}.{res.content}.{text}.{model}
+     * {modai}.{global}.{text}.{model}
+     *
+     * @param modX $modx
+     * @param string $namespace
+     * @param string $field
+     * @param string $area
+     * @param string $setting
+     * @return string|null
+     */
     private static function getOption(modX $modx, string $namespace, string $field, string $area, string $setting): ?string
     {
         if (!empty($field)) {
@@ -20,13 +38,6 @@ class Settings
         if ($value !== null && $value !== '') {
             return $value;
         }
-
-        // {#sys}.{content}.{text.model}
-        // {#sys}.{global}.{text.model}
-        // {tinymce.modai}.{content}.{text.model}
-        // {tinymce.modai}.{global}.{text.model}
-        // {modai}.{content}.{text.model}
-        // {modai}.{global}.{text.model}
 
         if (!empty($field)) {
             $value = $modx->getOption("$namespace.$field.$area.$setting");

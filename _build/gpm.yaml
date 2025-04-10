@@ -40,6 +40,10 @@ systemSettings:
     type: text-password
     area: api
 
+  - key: api.openrouter.key
+    type: text-password
+    area: api
+
   - key: api.custom.key
     type: text-password
     area: api
