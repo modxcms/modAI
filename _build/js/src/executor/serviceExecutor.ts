@@ -38,7 +38,11 @@ const callStreamService = async <D extends ServiceResponse>(
   onChunkStream?: ChunkStream<D>,
   signal?: AbortSignal,
 ) => {
-  const streamHandler = getStreamHandler(executorDetails.service, executorDetails.parser);
+  const streamHandler = getStreamHandler(
+    executorDetails.service,
+    executorDetails.parser,
+    executorDetails.model,
+  );
 
   const res = await fetch(executorDetails.url, {
     signal,
@@ -70,7 +74,11 @@ export const serviceExecutor = async <D extends ServiceResponse>(
     return (await callStreamService(executorDetails, onChunkStream, signal)) as D;
   }
 
-  const serviceParser = getServiceParser(executorDetails.service, executorDetails.parser);
+  const serviceParser = getServiceParser(
+    executorDetails.service,
+    executorDetails.parser,
+    executorDetails.model,
+  );
 
   const data = await callService(executorDetails, signal);
 

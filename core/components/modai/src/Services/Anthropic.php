@@ -50,40 +50,45 @@ class Anthropic implements AIService
         }
     }
 
+    private function formatImageMessage(string $image)
+    {
+        $data = Utils::parseDataURL($image);
+        if (is_string($data)) {
+            $imageData = file_get_contents($data);
+            if ($imageData === false) {
+                throw new LexiconException("modai.error.failed_to_fetch_image");
+            }
+            $info = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeType = $info->buffer($imageData);
+            $base64 = base64_encode($imageData);
+
+            return [
+                'type' => 'image',
+                'source' => [
+                    'type' => 'base64',
+                    'media_type' => $mimeType,
+                    'data' => $base64,
+                ],
+            ];
+        }
+
+        return [
+            'type' => 'image',
+            'source' => [
+                'type' => 'base64',
+                'media_type' => $data['mimeType'],
+                'data' => $data['base64'],
+            ],
+        ];
+    }
+
     private function formatMessageAttachments(array &$messages, array $attachments, array &$currentMessage)
     {
         foreach ($attachments as $attachment) {
             if ($attachment['__type'] === 'image') {
                 $content = is_string($currentMessage['content']) ? [['type' => 'text', 'text' => $currentMessage['content']]] : $currentMessage['content'];
 
-                $data = Utils::parseDataURL($attachment['value']);
-                if (is_string($data)) {
-                    $imageData = file_get_contents($data);
-                    if ($imageData === false) {
-                        throw new LexiconException("modai.error.failed_to_fetch_image");
-                    }
-                    $info = new \finfo(FILEINFO_MIME_TYPE);
-                    $mimeType = $info->buffer($imageData);
-                    $base64 = base64_encode($imageData);
-
-                    $content[] = [
-                        'type' => 'image',
-                        'source' => [
-                            'type' => 'base64',
-                            'media_type' => $mimeType,
-                            'data' => $base64,
-                        ],
-                    ];
-                } else {
-                    $content[] = [
-                        'type' => 'image',
-                        'source' => [
-                            'type' => 'base64',
-                            'media_type' => $data['mimeType'],
-                            'data' => $data['base64'],
-                        ],
-                    ];
-                }
+                $content[] = $this->formatImageMessage($attachment['value']);
 
                 $currentMessage['content'] = $content;
             }
@@ -211,7 +216,7 @@ class Anthropic implements AIService
             ];
         }
 
-        return AIResponse::new(self::getServiceName())
+        return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)
@@ -246,7 +251,7 @@ class Anthropic implements AIService
         if ($config->isStream()) {
             $input['stream'] = true;
         }
-        return AIResponse::new(self::getServiceName())
+        return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)

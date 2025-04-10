@@ -194,7 +194,7 @@ class CustomOpenAI implements AIService
         $url = self::COMPLETIONS_API;
         $url = str_replace('{url}', $baseUrl, $url);
 
-        return AIResponse::new(self::getServiceName())
+        return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl($url)
@@ -246,7 +246,7 @@ class CustomOpenAI implements AIService
         $url = self::COMPLETIONS_API;
         $url = str_replace('{url}', $baseUrl, $url);
 
-        return AIResponse::new(self::getServiceName())
+        return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl($url)
@@ -281,7 +281,7 @@ class CustomOpenAI implements AIService
         $url = self::IMAGES_API;
         $url = str_replace('{url}', $baseUrl, $url);
 
-        return AIResponse::new(self::getServiceName())
+        return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withParser('image')
             ->withUrl($url)
             ->withHeaders([

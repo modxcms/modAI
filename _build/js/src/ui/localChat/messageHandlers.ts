@@ -269,6 +269,15 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
     }
   }
 
+  if (msg.metadata?.model) {
+    const modelInfo = createElement(
+      'div',
+      'info',
+      lng('modai.ui.model_info', { model: msg.metadata.model }),
+    );
+    messageElement.appendChild(modelInfo);
+  }
+
   messageElement.appendChild(actionsContainer);
 
   globalState.modal.chatMessages.appendChild(messageElement);

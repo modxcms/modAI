@@ -145,6 +145,7 @@ abstract class API
     {
         $headerStream = (int)$aiResponse->isStream();
         header("x-modai-service: {$aiResponse->getService()}");
+        header("x-modai-model: {$aiResponse->getModel()}");
         header("x-modai-parser: {$aiResponse->getParser()}");
         header("x-modai-stream: $headerStream");
 
@@ -154,6 +155,7 @@ abstract class API
             $this->success([
                 'forExecutor' => [
                     'service' => $aiResponse->getService(),
+                    'model' => $aiResponse->getModel(),
                     'stream' => $aiResponse->isStream(),
                     'parser' => $aiResponse->getParser(),
                     'url' => $aiResponse->getUrl(),

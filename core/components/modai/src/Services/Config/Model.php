@@ -26,4 +26,9 @@ trait Model
 
         return $this->model;
     }
+
+    public function getRawModel(): string
+    {
+        return $this->model;
+    }
 }

@@ -33,7 +33,7 @@ type StreamData =
   | { type: 'message_start'; message: { id: string; usage: { input_tokens: number } } }
   | { type: 'message_delta'; usage: { output_tokens: number } };
 
-export const anthropic: StreamHandler = (chunk, buffer, currentData, onChunkStream) => {
+export const anthropic: StreamHandler = (chunk, buffer, currentData) => {
   buffer += chunk;
   let lastNewlineIndex = 0;
   let newlineIndex;
@@ -111,10 +111,6 @@ export const anthropic: StreamHandler = (chunk, buffer, currentData, onChunkStre
             promptTokens: currentData.usage.promptTokens || 0,
           },
         };
-
-        if (onChunkStream && currentData.content) {
-          onChunkStream(currentData);
-        }
       } catch {
         /* empty */
       }

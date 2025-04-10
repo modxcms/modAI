@@ -1,4 +1,4 @@
-import type { ToolResponseContent, ToolCalls } from './executor/types';
+import type { ToolResponseContent, ToolCalls, ServiceResponse, Metadata } from './executor/types';
 
 export type AssistantMessageContentType = 'text' | 'image';
 
@@ -34,14 +34,15 @@ export type ToolResponseMessage = BaseMessage & {
   el?: UpdatableHTMLElement<ToolResponseMessage>;
 };
 
-export type AssistantMessage = Omit<BaseMessage, 'toolCalls'> & {
-  __type: 'AssistantMessage';
-  role: 'assistant';
-  content: string | undefined;
-  contentType: AssistantMessageContentType;
-  toolCalls?: ToolCalls;
-  el?: UpdatableHTMLElement<AssistantMessage>;
-};
+export type AssistantMessage = Metadata &
+  Omit<BaseMessage, 'toolCalls'> & {
+    __type: 'AssistantMessage';
+    role: 'assistant';
+    content: string | undefined;
+    contentType: AssistantMessageContentType;
+    toolCalls?: ToolCalls;
+    el?: UpdatableHTMLElement<AssistantMessage>;
+  };
 
 export type UserMessage = Omit<BaseMessage, 'contexts' | 'attachments'> & {
   __type: 'UserMessage';
@@ -124,14 +125,7 @@ const addToolResponseMessage = (
   msgObject.el = namespace.onAddMessage(msgObject);
 };
 
-const addAssistantMessage = (
-  key: string,
-  id: string,
-  content: string | undefined,
-  toolCalls: ToolCalls | undefined,
-  contentType: AssistantMessageContentType,
-  hidden: boolean = false,
-) => {
+const addAssistantMessage = (key: string, data: ServiceResponse, hidden: boolean = false) => {
   const namespace = _namespace[key];
   if (!namespace) {
     return;
@@ -139,36 +133,49 @@ const addAssistantMessage = (
 
   const msgObject: AssistantMessage = {
     __type: 'AssistantMessage',
-    content,
-    toolCalls,
-    contentType,
+    content: undefined,
+    toolCalls: undefined,
+    contentType: 'text',
     role: 'assistant',
-    id,
+    id: data.id,
+    metadata: data.metadata,
     hidden,
     ctx: {},
   };
+  if (data.__type === 'ImageData') {
+    msgObject.content = data.url;
+    msgObject.contentType = 'image';
+  } else {
+    msgObject.content = data.content;
+    msgObject.toolCalls = data.toolCalls;
+  }
 
   const index = namespace.history.push(msgObject) - 1;
-  if (id) {
-    namespace.idRef[id] = namespace.history[index];
+  if (data.id) {
+    namespace.idRef[data.id] = namespace.history[index];
   }
 
   msgObject.el = namespace.onAddMessage(msgObject);
 };
 
-const updateAssistantMessage = (key: string, id: string, content: string) => {
+const updateAssistantMessage = (key: string, data: ServiceResponse) => {
   const namespace = _namespace[key];
   if (!namespace) {
     return;
   }
 
-  if (!namespace.idRef[id]) {
-    addAssistantMessage(key, id, content, undefined, 'text', false);
+  if (!namespace.idRef[data.id]) {
+    addAssistantMessage(key, data, false);
     return;
   }
 
-  const msg = namespace.idRef[id];
-  msg.content = content;
+  const msg = namespace.idRef[data.id];
+
+  if (data.__type === 'ImageData') {
+    msg.content = data.url;
+  } else {
+    msg.content = data.content;
+  }
 
   if (msg.__type === 'AssistantMessage' && msg.el && msg.el.update) {
     msg.el.update(msg);
@@ -191,19 +198,14 @@ export type ChatHistory = {
       | { content: string; contexts?: UserMessageContext[]; attachments?: UserAttachment[] },
     hidden?: boolean,
   ) => void;
-  addAssistantMessage: (
-    id: string,
-    content: string | undefined,
-    toolCalls: ToolCalls | undefined,
-    contentType: AssistantMessageContentType,
-    hidden?: boolean,
-  ) => void;
+  addAssistantMessage: (data: ServiceResponse, hidden?: boolean) => void;
+  addToolCallsMessage: (toolCalls: ToolCalls, hidden?: boolean) => void;
   addToolResponseMessage: (
     id: string,
     content: ToolResponseMessage['content'],
     hidden?: boolean,
   ) => void;
-  updateAssistantMessage: (id: string, content: string) => void;
+  updateAssistantMessage: (data: ServiceResponse) => void;
   getAssistantMessage: (id: string) => Message | undefined;
   getMessages: () => Message[];
   getMessagesHistory: () => Pick<
@@ -233,14 +235,31 @@ export const chatHistory = {
         const id = 'user-msg-' + Date.now() + Math.round(Math.random() * 1000);
         addUserMessage(key, id, content, hidden);
       },
-      addAssistantMessage: (id, content, toolCalls, contentType, hidden = false) => {
-        addAssistantMessage(key, id, content, toolCalls, contentType, hidden);
+      addAssistantMessage: (data, hidden = false) => {
+        addAssistantMessage(key, data, hidden);
+      },
+
+      addToolCallsMessage: (toolCalls, hidden = false) => {
+        addAssistantMessage(
+          key,
+          {
+            __type: 'ToolsData',
+            id: crypto.randomUUID(),
+            content: undefined,
+            toolCalls,
+            usage: {
+              completionTokens: 0,
+              promptTokens: 0,
+            },
+          },
+          hidden,
+        );
       },
       addToolResponseMessage: (id, content, hidden = false) => {
         addToolResponseMessage(key, id, content, hidden);
       },
-      updateAssistantMessage: (id, content) => {
-        updateAssistantMessage(key, id, content);
+      updateAssistantMessage: (data) => {
+        updateAssistantMessage(key, data);
       },
       getAssistantMessage: (id) => {
         return getMessage(key, id);

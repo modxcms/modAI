@@ -235,7 +235,7 @@ class Google implements AIService
             ]
         ];
 
-        return AIResponse::new(self::getServiceName())
+        return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl($url)
@@ -279,7 +279,7 @@ class Google implements AIService
         $url = str_replace("{model}", $config->getModel(), $url);
         $url = str_replace("{apiKey}", $apiKey, $url);
 
-        return AIResponse::new(self::getServiceName())
+        return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl($url)
@@ -305,7 +305,7 @@ class Google implements AIService
             "sampleCount" => $config->getN()
         ];
 
-        return AIResponse::new(self::getServiceName())
+        return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withParser('image')
             ->withUrl($url)
             ->withHeaders([

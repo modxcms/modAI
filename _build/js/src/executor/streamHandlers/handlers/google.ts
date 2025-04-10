@@ -18,7 +18,7 @@ type StreamData = {
   };
 };
 
-export const google: StreamHandler = (chunk, buffer, currentData, onChunkStream) => {
+export const google: StreamHandler = (chunk, buffer, currentData) => {
   const jsonLines = chunk
     .trim()
     .split(',\r\n')
@@ -63,10 +63,6 @@ export const google: StreamHandler = (chunk, buffer, currentData, onChunkStream)
           promptTokens: parsedData?.usageMetadata.promptTokenCount,
         },
       };
-
-      if (onChunkStream && currentData.content) {
-        onChunkStream(currentData);
-      }
     } catch {
       /* empty */
     }

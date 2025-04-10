@@ -31,13 +31,7 @@ const callTools = async (
   agent?: string,
   controller?: AbortController,
 ) => {
-  globalState.modal.history.addAssistantMessage(
-    crypto.randomUUID(),
-    undefined,
-    toolCalls,
-    'text',
-    true,
-  );
+  globalState.modal.history.addToolCallsMessage(toolCalls, true);
 
   const res = await executor.tools.run({ toolCalls, agent }, controller);
 
@@ -53,14 +47,14 @@ const callTools = async (
     },
     (data) => {
       if (data.__type === 'TextDataNoTools' || data.__type === 'TextDataMaybeTools') {
-        globalState.modal.history.updateAssistantMessage(data.id, data.content);
+        globalState.modal.history.updateAssistantMessage(data);
       }
     },
     controller,
   );
 
   if (aiRes.content) {
-    globalState.modal.history.updateAssistantMessage(aiRes.id, aiRes.content);
+    globalState.modal.history.updateAssistantMessage(aiRes);
   }
 
   if (aiRes.toolCalls) {
@@ -146,14 +140,14 @@ export const sendMessage = async (
         },
         (data) => {
           if (data.content) {
-            globalState.modal.history.updateAssistantMessage(data.id, data.content);
+            globalState.modal.history.updateAssistantMessage(data);
           }
         },
         globalState.modal.abortController,
       );
 
       if (data.content) {
-        globalState.modal.history.updateAssistantMessage(data.id, data.content);
+        globalState.modal.history.updateAssistantMessage(data);
       }
 
       if (data.toolCalls) {
@@ -174,7 +168,7 @@ export const sendMessage = async (
         globalState.modal.abortController,
       );
 
-      globalState.modal.history.addAssistantMessage(data.id, data.url, undefined, 'image');
+      globalState.modal.history.addAssistantMessage(data);
     }
 
     globalState.modal.abortController = undefined;

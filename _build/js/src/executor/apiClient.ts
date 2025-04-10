@@ -69,17 +69,18 @@ export const aiFetch = async <D extends ServiceResponse>(
     return serviceExecutor<D>(data, onChunkStream, controller);
   }
 
-  const service = res.headers.get('x-modai-service') ?? 'openai';
-  const parser = res.headers.get('x-modai-parser') ?? 'content';
+  const service = res.headers.get('x-modai-service') ?? undefined;
+  const parser = res.headers.get('x-modai-parser') ?? undefined;
+  const model = res.headers.get('x-modai-model') ?? undefined;
 
   try {
     if (stream) {
-      const streamHandler = getStreamHandler(service, parser);
+      const streamHandler = getStreamHandler(service, parser, model);
 
       return (await streamHandler(res, onChunkStream as ChunkStream<TextData>, signal)) as D;
     }
 
-    const serviceParser = getServiceParser(service, parser);
+    const serviceParser = getServiceParser(service, parser, model);
 
     const data = await res.json();
 

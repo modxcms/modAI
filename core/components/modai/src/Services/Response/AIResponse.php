@@ -5,20 +5,22 @@ namespace modAI\Services\Response;
 class AIResponse
 {
     private string $service;
+    private string $model;
     private string $url;
     private string $parser;
     private array $headers = [];
     private array $body = [];
     private bool $stream = false;
 
-    private function __construct(string $service)
+    private function __construct(string $service, string $model)
     {
         $this->service = $service;
+        $this->model = $model;
     }
 
-    public static function new(string $service): self
+    public static function new(string $service, string $model): self
     {
-        return new self($service);
+        return new self($service, $model);
     }
 
     public function withUrl(string $url): self
@@ -54,6 +56,11 @@ class AIResponse
     public function getService(): string
     {
         return $this->service;
+    }
+
+    public function getModel(): string
+    {
+        return $this->model;
     }
 
     public function getUrl(): string

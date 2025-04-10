@@ -170,6 +170,10 @@
                     &:last-of-type .actions {
                         opacity: 1;
                     }
+
+                    &:last-of-type .info {
+                        opacity: 0.8;
+                    }
                 }
 
                 &.error {
@@ -294,9 +298,22 @@
                     }
                 }
 
+                .info {
+                    position: absolute;
+                    font-size: 11px;
+                    color: #666;
+                    opacity: 0;
+                    bottom: -17px;
+                }
+
                 &:hover .actions,
                 &:focus-within .actions {
                     opacity: 1;
+                }
+
+                &:hover .info,
+                &:focus-within .info {
+                    opacity: 0.8;
                 }
             }
         }

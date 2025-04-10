@@ -13,30 +13,39 @@ export type ToolCalls = {
   arguments: string;
 }[];
 
-export type TextDataMaybeTools = UsageData & {
-  __type: 'TextDataMaybeTools';
-  id: string;
-  content: string;
-  toolCalls?: ToolCalls;
-};
+export type TextDataMaybeTools = Metadata &
+  UsageData & {
+    __type: 'TextDataMaybeTools';
+    id: string;
+    content: string;
+    toolCalls?: ToolCalls;
+  };
 
-export type ToolsData = UsageData & {
-  __type: 'ToolsData';
-  id: string;
-  content?: undefined;
-  toolCalls: ToolCalls;
-};
+export type ToolsData = Metadata &
+  UsageData & {
+    __type: 'ToolsData';
+    id: string;
+    content?: undefined;
+    toolCalls: ToolCalls;
+  };
 
-export type TextDataNoTools = UsageData & {
-  __type: 'TextDataNoTools';
-  id: string;
-  content: string;
-  toolCalls?: undefined;
+export type TextDataNoTools = Metadata &
+  UsageData & {
+    __type: 'TextDataNoTools';
+    id: string;
+    content: string;
+    toolCalls?: undefined;
+  };
+
+export type Metadata = {
+  metadata?: {
+    model: string;
+  };
 };
 
 export type TextData = TextDataNoTools | TextDataMaybeTools | ToolsData;
 
-export type ImageData = {
+export type ImageData = Metadata & {
   __type: 'ImageData';
   id: string;
   url: string;
@@ -53,13 +62,13 @@ export type StreamHandler = (
   chunk: string,
   buffer: string,
   currentData: TextData,
-  onChunkStream?: ChunkStream<TextData>,
 ) => { buffer: string; currentData: TextData };
 
 export type ForExecutor = {
   url: string;
   body: string;
   service: string;
+  model: string;
   headers: HeadersInit;
   parser: string;
   stream: boolean;

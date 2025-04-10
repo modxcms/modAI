@@ -184,7 +184,7 @@ class OpenAI implements AIService
             ];
         }
 
-        return AIResponse::new(self::getServiceName())
+        return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)
@@ -226,7 +226,7 @@ class OpenAI implements AIService
             ];
         }
 
-        return AIResponse::new(self::getServiceName())
+        return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)
@@ -251,7 +251,7 @@ class OpenAI implements AIService
         $input['style'] = $config->getStyle();
         $input['response_format'] = 'url';
 
-        return AIResponse::new(self::getServiceName())
+        return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withParser('image')
             ->withUrl(self::IMAGES_API)
             ->withHeaders([

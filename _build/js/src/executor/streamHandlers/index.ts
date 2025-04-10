@@ -1,10 +1,9 @@
 import { lng } from '../../lng';
+import { StreamHandler, ChunkStream, TextData } from '../types';
 import { anthropic } from './handlers/anthropic';
 import { google } from './handlers/google';
 import { openai } from './handlers/openai';
 import { openrouter } from './handlers/openrouter';
-
-import type { StreamHandler, ChunkStream, TextData } from '../types';
 
 const streamHandlers: Record<string, StreamHandler> = {
   openai,
@@ -16,6 +15,7 @@ const streamHandlers: Record<string, StreamHandler> = {
 const handleStream = async (
   res: Response,
   service: string,
+  model: string,
   streamHandler: StreamHandler,
   onChunkStream?: ChunkStream<TextData>,
   signal?: AbortSignal,
@@ -45,7 +45,16 @@ const handleStream = async (
 
     const chunk = decoder.decode(value, { stream: true });
 
-    const result = streamHandler(chunk, buffer, currentData, onChunkStream);
+    const result = streamHandler(chunk, buffer, currentData);
+    if (onChunkStream && currentData?.content) {
+      onChunkStream({
+        ...currentData,
+        metadata: {
+          model,
+        },
+      });
+    }
+
     buffer = result.buffer;
     currentData = result.currentData;
   }
@@ -54,11 +63,20 @@ const handleStream = async (
     currentData.toolCalls = currentData.toolCalls.filter(Boolean);
   }
 
-  return currentData;
+  return {
+    ...currentData,
+    metadata: {
+      model,
+    },
+  };
 };
 
-export const getStreamHandler = (service: string | undefined, parser: string | undefined) => {
-  if (!service || !parser) {
+export const getStreamHandler = (
+  service: string | undefined,
+  parser: string | undefined,
+  model: string | undefined,
+) => {
+  if (!service || !parser || !model) {
     throw new Error(lng('modai.error.service_required'));
   }
 
@@ -71,5 +89,5 @@ export const getStreamHandler = (service: string | undefined, parser: string | u
   }
 
   return (res: Response, onChunkStream?: ChunkStream<TextData>, signal?: AbortSignal) =>
-    handleStream(res, service, streamHandlers[service], onChunkStream, signal);
+    handleStream(res, service, model, streamHandlers[service], onChunkStream, signal);
 };

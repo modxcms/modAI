@@ -13,17 +13,31 @@ const services = {
   openrouter,
 };
 
-export const getServiceParser = (service: string | undefined, parser: string | undefined) => {
-  if (!service || !parser) {
+export const getServiceParser = (
+  service: string | undefined,
+  parser: string | undefined,
+  model: string | undefined,
+) => {
+  if (!service || !parser || !model) {
     throw new Error(lng('modai.error.service_required'));
   }
 
   const serviceType = service as keyof typeof services;
   const parserType = parser as keyof ServiceHandler<unknown, unknown>;
 
-  if (!services[serviceType]?.[parserType]) {
+  const serviceParser = services[serviceType]?.[parserType];
+
+  if (!serviceParser) {
     throw new Error(lng('modai.error.service_unsupported'));
   }
 
-  return services[serviceType]?.[parserType];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (data: any) => {
+    return {
+      ...serviceParser(data),
+      metadata: {
+        model,
+      },
+    };
+  };
 };

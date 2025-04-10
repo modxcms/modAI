@@ -22,7 +22,7 @@ type StreamData = {
   };
 };
 
-export const openrouter: StreamHandler = (chunk, buffer, currentData, onChunkStream) => {
+export const openrouter: StreamHandler = (chunk, buffer, currentData) => {
   buffer += chunk;
   let lastNewlineIndex = 0;
   let newlineIndex;
@@ -52,10 +52,6 @@ export const openrouter: StreamHandler = (chunk, buffer, currentData, onChunkStr
           !parsedData?.choices?.[0]?.delta?.tool_calls &&
           !parsedData?.choices?.[0]?.delta?.content
         ) {
-          if (onChunkStream && currentData?.content) {
-            onChunkStream(currentData);
-          }
-
           continue;
         }
 
@@ -96,7 +92,7 @@ export const openrouter: StreamHandler = (chunk, buffer, currentData, onChunkStr
 
         currentData = {
           __type: 'TextDataMaybeTools',
-          id: currentData.id,
+          id: parsedData.id,
           content: (currentData.content ?? '') + content,
           toolCalls,
           usage: {
@@ -104,10 +100,6 @@ export const openrouter: StreamHandler = (chunk, buffer, currentData, onChunkStr
             promptTokens: currentData.usage.promptTokens ?? 0,
           },
         };
-
-        if (onChunkStream && currentData?.content) {
-          onChunkStream(currentData);
-        }
       } catch {
         /* empty */
       }
