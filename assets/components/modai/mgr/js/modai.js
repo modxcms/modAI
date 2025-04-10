@@ -81,7 +81,9 @@ Ext.extend(ModAIAdmin, Ext.Component, {
                 cls: 'desc-under'
             }
         ];
-    }
+    },
+
+    getResponsiveColumnLayout: function() {}
 });
 Ext.reg('modai-admin', ModAIAdmin);
 modAIAdmin = new ModAIAdmin();

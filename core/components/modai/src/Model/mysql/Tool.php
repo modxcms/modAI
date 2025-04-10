@@ -19,7 +19,7 @@ class Tool extends \modAI\Model\Tool
             'class' => NULL,
             'name' => NULL,
             'description' => '',
-            'config' => '{}',
+            'config' => NULL,
             'enabled' => 0,
             'default' => 0,
         ),
@@ -51,8 +51,7 @@ class Tool extends \modAI\Model\Tool
             array (
                 'dbtype' => 'text',
                 'phptype' => 'json',
-                'null' => false,
-                'default' => '{}',
+                'null' => true,
             ),
             'enabled' => 
             array (

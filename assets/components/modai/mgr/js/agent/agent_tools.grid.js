@@ -8,7 +8,7 @@ modAIAdmin.grid.AgentTools = function (config) {
       agent: MODx.request.id,
     },
     preventSaveRefresh: false,
-    fields: ['id', 'name', 'description'],
+    fields: ['id', 'name', 'description', 'enabled'],
     paging: true,
     remoteSort: true,
     emptyText: _('modai.admin.global.no_records'),
@@ -18,7 +18,7 @@ modAIAdmin.grid.AgentTools = function (config) {
         dataIndex: 'id',
         width: 0.05,
         sortable: true,
-        hidden: true
+        hidden: true,
       },
       {
         header: _('modai.admin.tool.name'),
@@ -34,36 +34,42 @@ modAIAdmin.grid.AgentTools = function (config) {
         sortable: true,
         hidden: false,
       },
+      {
+        header: _('modai.admin.tool.enabled'),
+        dataIndex: 'enabled',
+        renderer: this.rendYesNo,
+        width: 0.1,
+        hidden: false,
+      },
     ],
-    tbar: this.getTbar(config)
+    tbar: this.getTbar(config),
   });
   modAIAdmin.grid.AgentTools.superclass.constructor.call(this, config);
 };
 Ext.extend(modAIAdmin.grid.AgentTools, MODx.grid.Grid, {
-
   getMenu: function () {
     var m = [];
 
     m.push({
       text: _('modai.admin.agent_tool.view'),
-      handler: this.viewTool
+      handler: this.viewTool,
     });
 
     m.push('-');
 
     m.push({
       text: _('modai.admin.agent_tool.remove'),
-      handler: this.removeTool
+      handler: this.removeTool,
     });
 
     return m;
   },
 
-  getTbar: function(config) {
+  getTbar: function (config) {
     return [
       {
         text: _('modai.admin.agent_tool.create'),
-        handler: this.createTool
+        handler: this.createTool,
       },
       '->',
       {
@@ -72,7 +78,7 @@ Ext.extend(modAIAdmin.grid.AgentTools, MODx.grid.Grid, {
         listeners: {
           change: {
             fn: this.search,
-            scope: this
+            scope: this,
           },
           render: {
             fn: function (cmp) {
@@ -82,17 +88,17 @@ Ext.extend(modAIAdmin.grid.AgentTools, MODx.grid.Grid, {
                   this.blur();
                   return true;
                 },
-                scope: cmp
+                scope: cmp,
               });
             },
-            scope: this
-          }
-        }
+            scope: this,
+          },
+        },
       },
     ];
   },
 
-  createTool: function(btn, e) {
+  createTool: function (btn, e) {
     const record = {
       agent_id: MODx.request.id,
     };
@@ -105,9 +111,9 @@ Ext.extend(modAIAdmin.grid.AgentTools, MODx.grid.Grid, {
           fn: function () {
             this.refresh();
           },
-          scope: this
-        }
-      }
+          scope: this,
+        },
+      },
     });
 
     win.fp.getForm().setValues(record);
@@ -126,22 +132,22 @@ Ext.extend(modAIAdmin.grid.AgentTools, MODx.grid.Grid, {
       params: {
         action: 'modAI\\Processors\\AgentTools\\Remove',
         agent_id: MODx.request.id,
-        tool_id: this.menu.record.id
+        tool_id: this.menu.record.id,
       },
       listeners: {
         success: {
           fn: function (r) {
             this.refresh();
           },
-          scope: this
-        }
-      }
+          scope: this,
+        },
+      },
     });
 
     return true;
   },
 
-  viewTool: function(btn, e) {
+  viewTool: function (btn, e) {
     modAIAdmin.loadPage('tool/update', { id: this.menu.record.id });
   },
 
@@ -155,6 +161,6 @@ Ext.extend(modAIAdmin.grid.AgentTools, MODx.grid.Grid, {
     const s = this.getStore();
     s.baseParams.search = value;
     this.getBottomToolbar().changePage(1);
-  }
+  },
 });
 Ext.reg('modai-grid-agent_tools', modAIAdmin.grid.AgentTools);

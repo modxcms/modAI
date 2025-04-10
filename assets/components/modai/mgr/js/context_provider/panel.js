@@ -5,33 +5,21 @@ modAIAdmin.panel.ContextProvider = function (config) {
 
   const configItems = [];
 
-  if (config.record.classConfig) {
-    Object.entries(config.record.classConfig).map((([key, cfg]) => {
-      configItems.push({
-        fieldLabel: cfg.name,
-        allowBlank: !cfg.required,
-        xtype: cfg.type,
-        name: `config_${key}`,
-        value: config.record.config[key]
-      });
-
-      configItems.push({
-        xtype: 'label',
-        html: cfg.description,
-        cls: 'desc-under'
-      });
-    }));
+  if (config.record.classConfig && config.record.config) {
+    Object.entries(config.record.classConfig).map(([key, cfg]) => {
+      configItems.push(...modAIAdmin.formatConfigItem(key, cfg, config.record.config[key]));
+    });
   }
 
   this.configSection = new Ext.Panel({
     defaults: {
       msgTarget: 'under',
-      anchor: '100%'
+      anchor: '100%',
     },
     layout: 'form',
     autoHeight: true,
     hideMode: 'offsets',
-    items: configItems
+    items: configItems,
   });
 
   Ext.applyIf(config, {
@@ -40,15 +28,15 @@ modAIAdmin.panel.ContextProvider = function (config) {
     baseCls: 'modx-formpanel',
     url: MODx.config.connector_url,
     baseParams: {
-      action: 'modAI\\Processors\\ContextProviders\\Update'
+      action: 'modAI\\Processors\\ContextProviders\\Update',
     },
     items: this.getItems(config),
     listeners: {
       success: {
         fn: this.success,
-        scope: this
-      }
-    }
+        scope: this,
+      },
+    },
   });
 
   modAIAdmin.panel.ContextProvider.superclass.constructor.call(this, config);
@@ -65,25 +53,31 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
 
   getItems: function (config) {
     return [
-      MODx.util.getHeaderBreadCrumbs({
-        html: ((config.isUpdate === true) ? _('modai.admin.context_provider.update') : _('modai.admin.context_provider.create')),
-        xtype: "modx-header"
-      }, [
+      MODx.util.getHeaderBreadCrumbs(
         {
-          text: _('modai.admin.home.page_title'),
-          href: '?a=home&namespace=modai',
+          html:
+            config.isUpdate === true
+              ? _('modai.admin.context_provider.update')
+              : _('modai.admin.context_provider.create'),
+          xtype: 'modx-header',
         },
-        {
-          text: _('modai.admin.home.context_providers'),
-          href: null,
-        }
-      ]),
+        [
+          {
+            text: _('modai.admin.home.page_title'),
+            href: '?a=home&namespace=modai',
+          },
+          {
+            text: _('modai.admin.home.context_providers'),
+            href: null,
+          },
+        ],
+      ),
       {
         name: 'id',
         xtype: 'hidden',
         value: config.record.id,
       },
-      this.getGeneralFields(config)
+      this.getGeneralFields(config),
     ];
   },
 
@@ -94,7 +88,7 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
         border: false,
         anchor: '100%',
         style: {
-          marginTop: '30px'
+          marginTop: '30px',
         },
         defaults: {
           layout: 'form',
@@ -102,15 +96,15 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
           labelSeparator: '',
           anchor: '100%',
           msgTarget: 'under',
-          border: false
+          border: false,
         },
         items: [
           {
-            columnWidth: .6,
+            columnWidth: 0.6,
             border: false,
             defaults: {
               msgTarget: 'under',
-              anchor: '100%'
+              anchor: '100%',
             },
             items: [
               {
@@ -120,7 +114,7 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                 },
                 defaults: {
                   msgTarget: 'under',
-                  anchor: '100%'
+                  anchor: '100%',
                 },
                 layout: 'form',
                 msgTarget: 'under',
@@ -136,23 +130,12 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                       select: (self, record) => {
                         this.configSection.removeAll();
                         Object.entries(record.data.config).forEach(([key, config]) => {
-                          this.configSection.add({
-                            fieldLabel: config.name,
-                            allowBlank: !config.required,
-                            xtype: config.type,
-                            name: `config_${key}`,
-                          });
-
-                          this.configSection.add({
-                            xtype: 'label',
-                            html: config.description,
-                            cls: 'desc-under'
-                          });
-                        })
+                          this.configSection.add(modAIAdmin.formatConfigItem(key, config));
+                        });
 
                         this.configSection.doLayout();
-                      }
-                    }
+                      },
+                    },
                   },
                   {
                     fieldLabel: _('modai.admin.context_provider.name'),
@@ -168,9 +151,9 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                     name: 'description',
                     msgTarget: 'under',
                     value: config.record.description,
-                    allowBlank: true
+                    allowBlank: true,
                   },
-                ]
+                ],
               },
 
               config.isUpdate && {
@@ -179,11 +162,11 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                   cls: 'modai-admin-section_header x-panel-header',
                 },
                 style: {
-                  marginTop: '20px'
+                  marginTop: '20px',
                 },
                 defaults: {
                   msgTarget: 'under',
-                  anchor: '100%'
+                  anchor: '100%',
                 },
                 layout: 'form',
                 msgTarget: 'under',
@@ -194,15 +177,15 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                   {
                     xtype: 'modai-grid-related_agents',
                     relatedObject: {
-                      context_provider_id: MODx.request.id
-                    }
-                  }
-                ]
+                      context_provider_id: MODx.request.id,
+                    },
+                  },
+                ],
               },
-            ]
+            ],
           },
           {
-            columnWidth: .4,
+            columnWidth: 0.4,
             border: false,
             items: [
               {
@@ -212,7 +195,7 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                 },
                 defaults: {
                   msgTarget: 'under',
-                  anchor: '100%'
+                  anchor: '100%',
                 },
                 layout: 'form',
                 bodyCssClass: 'main-wrapper',
@@ -227,14 +210,19 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                     hiddenName: 'enabled',
                     value: config.record.enabled ?? 1,
                   },
-                  this.configSection
-                ]
-              }
-            ]
-          }
-        ]
-      }
+                  {
+                    xtype: 'label',
+                    html: _('modai.admin.context_provider.enabled_desc'),
+                    cls: 'desc-under',
+                  },
+                  this.configSection,
+                ],
+              },
+            ],
+          },
+        ],
+      },
     ];
-  }
+  },
 });
 Ext.reg('modai-panel-context_provider', modAIAdmin.panel.ContextProvider);

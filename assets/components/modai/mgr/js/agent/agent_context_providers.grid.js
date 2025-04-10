@@ -8,7 +8,7 @@ modAIAdmin.grid.AgentContextProviders = function (config) {
       agent: MODx.request.id,
     },
     preventSaveRefresh: false,
-    fields: ['id', 'name', 'description'],
+    fields: ['id', 'name', 'description', 'enabled'],
     paging: true,
     remoteSort: true,
     emptyText: _('modai.admin.global.no_records'),
@@ -18,7 +18,7 @@ modAIAdmin.grid.AgentContextProviders = function (config) {
         dataIndex: 'id',
         width: 0.05,
         sortable: true,
-        hidden: true
+        hidden: true,
       },
       {
         header: _('modai.admin.context_provider.name'),
@@ -28,7 +28,7 @@ modAIAdmin.grid.AgentContextProviders = function (config) {
         hidden: false,
         editor: {
           xtype: 'textfield',
-        }
+        },
       },
       {
         header: _('modai.admin.context_provider.description'),
@@ -38,38 +38,44 @@ modAIAdmin.grid.AgentContextProviders = function (config) {
         hidden: false,
         editor: {
           xtype: 'textfield',
-        }
+        },
+      },
+      {
+        header: _('modai.admin.context_provider.enabled'),
+        dataIndex: 'enabled',
+        renderer: this.rendYesNo,
+        width: 0.1,
+        hidden: false,
       },
     ],
-    tbar: this.getTbar(config)
+    tbar: this.getTbar(config),
   });
   modAIAdmin.grid.AgentContextProviders.superclass.constructor.call(this, config);
 };
 Ext.extend(modAIAdmin.grid.AgentContextProviders, MODx.grid.Grid, {
-
   getMenu: function () {
     var m = [];
 
     m.push({
       text: _('modai.admin.agent_context_provider.view'),
-      handler: this.viewContextProvider
+      handler: this.viewContextProvider,
     });
 
     m.push('-');
 
     m.push({
       text: _('modai.admin.agent_context_provider.remove'),
-      handler: this.removeContextProvider
+      handler: this.removeContextProvider,
     });
 
     return m;
   },
 
-  getTbar: function(config) {
+  getTbar: function (config) {
     return [
       {
         text: _('modai.admin.agent_context_provider.create'),
-        handler: this.createContextProvider
+        handler: this.createContextProvider,
       },
       '->',
       {
@@ -78,7 +84,7 @@ Ext.extend(modAIAdmin.grid.AgentContextProviders, MODx.grid.Grid, {
         listeners: {
           change: {
             fn: this.search,
-            scope: this
+            scope: this,
           },
           render: {
             fn: function (cmp) {
@@ -88,17 +94,17 @@ Ext.extend(modAIAdmin.grid.AgentContextProviders, MODx.grid.Grid, {
                   this.blur();
                   return true;
                 },
-                scope: cmp
+                scope: cmp,
               });
             },
-            scope: this
-          }
-        }
+            scope: this,
+          },
+        },
       },
     ];
   },
 
-  createContextProvider: function(btn, e) {
+  createContextProvider: function (btn, e) {
     const record = {
       agent_id: MODx.request.id,
     };
@@ -111,9 +117,9 @@ Ext.extend(modAIAdmin.grid.AgentContextProviders, MODx.grid.Grid, {
           fn: function () {
             this.refresh();
           },
-          scope: this
-        }
-      }
+          scope: this,
+        },
+      },
     });
 
     win.fp.getForm().setValues(record);
@@ -132,22 +138,22 @@ Ext.extend(modAIAdmin.grid.AgentContextProviders, MODx.grid.Grid, {
       params: {
         action: 'modAI\\Processors\\AgentContextProviders\\Remove',
         agent_id: MODx.request.id,
-        context_provider_id: this.menu.record.id
+        context_provider_id: this.menu.record.id,
       },
       listeners: {
         success: {
           fn: function (r) {
             this.refresh();
           },
-          scope: this
-        }
-      }
+          scope: this,
+        },
+      },
     });
 
     return true;
   },
 
-  viewContextProvider: function(btn, e) {
+  viewContextProvider: function (btn, e) {
     modAIAdmin.loadPage('context_provider/update', { id: this.menu.record.id });
   },
 
@@ -161,6 +167,6 @@ Ext.extend(modAIAdmin.grid.AgentContextProviders, MODx.grid.Grid, {
     const s = this.getStore();
     s.baseParams.search = value;
     this.getBottomToolbar().changePage(1);
-  }
+  },
 });
 Ext.reg('modai-grid-agent_context_providers', modAIAdmin.grid.AgentContextProviders);

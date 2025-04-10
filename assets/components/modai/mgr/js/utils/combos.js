@@ -338,3 +338,37 @@ modAIAdmin.combo.Agents = function (config, getStore) {
 };
 Ext.extend(modAIAdmin.combo.Agents, Ext.ux.form.SuperBoxSelect);
 Ext.reg('modai-combo-agents', modAIAdmin.combo.Agents);
+
+modAIAdmin.combo.SettingArea = function (config) {
+    const data = [
+        [
+            'text'
+        ],
+        [
+            'image'
+        ],
+        [
+            'vision'
+        ]
+    ];
+
+    config = config || {};
+    Ext.applyIf(config, {
+        store: new Ext.data.SimpleStore({
+            fields: ['v'],
+            data: data
+        }),
+        displayField: 'v',
+        valueField: 'v',
+        mode: 'local',
+        triggerAction: 'all',
+        editable: false,
+        selectOnFocus: false,
+        preventRender: true,
+        forceSelection: true,
+        enableKeyEvents: true,
+    });
+    modAIAdmin.combo.SettingArea.superclass.constructor.call(this, config);
+};
+Ext.extend(modAIAdmin.combo.SettingArea, MODx.combo.ComboBox);
+Ext.reg('modai-combo-setting_area', modAIAdmin.combo.SettingArea);

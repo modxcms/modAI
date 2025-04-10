@@ -17,6 +17,8 @@ class ModAIAgentCreateManagerController extends ModAIBaseManagerController
     {
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/combos.js');
 
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'agent/advanced_config.grid.js');
+
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'agent/panel.js');
         $this->addLastJavascript($this->modAI->getOption('mgrJsUrl') . 'agent/page.js');
 

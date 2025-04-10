@@ -4,3 +4,15 @@
     border-top-right-radius: 10px;
     background-color: rgba(255, 255, 255, 0.4);
 }
+
+.modai-admin--advanced_config_grid .x-grid3-scroller {
+    max-height: 200px;
+}
+
+.modai-admin--advanced_config_grid .x-grid3-scroller {
+    overflow-y: scroll !important;
+}
+
+.modai-admin--invalid_row {
+    background-color: #ffeaea;
+}

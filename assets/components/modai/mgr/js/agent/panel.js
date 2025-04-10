@@ -3,6 +3,13 @@ modAIAdmin.panel.Agent = function (config) {
 
   config.id = config.id || 'modai-panel-agent';
 
+  this.advancedConfigField = new Ext.form.Hidden({
+    name: 'advanced_config',
+  });
+  this.advancedConfig = new modAIAdmin.grid.AdvancedConfig({
+    fieldLabel: _('modai.admin.agent.advanced_config'),
+    initValue: config.record.advanced_config || [],
+  });
 
   Ext.applyIf(config, {
     border: false,
@@ -10,21 +17,32 @@ modAIAdmin.panel.Agent = function (config) {
     baseCls: 'modx-formpanel',
     url: MODx.config.connector_url,
     baseParams: {
-      action: 'modAI\\Processors\\Agents\\Update'
+      action: 'modAI\\Processors\\Agents\\Update',
     },
     items: this.getItems(config),
     listeners: {
       success: {
         fn: this.success,
-        scope: this
-      }
-    }
+        scope: this,
+      },
+    },
   });
 
   modAIAdmin.panel.Agent.superclass.constructor.call(this, config);
+
+  this.on(
+    'beforeSubmit',
+    function () {
+      this.advancedConfigField.setValue(this.advancedConfig.encode());
+    },
+    this,
+  );
 };
 
 Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
+  advancedConfig: null,
+  advancedConfigField: null,
+
   success: function (o, r) {
     if (this.config.isUpdate === false) {
       modAIAdmin.loadPage('agent/update', { id: o.result.object.id });
@@ -33,24 +51,31 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
 
   getItems: function (config) {
     return [
-      MODx.util.getHeaderBreadCrumbs({
-        html: ((config.isUpdate === true) ? _('modai.admin.agent.update') : _('modai.admin.agent.create')),
-        xtype: "modx-header"
-      }, [
+      MODx.util.getHeaderBreadCrumbs(
         {
-          text: _('modai.admin.home.page_title'),
-          href: '?a=home&namespace=modai',
+          html:
+            config.isUpdate === true
+              ? _('modai.admin.agent.update')
+              : _('modai.admin.agent.create'),
+          xtype: 'modx-header',
         },
-        {
-          text: _('modai.admin.home.agents'),
-          href: null,
-        }
-      ]),
+        [
+          {
+            text: _('modai.admin.home.page_title'),
+            href: '?a=home&namespace=modai',
+          },
+          {
+            text: _('modai.admin.home.agents'),
+            href: null,
+          },
+        ],
+      ),
       {
         name: 'id',
         xtype: 'hidden',
         value: config.record.id,
       },
+      this.advancedConfigField,
       this.getGeneralFields(config),
       config.isUpdate && this.getUpdateFields(config),
     ].filter(Boolean);
@@ -63,7 +88,7 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
         border: false,
         anchor: '100%',
         style: {
-          marginTop: '30px'
+          marginTop: '30px',
         },
         defaults: {
           layout: 'form',
@@ -71,15 +96,15 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
           labelSeparator: '',
           anchor: '100%',
           msgTarget: 'under',
-          border: false
+          border: false,
         },
         items: [
           {
-            columnWidth: .5,
+            columnWidth: 0.5,
             border: false,
             defaults: {
               msgTarget: 'under',
-              anchor: '100%'
+              anchor: '100%',
             },
             items: [
               {
@@ -89,12 +114,13 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
                 },
                 defaults: {
                   msgTarget: 'under',
-                  anchor: '100%'
+                  anchor: '100%',
                 },
                 layout: 'form',
                 msgTarget: 'under',
                 bodyCssClass: 'main-wrapper',
                 autoHeight: true,
+                collapsible: true,
                 hideMode: 'offsets',
                 items: [
                   {
@@ -111,14 +137,14 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
                     name: 'description',
                     msgTarget: 'under',
                     value: config.record.description,
-                    allowBlank: true
+                    allowBlank: true,
                   },
-                ]
+                ],
               },
-            ]
+            ],
           },
           {
-            columnWidth: .5,
+            columnWidth: 0.5,
             border: false,
             items: [
               {
@@ -128,11 +154,12 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
                 },
                 defaults: {
                   msgTarget: 'under',
-                  anchor: '100%'
+                  anchor: '100%',
                 },
                 layout: 'form',
                 bodyCssClass: 'main-wrapper',
                 autoHeight: true,
+                collapsible: true,
                 hideMode: 'offsets',
                 items: [
                   {
@@ -144,12 +171,22 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
                     value: config.record.enabled ?? 1,
                   },
                   {
+                    xtype: 'label',
+                    html: _('modai.admin.agent.enabled_desc'),
+                    cls: 'desc-under',
+                  },
+                  {
                     fieldLabel: _('modai.admin.agent.model'),
                     xtype: 'textfield',
                     name: 'model',
                     msgTarget: 'under',
                     value: config.record.model,
-                    allowBlank: true
+                    allowBlank: true,
+                  },
+                  {
+                    xtype: 'label',
+                    html: _('modai.admin.agent.model_desc'),
+                    cls: 'desc-under',
                   },
                   {
                     fieldLabel: _('modai.admin.agent.prompt'),
@@ -157,14 +194,27 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
                     name: 'prompt',
                     msgTarget: 'under',
                     value: config.record.prompt,
-                    allowBlank: true
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
+                    allowBlank: true,
+                    grow: true,
+                    growMax: 300,
+                  },
+                  {
+                    xtype: 'label',
+                    html: _('modai.admin.agent.prompt_desc'),
+                    cls: 'desc-under',
+                  },
+                  this.advancedConfig,
+                  {
+                    xtype: 'label',
+                    html: _('modai.admin.agent.advanced_config_desc'),
+                    cls: 'desc-under',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     ];
   },
 
@@ -175,7 +225,7 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
         border: false,
         anchor: '100%',
         style: {
-          marginTop: '30px'
+          marginTop: '30px',
         },
         defaults: {
           layout: 'form',
@@ -183,15 +233,15 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
           labelSeparator: '',
           anchor: '100%',
           msgTarget: 'under',
-          border: false
+          border: false,
         },
         items: [
           {
-            columnWidth: .5,
+            columnWidth: 0.5,
             border: false,
             defaults: {
               msgTarget: 'under',
-              anchor: '100%'
+              anchor: '100%',
             },
             items: [
               {
@@ -201,23 +251,24 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
                 },
                 defaults: {
                   msgTarget: 'under',
-                  anchor: '100%'
+                  anchor: '100%',
                 },
                 layout: 'form',
                 msgTarget: 'under',
                 bodyCssClass: 'main-wrapper',
                 autoHeight: true,
+                collapsible: true,
                 hideMode: 'offsets',
                 items: [
                   {
-                    xtype: 'modai-grid-agent_tools'
-                  }
-                ]
+                    xtype: 'modai-grid-agent_tools',
+                  },
+                ],
               },
-            ]
+            ],
           },
           {
-            columnWidth: .5,
+            columnWidth: 0.5,
             border: false,
             items: [
               {
@@ -227,23 +278,24 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
                 },
                 defaults: {
                   msgTarget: 'under',
-                  anchor: '100%'
+                  anchor: '100%',
                 },
                 layout: 'form',
                 bodyCssClass: 'main-wrapper',
                 autoHeight: true,
+                collapsible: true,
                 hideMode: 'offsets',
                 items: [
                   {
-                    xtype: 'modai-grid-agent_context_providers'
+                    xtype: 'modai-grid-agent_context_providers',
                   },
-                ]
-              }
-            ]
-          }
-        ]
-      }
+                ],
+              },
+            ],
+          },
+        ],
+      },
     ];
-  }
+  },
 });
 Ext.reg('modai-panel-agent', modAIAdmin.panel.Agent);

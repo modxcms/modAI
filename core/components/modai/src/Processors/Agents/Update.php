@@ -25,6 +25,12 @@ class Update extends UpdateProcessor
             return false;
         }
 
+        $advancedConfig = $this->getProperty('advanced_config');
+        $advancedConfig = json_decode($advancedConfig, true);
+        if (empty($advancedConfig)) {
+            $this->setProperty('advanced_config', null);
+        }
+
         return parent::beforeSet();
     }
 }

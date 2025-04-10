@@ -47,7 +47,7 @@ class Update extends UpdateProcessor
             }
         }
 
-        $this->setProperty('config', $configValues);
+        $this->setProperty('config', empty($configValues) ? null : $configValues);
 
         return parent::beforeSet();
     }

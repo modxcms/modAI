@@ -2,7 +2,7 @@ modAIAdmin.grid.RelatedAgents = function (config) {
   config = config || {};
 
   if (!config.relatedObject) {
-    console.error('relatedObject property is required for modAIAdmin.grid.RelatedAgents.')
+    console.error('relatedObject property is required for modAIAdmin.grid.RelatedAgents.');
   }
 
   Ext.applyIf(config, {
@@ -12,7 +12,7 @@ modAIAdmin.grid.RelatedAgents = function (config) {
       ...config.relatedObject,
     },
     preventSaveRefresh: false,
-    fields: ['id', 'name', 'description', 'model'],
+    fields: ['id', 'name', 'description', 'model', 'enabled'],
     paging: true,
     remoteSort: true,
     emptyText: _('modai.admin.global.no_records'),
@@ -30,10 +30,11 @@ modAIAdmin.grid.RelatedAgents = function (config) {
         width: 0.2,
         sortable: true,
         hidden: false,
-      },  {
+      },
+      {
         header: _('modai.admin.agent.description'),
         dataIndex: 'description',
-        width: 0.7,
+        width: 0.5,
         sortable: true,
         hidden: false,
       },
@@ -41,6 +42,13 @@ modAIAdmin.grid.RelatedAgents = function (config) {
         header: _('modai.admin.agent.model'),
         dataIndex: 'model',
         width: 0.2,
+        hidden: false,
+      },
+      {
+        header: _('modai.admin.agent.enabled'),
+        dataIndex: 'enabled',
+        renderer: this.rendYesNo,
+        width: 0.1,
         hidden: false,
       },
     ],
@@ -54,14 +62,14 @@ Ext.extend(modAIAdmin.grid.RelatedAgents, MODx.grid.Grid, {
 
     m.push({
       text: _('modai.admin.related_agent.view'),
-      handler: this.viewRelatedAgent
+      handler: this.viewRelatedAgent,
     });
 
     m.push('-');
 
     m.push({
       text: _('modai.admin.related_agent.remove'),
-      handler: this.removeRelatedAgent
+      handler: this.removeRelatedAgent,
     });
 
     return m;
@@ -96,7 +104,7 @@ Ext.extend(modAIAdmin.grid.RelatedAgents, MODx.grid.Grid, {
             scope: this,
           },
         },
-      }
+      },
     ];
   },
 
@@ -113,9 +121,9 @@ Ext.extend(modAIAdmin.grid.RelatedAgents, MODx.grid.Grid, {
           fn: function () {
             this.refresh();
           },
-          scope: this
-        }
-      }
+          scope: this,
+        },
+      },
     });
 
     win.fp.getForm().setValues(record);
@@ -124,7 +132,7 @@ Ext.extend(modAIAdmin.grid.RelatedAgents, MODx.grid.Grid, {
     return true;
   },
 
-  viewRelatedAgent: function(btn, e) {
+  viewRelatedAgent: function (btn, e) {
     modAIAdmin.loadPage('agent/update', { id: this.menu.record.id });
   },
 
@@ -145,9 +153,9 @@ Ext.extend(modAIAdmin.grid.RelatedAgents, MODx.grid.Grid, {
           fn: function (r) {
             this.refresh();
           },
-          scope: this
-        }
-      }
+          scope: this,
+        },
+      },
     });
 
     return true;

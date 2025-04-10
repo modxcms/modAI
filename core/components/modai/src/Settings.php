@@ -10,6 +10,25 @@ class Settings
     private static function getOption(modX $modx, string $namespace, string $field, string $area, string $setting): ?string
     {
         if (!empty($field)) {
+            $value = $modx->getOption("#sys.$field.$area.$setting");
+            if ($value !== null && $value !== '') {
+                return $value;
+            }
+        }
+
+        $value = $modx->getOption("#sys.global.$area.$setting");
+        if ($value !== null && $value !== '') {
+            return $value;
+        }
+
+        // {#sys}.{content}.{text.model}
+        // {#sys}.{global}.{text.model}
+        // {tinymce.modai}.{content}.{text.model}
+        // {tinymce.modai}.{global}.{text.model}
+        // {modai}.{content}.{text.model}
+        // {modai}.{global}.{text.model}
+
+        if (!empty($field)) {
             $value = $modx->getOption("$namespace.$field.$area.$setting");
             if ($value !== null && $value !== '') {
                 return $value;
@@ -45,11 +64,6 @@ class Settings
      */
     public static function getTextSetting(modX $modx, string $field, string $setting, string $namespace = 'modai', bool $required = true): ?string
     {
-        // modai.global.text.model
-        // modai.res.description.text.model
-        // modai.tv.image.text.model
-        // medaibrowser.vision.model
-        // medaibrowser.vision.prompt = 'custom prompt
         $value = self::getOption($modx, $namespace, $field, 'text', $setting);
 
         if ($required && ($value === null || $value === '')) {

@@ -21,6 +21,7 @@ class Agent extends \modAI\Model\Agent
             'prompt' => '',
             'model' => '',
             'enabled' => 0,
+            'advanced_config' => NULL,
         ),
         'fieldMeta' => 
         array (
@@ -61,6 +62,12 @@ class Agent extends \modAI\Model\Agent
                 'phptype' => 'boolean',
                 'null' => false,
                 'default' => 0,
+            ),
+            'advanced_config' => 
+            array (
+                'dbtype' => 'text',
+                'phptype' => 'json',
+                'null' => true,
             ),
         ),
         'indexes' => 

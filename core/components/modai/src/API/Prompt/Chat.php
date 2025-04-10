@@ -33,6 +33,10 @@ class Chat extends API
             throw new LexiconException('modai.error.prompt_required');
         }
 
+        if (!empty($model)) {
+            $this->modx->setOption('#sys.global.text.model', $model);
+        }
+
         if (!empty($agent)) {
             /** @var Agent $agent */
             $agent = $this->modx->getObject(Agent::class, ['name' => $agent]);
@@ -41,14 +45,50 @@ class Chat extends API
             }
 
             if (!empty($agent->model)) {
-                $model = $agent->model;
+                $this->modx->setOption('#sys.global.text.model', $agent->model);
+            }
+
+            $advancedConfig = $agent->get('advanced_config');
+            if (!empty($advancedConfig)) {
+                $cfgCustomOptions = [];
+                foreach ($advancedConfig as $cfgItem) {
+                    if (in_array($cfgItem['setting'], ['stream', 'model', 'temperature', 'max_tokens', 'base_output', 'base_prompt'])) {
+                        $this->modx->setOption("#sys.{$cfgItem['field']}.{$cfgItem['area']}.{$cfgItem['setting']}", $cfgItem['value']);
+                        continue;
+                    }
+
+                    if ($cfgItem['setting'] == 'custom_options') {
+                        if (!isset($cfgCustomOptions["{$cfgItem['field']}.{$cfgItem['area']}"])) {
+                            $cfgCustomOptions["{$cfgItem['field']}.{$cfgItem['area']}"] = [];
+                        }
+
+                        $cfgCustomOptions["{$cfgItem['field']}.{$cfgItem['area']}"] = array_merge($cfgCustomOptions["{$cfgItem['field']}.{$cfgItem['area']}"], json_decode($cfgItem['value'], true));
+                        continue;
+                    }
+
+                    if (!isset($cfgCustomOptions["{$cfgItem['field']}.{$cfgItem['area']}"])) {
+                        $cfgCustomOptions["{$cfgItem['field']}.{$cfgItem['area']}"] = [];
+                    }
+                    $cfgCustomOptions["{$cfgItem['field']}.{$cfgItem['area']}"][$cfgItem['setting']] = $cfgItem['value'];
+                }
+
+                if (!empty($cfgCustomOptions)) {
+                    foreach ($cfgCustomOptions as $customOptionsKey => $customOptionsValue) {
+                        if (empty($customOptionsValue)) {
+                            continue;
+                        }
+
+                        $this->modx->setOption("#sys.$customOptionsKey.custom_options", json_encode($customOptionsValue));
+                    }
+
+                }
             }
         }
 
         $systemInstructions = [];
 
         $stream = intval(Settings::getTextSetting($this->modx, $field, 'stream', $namespace)) === 1;
-        $model = !empty($model) ? $model : Settings::getTextSetting($this->modx, $field, 'model', $namespace);
+        $model = Settings::getTextSetting($this->modx, $field, 'model', $namespace);
         $temperature = (float)Settings::getTextSetting($this->modx, $field, 'temperature', $namespace);
         $maxTokens = (int)Settings::getTextSetting($this->modx, $field, 'max_tokens', $namespace);
         $output = Settings::getTextSetting($this->modx, $field, 'base_output', $namespace, false);

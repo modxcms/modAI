@@ -18,17 +18,17 @@ class ToolClass extends Processor
 
         $registeredTools = $this->modx->invokeEvent('modAIOnToolRegister');
         foreach ($registeredTools as $registeredTool) {
-            if ($this->validateClassName($registeredTool, $query)) {
-                $classes[] = $registeredTool;
-                continue;
-            }
-
             if (is_array($registeredTool)) {
                 foreach ($registeredTool as $tool) {
                     if ($this->validateClassName($tool, $query)) {
                         $classes[] = $tool;
                     }
                 }
+                continue;
+            }
+
+            if ($this->validateClassName($registeredTool, $query)) {
+                $classes[] = $registeredTool;
             }
         }
 
