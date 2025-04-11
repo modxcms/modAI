@@ -1,15 +1,6 @@
-# Configuration and Initialization
+# Initialization
 
 The configuration system provides a way to set up and initialize the application with necessary settings and resources.
-
-## AvailableAgent Type
-
-Represents an available AI agent in the system.
-
-### Properties
-- `id` (string): Unique identifier for the agent
-- `name` (string): Display name of the agent
-- `contextProviders` (string[] | null): List of context providers supported by the agent
 
 ## Config Type
 
@@ -25,7 +16,7 @@ Defines the application configuration structure.
 
 ## Initialization
 
-The `init` function sets up the application with the provided configuration.
+The `ModAI.init` function sets up the application with the provided configuration. It's recommended to get the config from the modAI service class `$modAI->getBaseConfig()`. 
 
 ### Parameters
 - `config` (Config): Application configuration object
@@ -41,20 +32,33 @@ An object containing initialized modules:
 
 ## Example
 
-```typescript
-const config = {
-  name: "My AI Application",
-  assetsURL: "https://example.com/assets",
-  apiURL: "https://api.example.com",
-  cssURL: "https://example.com/styles.css",
-  availableAgents: {
-    "agent1": {
-      id: "agent1",
-      name: "Primary Agent",
-      contextProviders: ["context1", "context2"]
-    }
-  }
-};
+```php
+if (!$modx->services->has('modai')) {
+    return;
+}
 
-const app = init(config);
+/** @var \modAI\modAI | null $modAI */
+$modAI = $modx->services->get('modai');
+
+if ($modAI === null) {
+    return;
+}
+
+foreach ($modAI->getUILexiconTopics() as $topic) {
+    $modx->controller->addLexiconTopic($topic);
+}
+
+$baseConfig = $modAI->getBaseConfig();
+$modx->controller->addHtml('
+    <script type="text/javascript">
+    if (typeof modAI === "undefined") {
+        let modAI;
+        Ext.onReady(function() {
+            modAI = ModAI.init(' . json_encode($baseConfig) . ');
+        });
+    }
+    </script>
+');
+
+$this->modx->regClientStartupScript($this->modAI->getJSFile());
 ``` 
