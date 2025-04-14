@@ -117,6 +117,8 @@
         <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
         <field key="advanced_config" dbtype="text" phptype="json" null="yes" />
 
+        <field key="user_groups" dbtype="text" phptype="json" null="yes" />
+
         <index alias="enabled" name="enabled" primary="false" unique="false" type="BTREE">
             <column key="enabled" length="" collation="A" null="false" />
         </index>

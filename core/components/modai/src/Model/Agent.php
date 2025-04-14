@@ -11,6 +11,7 @@ use xPDO\xPDO;
  * @property string $prompt
  * @property string $model
  * @property null | array $advanced_config
+ * @property null | array $user_groups
  * @property boolean $enabled
  *
  * @property \modAI\Model\AgentTool[] $AgentTools

@@ -188,7 +188,7 @@ class modAI
         $c->where([
             'enabled' => true,
         ]);
-        $c->select($this->modx->getSelectColumns(\modAI\Model\Agent::class, 'Agent', '', ['name']));
+        $c->select($this->modx->getSelectColumns(\modAI\Model\Agent::class, 'Agent', '', ['name', 'user_groups']));
         $c->select([
             "GROUP_CONCAT(ContextProvider.name SEPARATOR ',') AS context_providers"
         ]);
@@ -198,7 +198,18 @@ class modAI
 
         $output = [];
 
+        $userGroups = $this->modx->user->getUserGroups();
+
         while ($row = $c->stmt->fetch(\PDO::FETCH_ASSOC)) {
+            if (!$this->modx->user->sudo && $row['user_groups'] !== null) {
+                $agentGroups = json_decode($row['user_groups'], true);
+                $match = array_intersect($agentGroups, $userGroups);
+
+                if (count($match) === 0) {
+                    continue;
+                }
+            }
+
             $output[$row['name']] = [
                 'id' => $row['name'],
                 'name' => $row['name'],
@@ -235,7 +246,7 @@ class modAI
     {
         return [
             'modai_client' => (int)$this->modx->hasPermission('modai_client'),
-            'modai_client_chat_text' => 0,//(int)$this->modx->hasPermission('modai_client_chat_text'),
+            'modai_client_chat_text' => (int)$this->modx->hasPermission('modai_client_chat_text'),
             'modai_client_chat_image' => (int)$this->modx->hasPermission('modai_client_chat_image'),
             'modai_client_text' => (int)$this->modx->hasPermission('modai_client_text'),
             'modai_client_vision' => (int)$this->modx->hasPermission('modai_client_vision'),

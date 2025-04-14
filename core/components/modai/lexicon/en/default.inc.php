@@ -72,6 +72,7 @@ $_lang['modai.admin.agent.advanced_config.setting'] = 'Setting';
 $_lang['modai.admin.agent.advanced_config.value'] = 'Value';
 $_lang['modai.admin.agent.advanced_config.add_option'] = 'Add Option';
 $_lang['modai.admin.agent.advanced_config.remove_option'] = 'Remove Option';
+$_lang['modai.admin.agent.user_groups'] = 'User Groups';
 
 $_lang['modai.admin.agent_tool.create'] = 'Assign Tool';
 $_lang['modai.admin.agent_tool.remove'] = 'Unassign Tool';

@@ -30,6 +30,16 @@ class Run extends API
             if (!$agent) {
                 throw new LexiconException('modai.error.invalid_agent');
             }
+
+            $userGroups = $this->modx->user->getUserGroups();
+            $agentGroups = $agent->get('user_groups');
+            if (!$this->modx->user->sudo && $agentGroups !== null) {
+                $match = array_intersect($agentGroups, $userGroups);
+
+                if (count($match) === 0) {
+                    throw new LexiconException('modai.error.invalid_agent');
+                }
+            }
         }
 
         $content = [];

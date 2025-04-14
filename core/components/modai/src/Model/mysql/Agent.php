@@ -22,6 +22,7 @@ class Agent extends \modAI\Model\Agent
             'model' => '',
             'enabled' => 0,
             'advanced_config' => NULL,
+            'user_groups' => NULL,
         ),
         'fieldMeta' => 
         array (
@@ -64,6 +65,12 @@ class Agent extends \modAI\Model\Agent
                 'default' => 0,
             ),
             'advanced_config' => 
+            array (
+                'dbtype' => 'text',
+                'phptype' => 'json',
+                'null' => true,
+            ),
+            'user_groups' => 
             array (
                 'dbtype' => 'text',
                 'phptype' => 'json',

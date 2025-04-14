@@ -140,6 +140,11 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
                     value: config.record.description,
                     allowBlank: true,
                   },
+                  {
+                    fieldLabel: _('modai.admin.agent.user_groups'),
+                    xtype: 'modai-combo-user_groups',
+                    value: Array.isArray(config.record.user_groups) ? config.record.user_groups.join(',') : '',
+                  }
                 ],
               },
             ],

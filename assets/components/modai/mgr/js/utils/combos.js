@@ -372,3 +372,53 @@ modAIAdmin.combo.SettingArea = function (config) {
 };
 Ext.extend(modAIAdmin.combo.SettingArea, MODx.combo.ComboBox);
 Ext.reg('modai-combo-setting_area', modAIAdmin.combo.SettingArea);
+
+modAIAdmin.combo.UserGroups = function (config, getStore) {
+    config = config || {};
+
+    Ext.applyIf(config, {
+        name: 'user_groups',
+        hiddenName: 'user_groups[]',
+        displayField: 'name',
+        valueField: 'id',
+        fields: ['name', 'id', 'description'],
+        mode: 'remote',
+        triggerAction: 'all',
+        typeAhead: false,
+        editable: true,
+        forceSelection: true,
+        queryParam: 'query',
+        queryValuesDelimiter: ',',
+        minChars: 0,
+        pageSize: 20,
+        url: MODx.config.connector_url,
+        clearBtnCls: 'x-form-trigger',
+        expandBtnCls: 'x-form-trigger',
+        baseParams: {
+            action: 'modAI\\Processors\\Combos\\UserGroups'
+        },
+        tpl: new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span style="font-weight: bold">{name:htmlEncode}</span>'
+          ,'<br />{description:htmlEncode}</div></tpl>')
+    });
+    Ext.applyIf(config, {
+        store: new Ext.data.JsonStore({
+            url: config.url,
+            root: 'results',
+            totalProperty: 'total',
+            fields: config.fields,
+            errorReader: MODx.util.JSONReader,
+            baseParams: config.baseParams || {},
+            remoteSort: config.remoteSort || false,
+            autoDestroy: true
+        })
+    });
+    if (getStore === true) {
+        config.store.load();
+        return config.store;
+    }
+    modAIAdmin.combo.Agents.superclass.constructor.call(this, config);
+    this.config = config;
+    return this;
+};
+Ext.extend(modAIAdmin.combo.UserGroups, Ext.ux.form.SuperBoxSelect);
+Ext.reg('modai-combo-user_groups', modAIAdmin.combo.UserGroups);

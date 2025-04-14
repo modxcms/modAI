@@ -49,6 +49,16 @@ class Chat extends API
                 throw new LexiconException('modai.error.invalid_agent');
             }
 
+            $userGroups = $this->modx->user->getUserGroups();
+            $agentGroups = $agent->get('user_groups');
+            if (!$this->modx->user->sudo && $agentGroups !== null) {
+                $match = array_intersect($agentGroups, $userGroups);
+
+                if (count($match) === 0) {
+                    throw new LexiconException('modai.error.invalid_agent');
+                }
+            }
+
             if (!empty($agent->model)) {
                 $this->modx->setOption('#sys.global.text.model', $agent->model);
             }

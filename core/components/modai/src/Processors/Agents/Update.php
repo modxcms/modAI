@@ -32,6 +32,12 @@ class Update extends UpdateProcessor
             $this->setProperty('advanced_config', null);
         }
 
+        $userGroups = $this->getProperty('user_groups');
+        $userGroups = array_filter($userGroups);
+        if (empty($userGroups)) {
+            $this->setProperty('user_groups', null);
+        }
+
         return parent::beforeSet();
     }
 }
