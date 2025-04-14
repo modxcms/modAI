@@ -20,7 +20,13 @@ import type {
 } from '../../chatHistory';
 
 export const addUserMessage = (msg: UserMessage) => {
-  const messageElement: UpdatableHTMLElement<UserMessage> = createElement('div', 'message user');
+  const messageWrapper: UpdatableHTMLElement<UserMessage> = createElement(
+    'div',
+    'message-wrapper user',
+  );
+  messageWrapper.style.setProperty('--user-msg-height', '-10px');
+
+  const messageElement = createElement('div', 'message user');
 
   const textContent = msg.content;
   const imagesContent = [];
@@ -35,7 +41,7 @@ export const addUserMessage = (msg: UserMessage) => {
   textDiv.innerHTML = nlToBr(textContent);
   messageElement.appendChild(textDiv);
 
-  if (imagesContent) {
+  if (imagesContent.length > 0) {
     const imageRow = createElement('div', 'imageRow');
 
     for (const imgContent of imagesContent) {
@@ -103,20 +109,22 @@ export const addUserMessage = (msg: UserMessage) => {
 
   messageElement.appendChild(actionsContainer);
 
-  messageElement.update = (msg) => {
+  messageWrapper.update = (msg) => {
     const textContent = Array.isArray(msg.content) ? msg.content[0].value : msg.content;
     textDiv.innerHTML = nlToBr(textContent);
   };
 
-  globalState.modal.chatMessages.appendChild(messageElement);
+  messageWrapper.appendChild(messageElement);
+  globalState.modal.chatMessages.appendChild(messageWrapper);
 
-  return messageElement;
+  return messageWrapper;
 };
 
 export const addErrorMessage = (content: string) => {
   globalState.modal.welcomeMessage.style.display = 'none';
 
-  const messageElement: UpdatableHTMLElement = createElement('div', 'message error');
+  const messageWrapper: UpdatableHTMLElement = createElement('div', 'message-wrapper error');
+  const messageElement = createElement('div', 'message error');
 
   messageElement.appendChild(icon(14, triangleError));
 
@@ -124,15 +132,27 @@ export const addErrorMessage = (content: string) => {
   textSpan.textContent = content;
   messageElement.appendChild(textSpan);
 
-  globalState.modal.chatMessages.appendChild(messageElement);
+  messageWrapper.appendChild(messageElement);
 
-  return messageElement;
+  globalState.modal.chatMessages.appendChild(messageWrapper);
+
+  return messageWrapper;
 };
 
 export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConfig) => {
-  const messageElement: UpdatableHTMLElement<AssistantMessage> = createElement('div', 'message ai');
-  messageElement.dataset.id = msg.id;
+  const messageWrapper: UpdatableHTMLElement<AssistantMessage> = createElement(
+    'div',
+    'message-wrapper ai',
+  );
+  if (globalState.modal.chatMessages.lastElementChild?.firstElementChild) {
+    messageWrapper.style.setProperty(
+      '--user-msg-height',
+      `${globalState.modal.chatMessages.lastElementChild.firstElementChild.clientHeight}px`,
+    );
+  }
 
+  const messageElement = createElement('div', 'message ai');
+  messageElement.dataset.id = msg.id;
   const md = markdownit({
     html: true,
     xhtmlOut: true,
@@ -280,15 +300,17 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
 
   messageElement.appendChild(actionsContainer);
 
-  globalState.modal.chatMessages.appendChild(messageElement);
+  messageWrapper.appendChild(messageElement);
 
-  messageElement.update = (msg) => {
+  globalState.modal.chatMessages.appendChild(messageWrapper);
+
+  messageWrapper.update = (msg) => {
     const content =
       msg.contentType === 'image' ? `<img src="${textContent}" />` : md.render(msg.content ?? '');
     shadow.updateContent(content);
   };
 
-  return messageElement;
+  return messageWrapper;
 };
 
 export const renderMessage = (msg: Message, config: LocalChatConfig) => {

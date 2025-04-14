@@ -14,7 +14,7 @@ type LocalChat = {
 
 export const ui = {
   createLoadingOverlay,
-  localChat: Object.assign({}, createModal, {
+  localChat: Object.assign(createModal, {
     createModal: createModal,
     verifyPermissions,
   }) as LocalChat,

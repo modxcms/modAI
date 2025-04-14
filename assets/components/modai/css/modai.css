@@ -33,6 +33,8 @@
     --border-radius: 12px;
     --border-radius-inner: 1px;
     --icon-size: 20px;
+
+    --user-msg-height: 54px;
 }
 .icon {
     display: flex;
@@ -143,177 +145,188 @@
             gap: var(--spacing-md);
             margin-bottom: var(--spacing-md);
 
-            .message {
-                padding: var(--spacing-md);
-                border-radius: var(--border-radius);
-                position: relative;
-                font-size: 16px;
-                max-width: 80%;
+            .message-wrapper {
+                display: flex;
+                flex-direction: column;
 
-                &.user {
-                    min-width: 100px;
-                    align-self: flex-end;
-                    background-color: var(--primary-dark);
-                    color: var(--text-light);
-                    border-top-right-radius: var(--border-radius-inner);
+                &:last-of-type {
+                    min-height: calc(472px - var(--user-msg-height) - 50px)
                 }
 
                 &.ai {
-                    max-width: 100%;
-                    align-self: flex-start;
-                    background-color: #f1f1f2;
-                    color: var(--text-dark);
-                    border-top-left-radius: var(--border-radius-inner);
-                    width: 100%;
-                    box-sizing: border-box;
-
-                    &:last-of-type .actions {
+                    &:last-of-type .message .actions {
                         opacity: 1;
                     }
 
-                    &:last-of-type .info {
+                    &:last-of-type .message .info {
                         opacity: 0.8;
                     }
                 }
 
-                &.error {
-                    max-width: 100%;
-                    align-self: flex-start;
-                    background-color: #e44848;
-                    color: var(--text-light);
-                    width: 100%;
-                    box-sizing: border-box;
-                    align-items: center;
-                    display: flex;
-                    gap: 10px;
-                }
+                .message {
+                    padding: var(--spacing-md);
+                    border-radius: var(--border-radius);
+                    position: relative;
+                    font-size: 16px;
+                    max-width: 80%;
 
-                .imageRow {
-                    padding-top: var(--spacing-md);
-                    display: flex;
-                    gap: var(--spacing-sm);
-
-                    div {
-                        width: 65px;
-                        height: 65px;
-                        border-radius: 5px;
-                        overflow: hidden;
-                        border: 1px solid #e2e8f0;
-                        background-color: #f8fafc;
-
-                        img {
-                            width: 100%;
-                            height: 100%;
-                            object-fit: cover;
-                        }
-                    }
-                }
-
-                .actions {
-                    position: absolute;
-                    display: flex;
-                    gap: 0;
-                    opacity: 0;
-                    transition: opacity var(--transition-speed);
-                    background-color: white;
-                    border-radius: 28px;
-                    padding: 3px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                    z-index: 1;
-                    right: -6px;
-                    left: auto;
-                    bottom: -16.5px;
-
-                    &:hover,
-                    &:focus-within {
-                        opacity: 1;
+                    &.user {
+                        min-width: 100px;
+                        align-self: flex-end;
+                        background-color: var(--primary-dark);
+                        color: var(--text-light);
+                        border-top-right-radius: var(--border-radius-inner);
                     }
 
-                    .action-button {
-                        background: none;
-                        border: none;
-                        display: flex;
-                        align-items: center;
-                        gap: 4px;
-                        font-size: 12px;
+                    &.ai {
+                        max-width: 100%;
+                        align-self: flex-start;
+                        background-color: #f1f1f2;
                         color: var(--text-dark);
-                        cursor: pointer;
-                        padding: 4px 8px;
+                        border-top-left-radius: var(--border-radius-inner);
+                        width: 100%;
+                        box-sizing: border-box;
+                    }
+
+                    &.error {
+                        max-width: 100%;
+                        align-self: flex-start;
+                        background-color: #e44848;
+                        color: var(--text-light);
+                        width: 100%;
+                        box-sizing: border-box;
+                        align-items: center;
+                        display: flex;
+                        gap: 10px;
+                    }
+
+                    .imageRow {
+                        padding-top: var(--spacing-md);
+                        display: flex;
+                        gap: var(--spacing-sm);
+
+                        div {
+                            width: 65px;
+                            height: 65px;
+                            border-radius: 5px;
+                            overflow: hidden;
+                            border: 1px solid #e2e8f0;
+                            background-color: #f8fafc;
+
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                            }
+                        }
+                    }
+
+                    .actions {
+                        position: absolute;
+                        display: flex;
+                        gap: 0;
+                        opacity: 0;
+                        transition: opacity var(--transition-speed);
+                        background-color: white;
                         border-radius: 28px;
-                        line-height: 1;
+                        padding: 3px;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                        z-index: 1;
+                        right: -6px;
+                        left: auto;
+                        bottom: -16.5px;
 
-                        &:focus, &:hover {
-                            background-color: var(--border-light);
+                        &:hover,
+                        &:focus-within {
+                            opacity: 1;
                         }
 
-                        &:focus {
-                            outline: 2px solid var(--primary);
-                            outline-offset: 2px;
-                        }
+                        .action-button {
+                            background: none;
+                            border: none;
+                            display: flex;
+                            align-items: center;
+                            gap: 4px;
+                            font-size: 12px;
+                            color: var(--text-dark);
+                            cursor: pointer;
+                            padding: 4px 8px;
+                            border-radius: 28px;
+                            line-height: 1;
+
+                            &:focus, &:hover {
+                                background-color: var(--border-light);
+                            }
+
+                            &:focus {
+                                outline: 2px solid var(--primary);
+                                outline-offset: 2px;
+                            }
 
 
-                        .spinner {
-                            display: inline-block;
-                            margin-right: 5px;
-                            width: 12px;
-                            height: 12px;
-                            position: relative;
-                            animation-name: modai--spin-animation;
-                            animation-duration: 1s;
-                            animation-timing-function: linear;
-                            animation-iteration-count: infinite;
+                            .spinner {
+                                display: inline-block;
+                                margin-right: 5px;
+                                width: 12px;
+                                height: 12px;
+                                position: relative;
+                                animation-name: modai--spin-animation;
+                                animation-duration: 1s;
+                                animation-timing-function: linear;
+                                animation-iteration-count: infinite;
 
-                            .dot {
-                                position: absolute;
-                                width: 3px;
-                                height: 3px;
-                                background-color: currentColor;
-                                border-radius: 50%;
+                                .dot {
+                                    position: absolute;
+                                    width: 3px;
+                                    height: 3px;
+                                    background-color: currentColor;
+                                    border-radius: 50%;
 
-                                &.top {
-                                    top: 0;
-                                    left: 50%;
-                                    transform: translate(-50%, 0);
-                                }
+                                    &.top {
+                                        top: 0;
+                                        left: 50%;
+                                        transform: translate(-50%, 0);
+                                    }
 
-                                &.right {
-                                    top: 50%;
-                                    right: 0;
-                                    transform: translate(0, -50%);
-                                }
+                                    &.right {
+                                        top: 50%;
+                                        right: 0;
+                                        transform: translate(0, -50%);
+                                    }
 
-                                &.bottom {
-                                    bottom: 0;
-                                    left: 50%;
-                                    transform: translate(-50%, 0);
-                                }
+                                    &.bottom {
+                                        bottom: 0;
+                                        left: 50%;
+                                        transform: translate(-50%, 0);
+                                    }
 
-                                &.left {
-                                    top: 50%;
-                                    left: 0;
-                                    transform: translate(0, -50%);
+                                    &.left {
+                                        top: 50%;
+                                        left: 0;
+                                        transform: translate(0, -50%);
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                .info {
-                    position: absolute;
-                    font-size: 11px;
-                    color: #666;
-                    opacity: 0;
-                    bottom: -17px;
-                }
+                    .info {
+                        position: absolute;
+                        font-size: 11px;
+                        color: #666;
+                        opacity: 0;
+                        bottom: -17px;
+                    }
 
-                &:hover .actions,
-                &:focus-within .actions {
-                    opacity: 1;
-                }
+                    &:hover .actions,
+                    &:focus-within .actions {
+                        opacity: 1;
+                    }
 
-                &:hover .info,
-                &:focus-within .info {
-                    opacity: 0.8;
+                    &:hover .info,
+                    &:focus-within .info {
+                        opacity: 0.8;
+                    }
                 }
             }
         }

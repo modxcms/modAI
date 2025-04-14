@@ -33,6 +33,13 @@ export const createModal = (config: LocalChatConfig) => {
     return;
   }
 
+  /**
+   * @deprecated
+   */
+  if (!config.type) {
+    config.type = 'text';
+  }
+
   if (!config.type) {
     alert(lng('modai.error.type_required'));
     return;
