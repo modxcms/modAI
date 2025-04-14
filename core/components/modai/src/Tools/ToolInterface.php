@@ -35,6 +35,8 @@ interface ToolInterface
      */
     public static function getDescription(): string;
 
+    public static function checkPermissions(): bool;
+
     /**
      * Set the parameters that the LLM should or must provide when calling your function. Has to return valid JSON-schema.
      *

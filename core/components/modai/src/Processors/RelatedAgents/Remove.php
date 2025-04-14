@@ -11,6 +11,7 @@ class Remove extends RemoveProcessor
 {
     public $languageTopics = ['modai:default'];
     public $objectType = 'modai.admin.agent_tool';
+    public $permission = 'modai_admin_related_agent_delete';
 
     public function initialize()
     {

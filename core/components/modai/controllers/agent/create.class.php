@@ -16,6 +16,7 @@ class ModAIAgentCreateManagerController extends ModAIBaseManagerController
     public function loadCustomCssJs()
     {
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/combos.js');
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/acl_grid.js');
 
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'agent/advanced_config.grid.js');
 
@@ -26,7 +27,8 @@ class ModAIAgentCreateManagerController extends ModAIBaseManagerController
         <script type="text/javascript">
             Ext.onReady(function() {
                 MODx.load({ 
-                    xtype: "modai-page-agent"
+                    xtype: "modai-page-agent",
+                    permissions: ' . json_encode($this->permissions) . '
                 });
             });
         </script>

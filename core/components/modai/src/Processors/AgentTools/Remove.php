@@ -11,6 +11,7 @@ class Remove extends RemoveProcessor
     public $classKey = AgentTool::class;
     public $languageTopics = ['modai:default'];
     public $objectType = 'modai.admin.agent_tool';
+    public $permission = 'modai_admin_agent_tool_delete';
 
     public function initialize()
     {

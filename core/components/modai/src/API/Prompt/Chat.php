@@ -3,6 +3,7 @@
 namespace modAI\API\Prompt;
 
 use modAI\API\API;
+use modAI\Exceptions\APIException;
 use modAI\Exceptions\LexiconException;
 use modAI\Model\Agent;
 use modAI\Model\Tool;
@@ -16,6 +17,10 @@ class Chat extends API
 {
     public function post(ServerRequestInterface $request): void
     {
+        if (!$this->modx->hasPermission('modai_client_chat_text')) {
+            throw APIException::unauthorized();
+        }
+
         set_time_limit(0);
 
         $data = $request->getParsedBody();

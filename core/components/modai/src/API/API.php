@@ -2,6 +2,7 @@
 
 namespace modAI\API;
 
+use Cassandra\Exception\UnauthorizedException;
 use modAI\Exceptions\APIException;
 use modAI\Exceptions\LexiconException;
 use modAI\modAI;
@@ -27,6 +28,10 @@ abstract class API
         }
 
         if ($this->modAI) {
+            if (!$this->modx->hasPermission('modai_client')) {
+                throw APIException::unauthorized();
+            }
+
             foreach ($this->modAI->getUILexiconTopics() as $topic) {
                 $this->modx->lexicon->load($topic);
             }

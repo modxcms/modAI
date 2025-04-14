@@ -15,6 +15,7 @@ class GetList extends GetListProcessor
     public $defaultSortField = 'name';
     public $defaultSortDirection = 'ASC';
     public $objectType = 'modai.admin.agent';
+    public $permission = 'modai_admin_agents';
 
     public function prepareQueryBeforeCount(xPDOQuery $c)
     {

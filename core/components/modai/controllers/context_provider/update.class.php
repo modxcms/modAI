@@ -32,6 +32,7 @@ class ModAIContextProviderUpdateManagerController extends ModAIBaseManagerContro
     public function loadCustomCssJs()
     {
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/combos.js');
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/acl_grid.js');
 
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'related_agents/grid.js');
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'related_agents/window.js');
@@ -44,7 +45,8 @@ class ModAIContextProviderUpdateManagerController extends ModAIBaseManagerContro
             Ext.onReady(function() {
                 MODx.load({ 
                     xtype: "modai-page-context_provider",
-                    record: ' . $this->modx->toJSON($this->contextProviderData) . '
+                    record: ' . $this->modx->toJSON($this->contextProviderData) . ',
+                    permissions: ' . json_encode($this->permissions) . '
                 });
             });
         </script>

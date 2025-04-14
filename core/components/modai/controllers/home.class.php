@@ -4,8 +4,6 @@ require_once dirname(__FILE__, 2) . '/index.class.php';
 
 class ModAIHomeManagerController extends ModAIBaseManagerController
 {
-    protected $permissions = [];
-
     public function process(array $scriptProperties = [])
     {
     }
@@ -17,6 +15,8 @@ class ModAIHomeManagerController extends ModAIBaseManagerController
 
     public function loadCustomCssJs()
     {
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/acl_grid.js');
+
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/agents.grid.js');
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/tools.grid.js');
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/context_providers.grid.js');
@@ -29,6 +29,7 @@ class ModAIHomeManagerController extends ModAIBaseManagerController
             Ext.onReady(function() {
                 MODx.load({ 
                     xtype: "modai-page-home",
+                    permissions: ' . json_encode($this->permissions) . '
                 });
             });
         </script>

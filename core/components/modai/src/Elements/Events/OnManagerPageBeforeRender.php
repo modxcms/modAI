@@ -26,17 +26,19 @@ class OnManagerPageBeforeRender extends Event
         $baseConfig = $this->modAI->getBaseConfig();
         $this->modx->controller->addHtml('
                 <script type="text/javascript">
-                let modAI;
-                Ext.onReady(function() {
-                    modAI = ModAI.init(' . json_encode($baseConfig) . ');
-                    
-                     Ext.defer(function () {
-                       modAI.initOnResource({
-                          tvs:  ' . $this->modx->toJSON($this->modAI->getListOfTVsWithIDs()) . ',
-                          resourceFields:  ' . $this->modx->toJSON($this->modAI->getResourceFields()) . ',
-                        });
-                     }, 500);
-                });
+                if (typeof modAI === "undefined") {
+                    let modAI;
+                    Ext.onReady(function() {
+                        modAI = ModAI.init(' . json_encode($baseConfig) . ');
+                        
+                         Ext.defer(function () {
+                           modAI.initOnResource({
+                              tvs:  ' . $this->modx->toJSON($this->modAI->getListOfTVsWithIDs()) . ',
+                              resourceFields:  ' . $this->modx->toJSON($this->modAI->getResourceFields()) . ',
+                            });
+                         }, 500);
+                    });
+                }
                 </script>
             ');
 

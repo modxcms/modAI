@@ -1,6 +1,6 @@
 modAIAdmin.panel.Home = function (config) {
   config = config || {};
-  config.permission = config.permission || {};
+  config.permissions = config.permissions || {};
 
   this.state = Ext.state.Manager.getProvider();
 
@@ -45,38 +45,47 @@ Ext.extend(modAIAdmin.panel.Home, MODx.Panel, {
   getTopTabs: function (config) {
     var output = [];
 
-    output.push({
-      title: _('modai.admin.home.agents'),
-      items: [
-        {
-          xtype: 'modai-grid-agents',
-          preventRender: true,
-          cls: 'main-wrapper',
-        },
-      ],
-    });
+    if (config.permissions.modai_admin_agents) {
+      output.push({
+        title: _('modai.admin.home.agents'),
+        items: [
+          {
+            xtype: 'modai-grid-agents',
+            preventRender: true,
+            cls: 'main-wrapper',
+            permissions: config.permissions,
+          },
+        ],
+      });
+    }
 
-    output.push({
-      title: _('modai.admin.home.tools'),
-      items: [
-        {
-          xtype: 'modai-grid-tools',
-          preventRender: true,
-          cls: 'main-wrapper',
-        },
-      ],
-    });
+    if (config.permissions.modai_admin_tools) {
+      output.push({
+        title: _('modai.admin.home.tools'),
+        items: [
+          {
+            xtype: 'modai-grid-tools',
+            preventRender: true,
+            cls: 'main-wrapper',
+            permissions: config.permissions,
+          },
+        ],
+      });
+    }
 
-    output.push({
-      title: _('modai.admin.home.context_providers'),
-      items: [
-        {
-          xtype: 'modai-grid-context_providers',
-          preventRender: true,
-          cls: 'main-wrapper',
-        },
-      ],
-    });
+    if (config.permissions.modai_admin_context_providers) {
+      output.push({
+        title: _('modai.admin.home.context_providers'),
+        items: [
+          {
+            xtype: 'modai-grid-context_providers',
+            preventRender: true,
+            cls: 'main-wrapper',
+            permissions: config.permissions,
+          },
+        ],
+      });
+    }
 
     return output;
   },

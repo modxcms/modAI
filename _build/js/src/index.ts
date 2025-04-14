@@ -3,8 +3,11 @@ import { executor } from './executor';
 import { globalState } from './globalState';
 import { history } from './history';
 import { lng } from './lng';
+import { checkPermissions } from './permissions';
 import { initOnResource } from './resource';
 import { ui } from './ui';
+
+import type { Permissions } from './permissions';
 
 export type AvailableAgent = {
   id: string;
@@ -19,6 +22,7 @@ export type Config = {
   cssURL: string;
   translateFn?: (key: string, params?: Record<string, string>) => string;
   availableAgents: Record<string, AvailableAgent>;
+  permissions: Record<Permissions, 1 | 0>;
 };
 
 export const init = (config: Config) => {
@@ -31,5 +35,6 @@ export const init = (config: Config) => {
     ui,
     lng,
     initOnResource,
+    checkPermissions,
   };
 };

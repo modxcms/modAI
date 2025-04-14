@@ -6,6 +6,8 @@ abstract class ModAIBaseManagerController extends \MODX\Revolution\modExtraManag
 {
     public modAI $modAI;
 
+    protected array $permissions;
+
     public function initialize()
     {
         if (!$this->modx->services->has('modai')) {
@@ -32,9 +34,9 @@ abstract class ModAIBaseManagerController extends \MODX\Revolution\modExtraManag
         </script>');
 
 
-//        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/utils.js');
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/combos.js');
-//        $this->addJavascript($this->modAI->getOption('jsUrl') . 'utils/fields.js');
+
+        $this->loadPermissions();
 
         parent::initialize();
     }
@@ -44,8 +46,13 @@ abstract class ModAIBaseManagerController extends \MODX\Revolution\modExtraManag
         return ['modai:default'];
     }
 
+    protected function loadPermissions()
+    {
+        $this->permissions = $this->modAI->getAdminPermissions();
+    }
+
     public function checkPermissions()
     {
-        return true;
+        return $this->modx->hasPermission('modai_admin');
     }
 }

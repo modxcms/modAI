@@ -2,6 +2,7 @@
 namespace modAI\API\Context;
 
 use modAI\API\API;
+use modAI\Exceptions\APIException;
 use modAI\Exceptions\LexiconException;
 use modAI\Model\Agent;
 use modAI\Model\ContextProvider;
@@ -11,6 +12,10 @@ class Get extends API
 {
     public function post(ServerRequestInterface $request): void
     {
+        if (!$this->modx->hasPermission('modai_client_text')) {
+            throw APIException::unauthorized();
+        }
+
         $data = $request->getParsedBody();
         $prompt = $this->modx->getOption('prompt', $data);
         $agent = $this->modx->getOption('agent', $data);

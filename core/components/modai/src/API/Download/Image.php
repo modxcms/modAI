@@ -3,6 +3,7 @@
 namespace modAI\API\Download;
 
 use modAI\API\API;
+use modAI\Exceptions\APIException;
 use modAI\Exceptions\LexiconException;
 use modAI\Settings;
 use modAI\Utils;
@@ -15,6 +16,10 @@ class Image extends API
 
     public function post(ServerRequestInterface $request): void
     {
+        if (!$this->modx->hasPermission('modai_client_chat_image')) {
+            throw APIException::unauthorized();
+        }
+
         $data = $request->getParsedBody();
 
         $url = $this->modx->getOption('url', $data);

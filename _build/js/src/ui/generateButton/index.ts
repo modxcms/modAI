@@ -1,6 +1,7 @@
 import { executor } from '../../executor';
 import { history } from '../../history';
 import { lng } from '../../lng';
+import { checkPermissions } from '../../permissions';
 import { confirmDialog } from '../cofirmDialog';
 import { button } from '../dom/button';
 import { icon } from '../dom/icon';
@@ -114,8 +115,12 @@ type Target = {
 };
 
 const createLocalChat = (config: LocalChatConfig & Target) => {
+  if (!ui.localChat.verifyPermissions(config)) {
+    return;
+  }
+
   const { shadow } = createWandEl(() => {
-    ui.localChat(config);
+    ui.localChat.createModal(config);
   });
 
   config.targetEl.appendChild(shadow);
@@ -138,6 +143,10 @@ const createForcedTextPrompt = ({
   field,
   ...rest
 }: ForcedTextConfig) => {
+  if (!checkPermissions(['modai_client', 'modai_client_text'])) {
+    return;
+  }
+
   const { shadow, generate } = createWandEl<HistoryElement>(async () => {
     const done = createLoadingOverlay(input);
 
@@ -232,6 +241,10 @@ type VisionConfig = {
 };
 
 const createVisionPrompt = (config: VisionConfig & Target) => {
+  if (!checkPermissions(['modai_client', 'modai_client_vision'])) {
+    return;
+  }
+
   const { shadow } = createWandEl(async () => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');

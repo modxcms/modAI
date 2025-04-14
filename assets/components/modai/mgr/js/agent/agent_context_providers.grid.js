@@ -1,5 +1,7 @@
 modAIAdmin.grid.AgentContextProviders = function (config) {
   config = config || {};
+  config.permissions = config.permissions || {};
+  config.permission_item = 'agent_context_provider';
 
   Ext.applyIf(config, {
     url: MODx.config.connector_url,
@@ -52,23 +54,20 @@ modAIAdmin.grid.AgentContextProviders = function (config) {
   });
   modAIAdmin.grid.AgentContextProviders.superclass.constructor.call(this, config);
 };
-Ext.extend(modAIAdmin.grid.AgentContextProviders, MODx.grid.Grid, {
+Ext.extend(modAIAdmin.grid.AgentContextProviders, modAIAdmin.grid.ACLGrid, {
   getMenu: function () {
-    var m = [];
-
-    m.push({
-      text: _('modai.admin.agent_context_provider.view'),
-      handler: this.viewContextProvider,
-    });
-
-    m.push('-');
-
-    m.push({
-      text: _('modai.admin.agent_context_provider.remove'),
-      handler: this.removeContextProvider,
-    });
-
-    return m;
+    return [
+      {
+        text: _('modai.admin.agent_context_provider.view'),
+        handler: this.viewContextProvider,
+      },
+      '-',
+      {
+        text: _('modai.admin.agent_context_provider.remove'),
+        handler: this.removeContextProvider,
+        permission: 'delete'
+      }
+    ];
   },
 
   getTbar: function (config) {
@@ -76,6 +75,7 @@ Ext.extend(modAIAdmin.grid.AgentContextProviders, MODx.grid.Grid, {
       {
         text: _('modai.admin.agent_context_provider.create'),
         handler: this.createContextProvider,
+        permission: 'save'
       },
       '->',
       {

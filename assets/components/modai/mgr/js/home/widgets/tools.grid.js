@@ -1,5 +1,7 @@
 modAIAdmin.grid.Tools = function (config) {
     config = config || {};
+    config.permissions = config.permissions || {};
+    config.permission_item = 'tool';
 
     Ext.applyIf(config, {
         url: MODx.config.connector_url,
@@ -68,33 +70,29 @@ modAIAdmin.grid.Tools = function (config) {
     });
     modAIAdmin.grid.Tools.superclass.constructor.call(this, config);
 };
-Ext.extend(modAIAdmin.grid.Tools, MODx.grid.Grid, {
+Ext.extend(modAIAdmin.grid.Tools, modAIAdmin.grid.ACLGrid, {
 
     getMenu: function () {
-        var m = [];
-
-        m.push({
-            text: _('modai.admin.tool.update'),
-            handler: this.updateTool
-        });
-
-        if (m.length > 0) {
-            m.push('-');
-        }
-
-        m.push({
-            text: _('modai.admin.tool.remove'),
-            handler: this.removeTool
-        });
-
-        return m;
+        return [
+            {
+                text: _('modai.admin.tool.update'),
+                handler: this.updateTool
+            },
+            '-',
+            {
+                text: _('modai.admin.tool.remove'),
+                handler: this.removeTool,
+                permission: 'delete'
+            }
+        ];
     },
 
     getTbar: function(config) {
         return [
             {
                 text: _('modai.admin.tool.create'),
-                handler: this.createTool
+                handler: this.createTool,
+                permission: 'save',
             },
             '->',
             {
@@ -187,6 +185,6 @@ Ext.extend(modAIAdmin.grid.Tools, MODx.grid.Grid, {
         const s = this.getStore();
         s.baseParams.search = value;
         this.getBottomToolbar().changePage(1);
-    }
+    },
 });
 Ext.reg('modai-grid-tools', modAIAdmin.grid.Tools);

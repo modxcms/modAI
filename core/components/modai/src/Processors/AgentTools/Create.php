@@ -10,6 +10,7 @@ class Create extends ModelProcessor
     public $classKey = AgentTool::class;
     public $languageTopics = ['modai:default'];
     public $objectType = 'modai.admin.agent_tool';
+    public $permission = 'modai_admin_agent_tool_save';
 
     public function process()
     {

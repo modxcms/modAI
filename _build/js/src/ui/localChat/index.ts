@@ -2,6 +2,7 @@ import { closeModal, sendMessage } from './modalActions';
 import { buildModal } from './modalBuilder';
 import { globalState } from '../../globalState';
 import { lng } from '../../lng';
+import { checkPermissions } from '../../permissions';
 
 import type { LocalChatConfig } from './types';
 
@@ -33,17 +34,13 @@ export const createModal = (config: LocalChatConfig) => {
   }
 
   if (!config.type) {
-    config.type = 'text';
+    alert(lng('modai.error.type_required'));
+    return;
   }
 
-  if (!config.availableTypes) {
-    config.availableTypes = [config.type];
-  }
-
-  config.availableTypes = config.availableTypes.filter((type) => modalTypes.includes(type));
-
-  if (config.availableTypes.length > 0 && !config.availableTypes.includes(config.type)) {
-    config.availableTypes.unshift(config.type);
+  const hasPermissions = verifyPermissions(config);
+  if (!hasPermissions) {
+    return;
   }
 
   const modal = buildModal(config);
@@ -64,4 +61,37 @@ export const createModal = (config: LocalChatConfig) => {
   globalState.modalOpen = true;
 
   return modal;
+};
+
+export const verifyPermissions = (config: LocalChatConfig) => {
+  if (!checkPermissions(['modai_client'])) {
+    return false;
+  }
+
+  if (
+    !checkPermissions(['modai_client_chat_image']) &&
+    !checkPermissions(['modai_client_chat_text'])
+  ) {
+    return false;
+  }
+
+  if (!config.availableTypes) {
+    config.availableTypes = [config.type];
+  }
+
+  config.availableTypes = config.availableTypes
+    .filter((type) => modalTypes.includes(type))
+    .filter((type) =>
+      checkPermissions([type === 'text' ? 'modai_client_chat_text' : 'modai_client_chat_image']),
+    );
+
+  if (config.availableTypes.length > 0 && !config.availableTypes.includes(config.type)) {
+    config.type = config.availableTypes[0];
+  }
+
+  if (config.availableTypes.length === 0 || !config.availableTypes.includes(config.type)) {
+    return false;
+  }
+
+  return true;
 };

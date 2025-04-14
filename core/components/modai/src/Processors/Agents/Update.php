@@ -10,6 +10,7 @@ class Update extends UpdateProcessor
     public $classKey = Agent::class;
     public $languageTopics = ['modai:default'];
     public $objectType = 'modai.admin.agent';
+    public $permission = 'modai_admin_agent_save';
 
     public function beforeSet()
     {

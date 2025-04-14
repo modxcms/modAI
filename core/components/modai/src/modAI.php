@@ -161,12 +161,13 @@ class modAI
             'apiURL' => $this->getAPIUrl(),
             'cssURL' => $this->getCSSFile(),
             'availableAgents' => $this->getAvailableAgents(),
+            'permissions' => $this->getClientPermissions(),
         ];
     }
 
     public function hasAccess()
     {
-        return !empty($this->modx->user) && !empty($this->modx->user->id) && $this->modx->hasPermission('frames');
+        return !empty($this->modx->user) && !empty($this->modx->user->id) && ($this->modx->hasPermission('modai_admin') || $this->modx->hasPermission('modai_client'));
     }
 
     public function getUILexiconTopics()
@@ -206,5 +207,38 @@ class modAI
         }
 
         return $output;
+    }
+
+    public function getAdminPermissions()
+    {
+        return [
+            'modai_admin' => (int)$this->modx->hasPermission('modai_admin'),
+            'modai_admin_tools' => (int)$this->modx->hasPermission('modai_admin_tools'),
+            'modai_admin_tool_save' => (int)$this->modx->hasPermission('modai_admin_tool_save'),
+            'modai_admin_tool_delete' => (int)$this->modx->hasPermission('modai_admin_tool_delete'),
+            'modai_admin_context_providers' => (int)$this->modx->hasPermission('modai_admin_context_providers'),
+            'modai_admin_context_provider_save' => (int)$this->modx->hasPermission('modai_admin_context_provider_save'),
+            'modai_admin_context_provider_delete' => (int)$this->modx->hasPermission('modai_admin_context_provider_delete'),
+            'modai_admin_agents' => (int)$this->modx->hasPermission('modai_admin_agents'),
+            'modai_admin_agent_save' => (int)$this->modx->hasPermission('modai_admin_agent_save'),
+            'modai_admin_agent_delete' => (int)$this->modx->hasPermission('modai_admin_agent_delete'),
+            'modai_admin_agent_tool_save' => (int)$this->modx->hasPermission('modai_admin_agent_tool_save'),
+            'modai_admin_agent_tool_delete' => (int)$this->modx->hasPermission('modai_admin_agent_tool_delete'),
+            'modai_admin_agent_context_provider_save' => (int)$this->modx->hasPermission('modai_admin_agent_context_provider_save'),
+            'modai_admin_agent_context_provider_delete' => (int)$this->modx->hasPermission('modai_admin_agent_context_provider_delete'),
+            'modai_admin_related_agent_save' => (int)$this->modx->hasPermission('modai_admin_related_agent_save'),
+            'modai_admin_related_agent_delete' => (int)$this->modx->hasPermission('modai_admin_related_agent_delete'),
+        ];
+    }
+
+    public function getClientPermissions()
+    {
+        return [
+            'modai_client' => (int)$this->modx->hasPermission('modai_client'),
+            'modai_client_chat_text' => 0,//(int)$this->modx->hasPermission('modai_client_chat_text'),
+            'modai_client_chat_image' => (int)$this->modx->hasPermission('modai_client_chat_image'),
+            'modai_client_text' => (int)$this->modx->hasPermission('modai_client_text'),
+            'modai_client_vision' => (int)$this->modx->hasPermission('modai_client_vision'),
+        ];
     }
 }

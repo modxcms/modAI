@@ -1,5 +1,6 @@
 modAIAdmin.panel.Tool = function (config) {
   config = config || {};
+  config.permissions = config.permissions || {};
 
   config.id = config.id || 'modai-panel-tool';
 
@@ -158,7 +159,7 @@ Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
                 ],
               },
 
-              config.isUpdate && {
+              (config.permissions.modai_admin_agents && config.isUpdate) && {
                 title: _('modai.admin.tool.agents'),
                 headerCfg: {
                   cls: 'modai-admin-section_header x-panel-header',
@@ -178,6 +179,7 @@ Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
                 items: [
                   {
                     xtype: 'modai-grid-related_agents',
+                    permissions: config.permissions,
                     relatedObject: {
                       tool_id: MODx.request.id,
                     },

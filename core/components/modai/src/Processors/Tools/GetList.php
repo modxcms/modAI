@@ -14,6 +14,7 @@ class GetList extends GetListProcessor
     public $defaultSortField = 'name';
     public $defaultSortDirection = 'ASC';
     public $objectType = 'modai.admin.tool';
+    public $permission = 'modai_admin_tools';
 
     public function prepareQueryBeforeCount(xPDOQuery $c)
     {

@@ -1,5 +1,6 @@
 modAIAdmin.panel.ContextProvider = function (config) {
   config = config || {};
+  config.permissions = config.permissions || {};
 
   config.id = config.id || 'modai-panel-context_provider';
 
@@ -156,7 +157,7 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                 ],
               },
 
-              config.isUpdate && {
+              (config.permissions.modai_admin_agents && config.isUpdate) && {
                 title: _('modai.admin.context_provider.agents'),
                 headerCfg: {
                   cls: 'modai-admin-section_header x-panel-header',
@@ -176,6 +177,7 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                 items: [
                   {
                     xtype: 'modai-grid-related_agents',
+                    permissions: config.permissions,
                     relatedObject: {
                       context_provider_id: MODx.request.id,
                     },

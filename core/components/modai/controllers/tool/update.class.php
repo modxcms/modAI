@@ -32,6 +32,7 @@ class ModAIToolUpdateManagerController extends ModAIBaseManagerController
     public function loadCustomCssJs()
     {
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/combos.js');
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'utils/acl_grid.js');
 
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'related_agents/grid.js');
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'related_agents/window.js');
@@ -44,7 +45,8 @@ class ModAIToolUpdateManagerController extends ModAIBaseManagerController
             Ext.onReady(function() {
                 MODx.load({ 
                     xtype: "modai-page-tool",
-                    record: ' . $this->modx->toJSON($this->toolData) . '
+                    record: ' . $this->modx->toJSON($this->toolData) . ',
+                    permissions: ' . json_encode($this->permissions) . '
                 });
             });
         </script>

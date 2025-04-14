@@ -1,5 +1,7 @@
 modAIAdmin.grid.Agents = function (config) {
   config = config || {};
+  config.permissions = config.permissions || {};
+  config.permission_item = 'agent';
 
   Ext.applyIf(config, {
     url: MODx.config.connector_url,
@@ -65,34 +67,34 @@ modAIAdmin.grid.Agents = function (config) {
   });
   modAIAdmin.grid.Agents.superclass.constructor.call(this, config);
 };
-Ext.extend(modAIAdmin.grid.Agents, MODx.grid.Grid, {
+Ext.extend(modAIAdmin.grid.Agents, modAIAdmin.grid.ACLGrid, {
   getMenu: function () {
-    var m = [];
-
-    m.push({
-      text: _('modai.admin.agent.update'),
-      handler: this.updateAgent,
-    });
-
-    if (m.length > 0) {
-      m.push('-');
-    }
-
-    m.push({
-      text: _('modai.admin.agent.remove'),
-      handler: this.removeAgent,
-    });
-
-    return m;
+    return [
+      {
+        text: _('modai.admin.agent.update'),
+        handler: this.updateAgent,
+      },
+      '-',
+      {
+        text: _('modai.admin.agent.remove'),
+        handler: this.removeAgent,
+        permission: 'delete',
+      }
+    ];
   },
 
   getTbar: function (config) {
-    return [
-      {
-        text: _('modai.admin.agent.create'),
-        handler: this.createAgent,
-      },
-      '->',
+    const tbar = [];
+
+    tbar.push({
+      text: _('modai.admin.agent.create'),
+      handler: this.createAgent,
+      permission: 'save',
+    });
+
+    tbar.push('->');
+
+    tbar.push([
       {
         xtype: 'textfield',
         emptyText: _('modai.admin.agent.search'),
@@ -127,7 +129,9 @@ Ext.extend(modAIAdmin.grid.Agents, MODx.grid.Grid, {
           scope: this,
         },
       },
-    ];
+    ]);
+
+    return tbar;
   },
 
   createAgent: function (btn, e) {

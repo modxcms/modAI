@@ -10,6 +10,7 @@ class Create extends ModelProcessor
     public $classKey = AgentContextProvider::class;
     public $languageTopics = ['modai:default'];
     public $objectType = 'modai.admin.agent_context_provider';
+    public $permission = 'modai_admin_agent_context_provider_save';
 
     public function process()
     {

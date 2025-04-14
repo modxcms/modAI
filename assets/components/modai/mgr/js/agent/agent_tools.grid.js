@@ -1,5 +1,7 @@
 modAIAdmin.grid.AgentTools = function (config) {
   config = config || {};
+  config.permissions = config.permissions || {};
+  config.permission_item = 'agent_tool';
 
   Ext.applyIf(config, {
     url: MODx.config.connector_url,
@@ -46,23 +48,20 @@ modAIAdmin.grid.AgentTools = function (config) {
   });
   modAIAdmin.grid.AgentTools.superclass.constructor.call(this, config);
 };
-Ext.extend(modAIAdmin.grid.AgentTools, MODx.grid.Grid, {
+Ext.extend(modAIAdmin.grid.AgentTools, modAIAdmin.grid.ACLGrid, {
   getMenu: function () {
-    var m = [];
-
-    m.push({
-      text: _('modai.admin.agent_tool.view'),
-      handler: this.viewTool,
-    });
-
-    m.push('-');
-
-    m.push({
-      text: _('modai.admin.agent_tool.remove'),
-      handler: this.removeTool,
-    });
-
-    return m;
+    return [
+      {
+        text: _('modai.admin.agent_tool.view'),
+        handler: this.viewTool,
+      },
+      '-',
+      {
+        text: _('modai.admin.agent_tool.remove'),
+        handler: this.removeTool,
+        permission: 'delete'
+      }
+    ];
   },
 
   getTbar: function (config) {
@@ -70,6 +69,7 @@ Ext.extend(modAIAdmin.grid.AgentTools, MODx.grid.Grid, {
       {
         text: _('modai.admin.agent_tool.create'),
         handler: this.createTool,
+        permission: 'save'
       },
       '->',
       {

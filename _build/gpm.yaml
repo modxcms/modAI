@@ -7,6 +7,7 @@ menus:
   - action: home
     text: modai.admin.menu.home
     description: modai.admin.menu.home_desc
+    permission: modai_admin
 
 plugins:
   - name: modAI
@@ -180,6 +181,7 @@ systemSettings:
 build:
   scriptsBefore:
     - custom_events.gpm.php
+    - acls.gpm.php
   scriptsAfter:
     - lit.gpm.php
     - seed.gpm.php

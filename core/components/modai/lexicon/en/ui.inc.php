@@ -78,3 +78,4 @@ $_lang['modai.error.context_provider_instance_err'] = 'Context Provider could no
 $_lang['modai.error.invalid_agent'] = 'Invalid agent.';
 $_lang['modai.error.invalid_context_provider_config'] = 'Invalid configuration for context provider [[+name]] ([[+class]]).';
 $_lang['modai.error.invalid_model_name'] = 'Invalid model name: [[+model]].';
+$_lang['modai.error.type_required'] = 'type is required.';

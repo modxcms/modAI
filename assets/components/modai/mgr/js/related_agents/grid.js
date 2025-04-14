@@ -1,5 +1,7 @@
 modAIAdmin.grid.RelatedAgents = function (config) {
   config = config || {};
+  config.permissions = config.permissions || {};
+  config.permission_item = 'related_agent';
 
   if (!config.relatedObject) {
     console.error('relatedObject property is required for modAIAdmin.grid.RelatedAgents.');
@@ -56,23 +58,20 @@ modAIAdmin.grid.RelatedAgents = function (config) {
   });
   modAIAdmin.grid.RelatedAgents.superclass.constructor.call(this, config);
 };
-Ext.extend(modAIAdmin.grid.RelatedAgents, MODx.grid.Grid, {
+Ext.extend(modAIAdmin.grid.RelatedAgents, modAIAdmin.grid.ACLGrid, {
   getMenu: function () {
-    var m = [];
-
-    m.push({
-      text: _('modai.admin.related_agent.view'),
-      handler: this.viewRelatedAgent,
-    });
-
-    m.push('-');
-
-    m.push({
-      text: _('modai.admin.related_agent.remove'),
-      handler: this.removeRelatedAgent,
-    });
-
-    return m;
+    return [
+      {
+        text: _('modai.admin.related_agent.view'),
+        handler: this.viewRelatedAgent,
+      },
+      '-',
+      {
+        text: _('modai.admin.related_agent.remove'),
+        handler: this.removeRelatedAgent,
+        permission: 'delete'
+      }
+    ];
   },
 
   getTbar: function (config) {
@@ -80,6 +79,7 @@ Ext.extend(modAIAdmin.grid.RelatedAgents, MODx.grid.Grid, {
       {
         text: _('modai.admin.related_agent.create'),
         handler: this.createRelatedAgent,
+        permission: 'save',
       },
       '->',
       {

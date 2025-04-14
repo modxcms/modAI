@@ -1,5 +1,6 @@
 modAIAdmin.panel.Agent = function (config) {
   config = config || {};
+  config.permissions = config.permissions || {};
 
   config.id = config.id || 'modai-panel-agent';
 
@@ -236,7 +237,7 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
           border: false,
         },
         items: [
-          {
+          (config.permissions.modai_admin_tools) && {
             columnWidth: 0.5,
             border: false,
             defaults: {
@@ -262,12 +263,13 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
                 items: [
                   {
                     xtype: 'modai-grid-agent_tools',
+                    permissions: config.permissions
                   },
                 ],
               },
             ],
           },
-          {
+          (config.permissions.modai_admin_context_providers) && {
             columnWidth: 0.5,
             border: false,
             items: [
@@ -288,12 +290,13 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
                 items: [
                   {
                     xtype: 'modai-grid-agent_context_providers',
+                    permissions: config.permissions
                   },
                 ],
               },
             ],
           },
-        ],
+        ].filter(Boolean),
       },
     ];
   },

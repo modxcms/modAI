@@ -3,6 +3,7 @@
 namespace modAI\API\Tools;
 
 use modAI\API\API;
+use modAI\Exceptions\APIException;
 use modAI\Exceptions\LexiconException;
 use modAI\Model\Agent;
 use modAI\Model\Tool;
@@ -12,6 +13,10 @@ class Run extends API
 {
     public function post(ServerRequestInterface $request): void
     {
+        if (!$this->modx->hasPermission('modai_client_text')) {
+            throw APIException::unauthorized();
+        }
+
         $data = $request->getParsedBody();
         $toolCalls = $this->modx->getOption('toolCalls', $data);
         $agent = $this->modx->getOption('agent', $data, null);

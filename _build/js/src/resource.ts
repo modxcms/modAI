@@ -39,7 +39,9 @@ const attachImagePlus = (imgPlusPanel: Element, fieldName: string) => {
     },
   });
 
-  altTextWand.style.marginTop = '6px';
+  if (altTextWand) {
+    altTextWand.style.marginTop = '6px';
+  }
 
   imagePlus.altTextField.el.dom.style.display = 'flex';
   imagePlus.altTextField.el.dom.style.justifyItems = 'center';
