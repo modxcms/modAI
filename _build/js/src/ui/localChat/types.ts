@@ -43,6 +43,7 @@ export type Modal = HTMLDivElement & {
 
 export type LocalChatConfig = {
   key: string;
+  persist?: boolean;
   type: ModalType;
   availableTypes?: ModalType[];
   namespace?: string;

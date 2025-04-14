@@ -224,8 +224,22 @@ export const tryAgain = (config: LocalChatConfig) => {
 export const switchType = (type: ModalType, config: LocalChatConfig) => {
   config.type = type;
 
-  globalState.modal.history = chatHistory.init(`${config.key}/${config.type}`, (msg) => {
-    return renderMessage(msg, config) as UpdatableHTMLElement | undefined;
+  globalState.modal.history = chatHistory.init({
+    key: `${config.namespace ?? 'modai'}/${config.key}/${config.type}`,
+    persist: config.persist,
+    onAddMessage: (msg) => {
+      return renderMessage(msg, config) as UpdatableHTMLElement | undefined;
+    },
+    onInitDone: () => {
+      const messages = globalState.modal.history.getMessages().filter((m) => !m.hidden);
+      if (messages.length > 0) {
+        globalState.modal.welcomeMessage.style.display = 'none';
+
+        globalState.modal.actionButtons.forEach((btn) => {
+          btn.enable();
+        });
+      }
+    },
   });
 
   while (globalState.modal.chatMessages.firstChild) {
@@ -238,6 +252,7 @@ export const switchType = (type: ModalType, config: LocalChatConfig) => {
 
     messages.forEach((msg) => {
       if (msg.el) {
+        msg.el.classList.remove('new');
         globalState.modal.chatMessages.appendChild(msg.el);
       }
     });

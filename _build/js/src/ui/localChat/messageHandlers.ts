@@ -22,7 +22,7 @@ import type {
 export const addUserMessage = (msg: UserMessage) => {
   const messageWrapper: UpdatableHTMLElement<UserMessage> = createElement(
     'div',
-    'message-wrapper user',
+    `message-wrapper user ${msg.init ? '' : 'new'}`,
   );
   messageWrapper.style.setProperty('--user-msg-height', '-10px');
 
@@ -123,7 +123,7 @@ export const addUserMessage = (msg: UserMessage) => {
 export const addErrorMessage = (content: string) => {
   globalState.modal.welcomeMessage.style.display = 'none';
 
-  const messageWrapper: UpdatableHTMLElement = createElement('div', 'message-wrapper error');
+  const messageWrapper: UpdatableHTMLElement = createElement('div', 'message-wrapper error new');
   const messageElement = createElement('div', 'message error');
 
   messageElement.appendChild(icon(14, triangleError));
@@ -142,7 +142,7 @@ export const addErrorMessage = (content: string) => {
 export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConfig) => {
   const messageWrapper: UpdatableHTMLElement<AssistantMessage> = createElement(
     'div',
-    'message-wrapper ai',
+    `message-wrapper ai ${msg.init ? '' : 'new'}`,
   );
   if (globalState.modal.chatMessages.lastElementChild?.firstElementChild) {
     messageWrapper.style.setProperty(
@@ -248,6 +248,8 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
             msg.ctx.url = data.url;
             msg.ctx.fullUrl = data.fullUrl;
 
+            globalState.modal.history.syncMessage(msg.id);
+
             handler(msg, modal);
           },
         }),
@@ -319,17 +321,26 @@ export const renderMessage = (msg: Message, config: LocalChatConfig) => {
   }
 
   if (msg.__type === 'UserMessage') {
-    const userMsg = addUserMessage(msg);
-    userMsg.scrollIntoView({
-      behavior: 'smooth',
+    const el = addUserMessage(msg);
+    el.firstElementChild?.scrollIntoView({
+      behavior: msg.init === true ? 'instant' : 'smooth',
       block: 'start',
     });
 
-    return userMsg;
+    return el;
   }
 
   if (msg.__type === 'AssistantMessage') {
-    return addAssistantMessage(msg, config);
+    const el = addAssistantMessage(msg, config);
+
+    if (msg.init === true) {
+      el.firstElementChild?.scrollIntoView({
+        behavior: 'instant',
+        block: 'start',
+      });
+    }
+
+    return el;
   }
 
   return;

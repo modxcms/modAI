@@ -1,5 +1,6 @@
 import { chatHistory } from './chatHistory';
 import { executor } from './executor';
+import { initGlobalButton } from './globalButton';
 import { globalState } from './globalState';
 import { history } from './history';
 import { lng } from './lng';
@@ -36,5 +37,6 @@ export const init = (config: Config) => {
     lng,
     initOnResource,
     checkPermissions,
+    initGlobalButton,
   };
 };

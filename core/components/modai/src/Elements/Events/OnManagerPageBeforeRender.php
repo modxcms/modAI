@@ -15,33 +15,47 @@ class OnManagerPageBeforeRender extends Event
             $action = $_REQUEST['a'];
         }
 
-        if (!in_array($action, ['resource/create', 'resource/update'])) {
-            return;
-        }
+
 
         foreach ($this->modAI->getUILexiconTopics() as $topic) {
             $this->modx->controller->addLexiconTopic($topic);
         }
 
+        $this->modx->regClientStartupScript($this->modAI->getJSFile());
+
         $baseConfig = $this->modAI->getBaseConfig();
         $this->modx->controller->addHtml('
                 <script type="text/javascript">
                 if (typeof modAI === "undefined") {
-                    let modAI;
                     Ext.onReady(function() {
-                        modAI = ModAI.init(' . json_encode($baseConfig) . ');
+                        const modAI = ModAI.init(' . json_encode($baseConfig) . ');
                         
-                         Ext.defer(function () {
-                           modAI.initOnResource({
-                              tvs:  ' . $this->modx->toJSON($this->modAI->getListOfTVsWithIDs()) . ',
-                              resourceFields:  ' . $this->modx->toJSON($this->modAI->getResourceFields()) . ',
-                            });
-                         }, 500);
+                        modAI.initGlobalButton();
+                        
+                        window.modAI = modAI;
                     });
                 }
                 </script>
             ');
 
-        $this->modx->regClientStartupScript($this->modAI->getJSFile());
+
+        if (!in_array($action, ['resource/create', 'resource/update'])) {
+            return;
+        }
+
+        $this->modx->controller->addHtml('
+            <script type="text/javascript">
+            Ext.onReady(function() {
+                if (typeof modAI !== "undefined") {
+                    Ext.defer(() => {
+                        modAI.initOnResource({
+                          tvs:  ' . $this->modx->toJSON($this->modAI->getListOfTVsWithIDs()) . ',
+                          resourceFields:  ' . $this->modx->toJSON($this->modAI->getResourceFields()) . ',
+                        });
+                    }, 500);
+                }
+            });
+            </script>
+        ');
     }
 }

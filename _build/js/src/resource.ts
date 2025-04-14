@@ -11,7 +11,7 @@ const attachImagePlus = (imgPlusPanel: Element, fieldName: string) => {
 
   ui.generateButton.localChat({
     targetEl: label,
-    key: fieldName,
+    key: `resource/${MODx.request.id}/${fieldName}`,
     field: fieldName,
     type: 'image',
     resource: MODx.request.id,
@@ -58,7 +58,7 @@ const attachContent = () => {
 
   ui.generateButton.localChat({
     targetEl: label,
-    key: 'res.content',
+    key: `resource/${MODx.request.id}/res.content`,
     field: 'res.content',
     type: 'text',
     availableTypes: ['text', 'image'],
@@ -111,7 +111,7 @@ const attachTVs = (config: Config) => {
       } else {
         ui.generateButton.localChat({
           targetEl: label,
-          key: fieldName,
+          key: `resource/${MODx.request.id}/${fieldName}`,
           field: fieldName,
           type: 'text',
           availableTypes: ['text', 'image'],
@@ -126,7 +126,7 @@ const attachTVs = (config: Config) => {
 
       ui.generateButton.localChat({
         targetEl: label,
-        key: fieldName,
+        key: `resource/${MODx.request.id}/${fieldName}`,
         field: fieldName,
         type: 'image',
         resource: MODx.request.id,

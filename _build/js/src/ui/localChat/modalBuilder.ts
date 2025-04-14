@@ -24,11 +24,6 @@ export const buildModal = (config: LocalChatConfig) => {
   shadow.modal = chatModal;
   globalState.modal = shadow;
 
-  shadow.history = chatHistory.init(
-    `${config.key}/${config.type}`,
-    (msg) => renderMessage(msg, config) as UpdatableHTMLElement | undefined,
-  );
-
   chatModal.append(buildModalHeader());
   chatModal.append(buildModalChat());
   chatModal.append(buildModalInput(config));
@@ -45,6 +40,22 @@ export const buildModal = (config: LocalChatConfig) => {
   shadow.offsetX = 0;
   shadow.offsetY = 0;
 
+  shadow.history = chatHistory.init({
+    key: `${config.namespace ?? 'modai'}/${config.key}/${config.type}`,
+    onAddMessage: (msg) => renderMessage(msg, config) as UpdatableHTMLElement | undefined,
+    persist: config.persist,
+    onInitDone: () => {
+      const messages = shadow.history.getMessages().filter((m) => !m.hidden);
+      if (messages.length > 0) {
+        shadow.welcomeMessage.style.display = 'none';
+
+        shadow.actionButtons.forEach((btn) => {
+          btn.enable();
+        });
+      }
+    },
+  });
+
   const messages = shadow.history.getMessages().filter((m) => !m.hidden);
   if (messages.length > 0) {
     shadow.welcomeMessage.style.display = 'none';
@@ -54,6 +65,7 @@ export const buildModal = (config: LocalChatConfig) => {
 
     messages.forEach((msg) => {
       if (msg.el) {
+        msg.el.classList.remove('new');
         shadow.chatMessages.appendChild(msg.el);
       }
     });
