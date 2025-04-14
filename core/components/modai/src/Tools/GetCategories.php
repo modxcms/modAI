@@ -40,6 +40,10 @@ class GetCategories implements ToolInterface
      */
     public function runTool($parameters): string
     {
+        if (!self::checkPermissions($this->modx)) {
+            return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
+        }
+
         /** @var modCategory[] $chunks */
         $categories = $this->modx->getIterator(modCategory::class);
         foreach ($categories as $category) {
@@ -52,5 +56,10 @@ class GetCategories implements ToolInterface
         }
 
         return json_encode($output);
+    }
+
+    public static function checkPermissions(modX $modx): bool
+    {
+        return true;
     }
 }

@@ -6,6 +6,8 @@ use MODX\Revolution\modX;
 
 class GetWeather implements ToolInterface
 {
+    private $modx;
+
     public static function getSuggestedName(): string
     {
         return 'get_weather';
@@ -39,6 +41,7 @@ class GetWeather implements ToolInterface
 
     public function __construct(modX $modx, array $config)
     {
+        $this->modx = $modx;
     }
 
     /**
@@ -47,6 +50,10 @@ class GetWeather implements ToolInterface
      */
     public function runTool($parameters): string
     {
+        if (!self::checkPermissions($this->modx)) {
+            return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
+        }
+
         try {
             $res = file_get_contents(
                 "https://api.open-meteo.com/v1/forecast?latitude={$parameters['latitude']}&longitude={$parameters['longitude']}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto&forecast_days=1"
@@ -63,7 +70,12 @@ class GetWeather implements ToolInterface
 
             return json_encode($output, JSON_THROW_ON_ERROR);
         } catch (\Throwable $e) {
-            return "Received an error looking up the weather: {$e->getMessage()}";
+            return json_encode(['success' => false, "message" => "Received an error looking up the weather: {$e->getMessage()}"]);
         }
+    }
+
+    public static function checkPermissions(modX $modx): bool
+    {
+        return true;
     }
 }

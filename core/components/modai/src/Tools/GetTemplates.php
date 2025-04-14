@@ -72,6 +72,10 @@ class GetTemplates implements ToolInterface
      */
     public function runTool($parameters): string
     {
+        if (!self::checkPermissions($this->modx)) {
+            return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
+        }
+
         $where = [];
 
         if (is_array($parameters)) {
@@ -126,5 +130,10 @@ class GetTemplates implements ToolInterface
         }
 
         return json_encode($output);
+    }
+
+    public static function checkPermissions(modX $modx): bool
+    {
+        return true;
     }
 }

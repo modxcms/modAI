@@ -54,6 +54,10 @@ class GetResourceDetail implements ToolInterface
      */
     public function runTool($parameters): string
     {
+        if (!self::checkPermissions($this->modx)) {
+            return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
+        }
+
         if (empty($parameters)) {
             return json_encode(['success' => false, 'message' => 'Parameters are required.']);
         }
@@ -86,5 +90,10 @@ class GetResourceDetail implements ToolInterface
         }
 
         return json_encode($output);
+    }
+
+    public static function checkPermissions(modX $modx): bool
+    {
+        return true;
     }
 }

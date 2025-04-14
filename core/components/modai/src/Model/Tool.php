@@ -55,6 +55,20 @@ class Tool extends \xPDO\Om\xPDOSimpleObject
         $tools = $modx->getIterator(self::class, $c);
 
         foreach ($tools as $tool) {
+            $className = $tool->get('class');
+            if (!class_exists($className)) {
+                continue;
+            }
+
+            if (!is_subclass_of($className, ToolInterface::class, true)) {
+                continue;
+            }
+
+            $hasPermissions = $className::checkPermissions($modx);
+            if (!$hasPermissions) {
+                continue;
+            }
+
             $output[$tool->get('name')] = $tool;
         }
 

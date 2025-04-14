@@ -35,7 +35,13 @@ interface ToolInterface
      */
     public static function getDescription(): string;
 
-    public static function checkPermissions(): bool;
+    /**
+     * Checks if user has permissions to run this tool.
+     *
+     * @param modX $modx
+     * @return bool
+     */
+    public static function checkPermissions(modX $modx): bool;
 
     /**
      * Set the parameters that the LLM should or must provide when calling your function. Has to return valid JSON-schema.

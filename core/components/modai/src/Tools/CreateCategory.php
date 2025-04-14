@@ -70,8 +70,12 @@ class CreateCategory implements ToolInterface
      */
     public function runTool($parameters): string
     {
+        if (!self::checkPermissions($this->modx)) {
+            return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
+        }
+
         if (empty($parameters)) {
-            throw new \Exception('Parameters are required.');
+            return json_encode(['success' => false, 'message' => 'Parameters are required.']);
         }
 
         $output = [];
@@ -105,5 +109,10 @@ class CreateCategory implements ToolInterface
         }
 
         return json_encode($output);
+    }
+
+    public static function checkPermissions(modX $modx): bool
+    {
+        return $modx->hasPermission('save_category');
     }
 }

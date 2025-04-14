@@ -52,12 +52,21 @@ class DeleteChunks implements ToolInterface
      */
     public function runTool($parameters): string
     {
+        if (!self::checkPermissions($this->modx)) {
+            return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
+        }
+
         if (empty($parameters) || empty($parameters['ids'])) {
-            throw new \Exception("Missing parameters");
+            return json_encode(['success' => false, 'message' => 'Parameters are required.']);
         }
 
         $this->modx->removeCollection(modChunk::class, ['id:IN' => $parameters['ids']]);
 
         return json_encode(["success" => true]);
+    }
+
+    public static function checkPermissions(modX $modx): bool
+    {
+        return $modx->hasPermission('delete_chunks');
     }
 }
