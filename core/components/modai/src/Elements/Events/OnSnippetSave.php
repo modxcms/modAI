@@ -2,21 +2,20 @@
 
 namespace modAI\Elements\Events;
 
-use MODX\Revolution\modResource;
+
+use MODX\Revolution\modChunk;
+use MODX\Revolution\modSnippet;
 use MODX\Revolution\modX;
 
-class OnDocFormSave extends Event
+class OnSnippetSave extends Event
 {
 
     public function run()
     {
-        /** @var modResource $resource */
-        $resource = $this->getOption('resource');
-        if ($resource->get('deleted')) {
-            return;
-        }
+        /** @var modSnippet $snippet */
+        $snippet = $this->getOption('snippet');
 
-        $contextName = $this->modx->getOption('modai.contexts.resources.name');
+        $contextName = $this->modx->getOption('modai.contexts.snippets.name');
         if (empty($contextName)) {
             return;
         }
@@ -32,7 +31,7 @@ class OnDocFormSave extends Event
             $instance = $provider->getContextProviderInstance();
 
 
-            $data = $resource->toArray();
+            $data = $snippet->toArray();
             foreach ($data as $key => $value) {
                 if (is_array($value)) {
                     $value = json_encode($value);
@@ -41,7 +40,7 @@ class OnDocFormSave extends Event
                 $data[$key] = strip_tags($value);
             }
 
-            $instance->index('resource', $resource->get('id'), $data);
+            $instance->index('snippet', $snippet->get('id'), $data);
         } catch (\Throwable $e) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[modai] context plugin: ' . $e->getMessage());
             return;

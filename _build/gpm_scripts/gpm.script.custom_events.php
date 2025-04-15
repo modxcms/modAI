@@ -36,6 +36,7 @@ return (function () {
 
         $events = [
             'modAIOnContextProviderRegister',
+            'modAIOnToolRegister',
         ];
 
         if ($this->action === \xPDO\Transport\xPDOTransport::ACTION_UNINSTALL) {

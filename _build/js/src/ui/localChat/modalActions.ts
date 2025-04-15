@@ -105,7 +105,10 @@ export const sendMessage = async (
   globalState.modal.context.removeContexts();
 
   const messages = globalState.modal.history.getMessagesHistory();
-  globalState.modal.history.addUserMessage({ content: message, attachments, contexts }, hidePrompt);
+  const userMsg = globalState.modal.history.addUserMessage(
+    { content: message, attachments, contexts },
+    hidePrompt,
+  );
 
   if (
     globalState.modal.selectedAgent &&
@@ -125,6 +128,8 @@ export const sendMessage = async (
       });
     });
   }
+
+  globalState.modal.history.updateMessage(userMsg, { contexts });
 
   try {
     if (config.type === 'text') {

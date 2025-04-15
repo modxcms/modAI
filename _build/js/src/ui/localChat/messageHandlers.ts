@@ -243,12 +243,10 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
               mediaSource: config.image?.mediaSource,
             });
 
-            msg.content = data.fullUrl;
-            msg.ctx.downloaded = true;
-            msg.ctx.url = data.url;
-            msg.ctx.fullUrl = data.fullUrl;
-
-            globalState.modal.history.syncMessage(msg.id);
+            msg = globalState.modal.history.updateMessage(msg, {
+              content: data.fullUrl,
+              ctx: { downloaded: true, url: data.url, fullUrl: data.fullUrl },
+            });
 
             handler(msg, modal);
           },

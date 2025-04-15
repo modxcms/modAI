@@ -13,7 +13,8 @@ class Pinecone implements ContextProviderInterface
     private Client $client;
     private string $namespace;
     private array $fields;
-    private string $introMsg;
+    private array $fieldsMap;
+    private array $contextMessages;
 
     public function __construct(modX $modx, array $config = [])
     {
@@ -22,10 +23,23 @@ class Pinecone implements ContextProviderInterface
         $endpoint = Utils::getConfigValue($modx, 'endpoint', $config, '');
         $apiKey = Utils::getConfigValue($modx,'api_key', $config, '');
         $this->namespace = Utils::getConfigValue($modx,'namespace', $config, '');
-        $this->introMsg = Utils::getConfigValue($modx,'intro_msg', $config, '');
+        $this->contextMessages = Utils::explodeAndClean(Utils::getConfigValue($modx,'context_messages', $config, ''), "\n");
         $this->fields = Utils::explodeAndClean(Utils::getConfigValue($modx,'fields', $config, ''));
+        $fieldsMap = Utils::explodeAndClean(Utils::getConfigValue($modx,'fields_map', $config, ''));
 
-        if (empty($endpoint) || empty($apiKey) || empty($this->namespace) || empty($this->fields) || empty($this->introMsg)) {
+        $this->fieldsMap = [];
+
+        foreach ($fieldsMap as $value) {
+            $value = Utils::explodeAndClean($value, ':', true);
+            if (count($value) !== 2) {
+                continue;
+            }
+
+            $this->fieldsMap[$value[0]] = $value[1];
+        }
+
+
+        if (empty($endpoint) || empty($apiKey) || empty($this->namespace) || empty($this->fields)) {
             throw new InvalidContextProviderConfig();
         }
 
@@ -47,13 +61,25 @@ class Pinecone implements ContextProviderInterface
 
         foreach ($this->fields as $field) {
             if (isset($data[$field])) {
-                $metadata[$field] = $data[$field];
-                $text[] = $data[$field];
+                $sourceField = $field;
+                $targetField = $field;
+
+                if (isset($this->fieldsMap[$sourceField])) {
+                    $targetField = $this->fieldsMap[$sourceField];
+                }
+
+                if (!isset($data[$sourceField])) {
+                    continue;
+                }
+
+                $metadata[$targetField] = $data[$sourceField];
+                $text[] = $data[$sourceField];
             }
         }
 
         $data = [
-                'id' => (string)$id,
+                'id' => "{$type}_$id",
+                "{$type}_id" => $id,
                 'type' => $type,
                 'text' => implode('\n', $text),
             ] + $metadata;
@@ -78,12 +104,14 @@ class Pinecone implements ContextProviderInterface
         }
     }
 
-    public function delete(array $ids): bool
+    public function delete(string $type, array $ids): bool
     {
         try {
             $response = $this->client->post("vectors/delete", [
                 'json' => [
-                    'ids' => array_map('strval', $ids),
+                    'ids' => array_map(function ($id) use ($type) {
+                        return "{$type}_$id";
+                    }, $ids),
                     'namespace' => $this->namespace,
                 ],
             ]);
@@ -121,10 +149,25 @@ class Pinecone implements ContextProviderInterface
             foreach ($json['result']['hits'] as $hit) {
                 $context = [];
 
-                $context[] = $this->formatIntroMessage($hit['fields']);
+                foreach ($this->contextMessages as $contextMessage) {
+                    $context[] = $this->formatMessage($contextMessage, $hit['fields']);
+                }
+
+                $context[] = 'id: ' . $hit['fields']["{$hit['fields']["type"]}_id"];
+
+                if (!empty($this->link)) {
+                    $context[] = (!empty($this->linkMsg) ? $this->formatMessage($this->linkMsg, $hit['fields']) : '') . $this->formatMessage($this->link, $hit['fields']);
+                }
+
                 foreach ($this->fields as $field) {
-                    if (!empty($hit['fields'][$field])) {
-                        $context[] = $field . ': ' . $hit['fields'][$field];
+                    $targetField = $field;
+
+                    if (isset($this->fieldsMap[$field])) {
+                        $targetField = $this->fieldsMap[$field];
+                    }
+
+                    if (!empty($hit['fields'][$targetField])) {
+                        $context[] = $targetField . ': ' . $hit['fields'][$targetField];
                     }
                 }
 
@@ -137,17 +180,44 @@ class Pinecone implements ContextProviderInterface
         }
     }
 
-    private function formatIntroMessage($data): string
+    private function formatMessage($msg, $data): string
     {
-        $search = [];
-        $replace = [];
+        $matches = [];
+        preg_match_all('/{([^}]*)}/', $msg, $matches);
 
-        foreach ($data as $key => $value) {
-            $search[] = '{' . $key . '}';
-            $replace[] = $value;
+        $placeholders = $matches[1];
+
+        if (!is_array($placeholders)) {
+            return $msg;
         }
 
-        return str_replace($search, $replace, $this->introMsg);
+        $search = ['{id}'];
+        $replace = [$data["{$data["type"]}_id"]];
+
+        foreach ($placeholders as $key) {
+            if ($key === 'id') {
+                $search[] = "\{$key\}";
+                $replace[] = $data["{$data["type"]}_id"];
+                continue;
+            }
+
+            if (strpos($key, '++') === 0) {
+                $value = substr($key, 2);
+                $systemSettingValue = $this->modx->getOption($value, null, '');
+
+                $search[] = '{' . $key . '}';
+                $replace[] = $systemSettingValue;
+
+                continue;
+            }
+
+            if (isset($data[$key])) {
+                $search[] = '{' . $key . '}';
+                $replace[] = $data[$key];
+            }
+        }
+
+        return str_replace($search, $replace, $msg);
     }
 
     public static function getConfig(): array
@@ -177,12 +247,21 @@ class Pinecone implements ContextProviderInterface
                 'required' => true,
                 'type' => 'textfield'
             ],
-            'intro_msg' => [
-                'name' => 'Intro message',
-                'description' => 'Intro message to the found context. Can contain {id} or any {field} (defined in fields config) placeholder.',
-                'required' => true,
+            'fields_map' => [
+                'name' => 'Map fields to a different name',
+                'description' => 'Comma separated list of original_name:new_name pairs',
+                'required' => false,
                 'type' => 'textfield'
-            ]
+            ],
+            'context_messages' => [
+                'name' => 'Context Messages',
+                'description' => 'Additional context messages that will be put in front of the data from DB. One message per line. Can contain {id} or any {field} (defined in fields config) placeholder, you can also reference a system setting with using ++ as a prefix, for example {++site_url}.',
+                'required' => false,
+                'type' => 'textarea',
+                'extraProperties' => [
+                    'grow' => true,
+                ],
+            ],
         ];
     }
 }

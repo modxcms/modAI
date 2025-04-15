@@ -3,7 +3,7 @@ import {
   deleteAllMessages,
   deleteMessagesAfter,
   getMessages,
-  updateMessage,
+  updateMessage as updateMessageInDB,
 } from './db';
 
 import type { ToolResponseContent, ToolCalls, ServiceResponse, Metadata } from './executor/types';
@@ -83,7 +83,7 @@ const addUserMessage = (
 ) => {
   const namespace = _namespace[key];
   if (!namespace) {
-    return;
+    throw Error("Namespace doesn't exist.");
   }
 
   const stringContent = typeof content === 'string';
@@ -109,6 +109,8 @@ const addUserMessage = (
   if (namespace.persist) {
     void saveMessage(key, msgObject);
   }
+
+  return msgObject;
 };
 
 const addToolResponseMessage = (
@@ -119,7 +121,7 @@ const addToolResponseMessage = (
 ) => {
   const namespace = _namespace[key];
   if (!namespace) {
-    return;
+    throw Error("Namespace doesn't exist.");
   }
 
   const msgObject: ToolResponseMessage = {
@@ -141,12 +143,14 @@ const addToolResponseMessage = (
   if (namespace.persist) {
     void saveMessage(key, msgObject);
   }
+
+  return msgObject;
 };
 
 const addAssistantMessage = (key: string, data: ServiceResponse, hidden: boolean = false) => {
   const namespace = _namespace[key];
   if (!namespace) {
-    return;
+    throw Error("Namespace doesn't exist.");
   }
 
   const msgObject: AssistantMessage = {
@@ -178,17 +182,18 @@ const addAssistantMessage = (key: string, data: ServiceResponse, hidden: boolean
   if (namespace.persist) {
     void saveMessage(key, msgObject);
   }
+
+  return msgObject;
 };
 
 const updateAssistantMessage = (key: string, data: ServiceResponse) => {
   const namespace = _namespace[key];
   if (!namespace) {
-    return;
+    throw Error("Namespace doesn't exist.");
   }
 
   if (!namespace.idRef[data.id]) {
-    addAssistantMessage(key, data, false);
-    return;
+    return addAssistantMessage(key, data, false);
   }
 
   const msg = namespace.idRef[data.id];
@@ -204,17 +209,38 @@ const updateAssistantMessage = (key: string, data: ServiceResponse) => {
   }
 
   if (namespace.persist) {
-    void updateMessage(msg);
+    void updateMessageInDB(msg);
   }
+
+  return msg;
 };
 
 const getMessage = (key: string, id: string) => {
   const namespace = _namespace[key];
   if (!namespace) {
-    return;
+    throw Error("Namespace doesn't exist.");
   }
 
   return namespace.idRef[id];
+};
+
+const updateMessage = <M extends Message>(
+  key: string,
+  msg: M,
+  newMessage: Partial<Omit<M, 'id' | '__type' | 'el'>>,
+): M => {
+  const namespace = _namespace[key];
+  if (!namespace) {
+    throw Error("Namespace doesn't exist.");
+  }
+
+  const message = { ...namespace.idRef[msg.id], ...newMessage } as M;
+
+  if (namespace.persist) {
+    void updateMessageInDB(msg);
+  }
+
+  return message;
 };
 
 const loadFromDB = async (key: string, onInitDone?: () => void) => {
@@ -308,16 +334,19 @@ export type ChatHistory = {
       | string
       | { content: string; contexts?: UserMessageContext[]; attachments?: UserAttachment[] },
     hidden?: boolean,
-  ) => void;
-  addAssistantMessage: (data: ServiceResponse, hidden?: boolean) => void;
-  addToolCallsMessage: (toolCalls: ToolCalls, hidden?: boolean) => void;
+  ) => Message;
+  addAssistantMessage: (data: ServiceResponse, hidden?: boolean) => Message;
+  addToolCallsMessage: (toolCalls: ToolCalls, hidden?: boolean) => Message;
   addToolResponseMessage: (
     id: string,
     content: ToolResponseMessage['content'],
     hidden?: boolean,
-  ) => void;
-  updateAssistantMessage: (data: ServiceResponse) => void;
-  syncMessage: (id: string) => void;
+  ) => Message;
+  updateAssistantMessage: (data: ServiceResponse) => Message;
+  updateMessage: <M extends Message>(
+    msg: M,
+    newMessage: Partial<Omit<M, 'id' | '__type' | 'el'>>,
+  ) => M;
   getAssistantMessage: (id: string) => Message | undefined;
   getMessages: () => Message[];
   getMessagesHistory: () => Pick<
@@ -355,14 +384,14 @@ export const chatHistory = {
     return {
       addUserMessage: (content, hidden = false) => {
         const id = 'user-msg-' + Date.now() + Math.round(Math.random() * 1000);
-        addUserMessage(config.key, id, content, hidden);
+        return addUserMessage(config.key, id, content, hidden);
       },
       addAssistantMessage: (data, hidden = false) => {
-        addAssistantMessage(config.key, data, hidden);
+        return addAssistantMessage(config.key, data, hidden);
       },
 
       addToolCallsMessage: (toolCalls, hidden = false) => {
-        addAssistantMessage(
+        return addAssistantMessage(
           config.key,
           {
             __type: 'ToolsData',
@@ -378,22 +407,13 @@ export const chatHistory = {
         );
       },
       addToolResponseMessage: (id, content, hidden = false) => {
-        addToolResponseMessage(config.key, id, content, hidden);
+        return addToolResponseMessage(config.key, id, content, hidden);
       },
       updateAssistantMessage: (data) => {
-        updateAssistantMessage(config.key, data);
+        return updateAssistantMessage(config.key, data);
       },
-      syncMessage: (id) => {
-        const namespace = _namespace[config.key];
-        if (!namespace) {
-          return;
-        }
-
-        if (!namespace.idRef[id]) {
-          return;
-        }
-
-        void updateMessage(namespace.idRef[id]);
+      updateMessage: (msg, newMessage) => {
+        return updateMessage(config.key, msg, newMessage);
       },
       getAssistantMessage: (id) => {
         return getMessage(config.key, id);

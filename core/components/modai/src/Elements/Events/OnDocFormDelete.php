@@ -24,7 +24,7 @@ class OnDocFormDelete extends Event
         try {
             /** @var \modAI\ContextProviders\Pinecone $instance */
             $instance = $provider->getContextProviderInstance();
-            $instance->delete(array_merge([$id], is_array($children) ? $children : []));
+            $instance->delete('resource', array_merge([$id], is_array($children) ? $children : []));
 
         } catch (\Throwable $e) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[modai] context plugin: ' . $e->getMessage());

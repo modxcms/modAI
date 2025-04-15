@@ -73,7 +73,8 @@ Ext.extend(ModAIAdmin, Ext.Component, {
                 xtype: cfg.type,
                 name: `config_${key}`,
                 hiddenName: `config_${key}`,
-                value: value ?? cfg.defaultValue
+                value: value ?? cfg.defaultValue,
+                ...(cfg.extraProperties || {}),
             },
             {
                 xtype: 'label',

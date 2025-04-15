@@ -19,6 +19,12 @@ plugins:
       - OnResourceUndelete
       - modAIOnContextProviderRegister
       - modAIOnToolRegister
+      - OnChunkSave
+      - OnChunkRemove
+      - OnSnippetSave
+      - OnSnippetRemove
+      - OnTemplateSave
+      - OnTemplateRemove
 
 systemSettings:
   - key: cache.lit
@@ -175,6 +181,15 @@ systemSettings:
     value: ''
 
   - key: contexts.resources.name
+    area: contexts
+    value: ''
+  - key: contexts.snippets.name
+    area: contexts
+    value: ''
+  - key: contexts.chunks.name
+    area: contexts
+    value: ''
+  - key: contexts.templates.name
     area: contexts
     value: ''
 

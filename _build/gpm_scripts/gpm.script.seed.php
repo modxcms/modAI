@@ -42,6 +42,7 @@ return (function () {
             [
                 'name' => \modAI\Tools\GetWeather::getSuggestedName(),
                 'class' => \modAI\Tools\GetWeather::class,
+                'description' => "Gets weather information from an external API.",
                 'config' => [],
                 'enabled' => true,
                 'default' => false,
