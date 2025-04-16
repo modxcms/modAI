@@ -31,7 +31,6 @@ class OnDocFormSave extends Event
             /** @var \modAI\ContextProviders\Pinecone $instance */
             $instance = $provider->getContextProviderInstance();
 
-
             $data = $resource->toArray();
             foreach ($data as $key => $value) {
                 if (is_array($value)) {
