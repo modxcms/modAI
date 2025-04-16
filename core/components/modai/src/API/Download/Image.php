@@ -31,10 +31,17 @@ class Image extends API
         $namespace = $this->modx->getOption('namespace', $data, 'modai');
         $resource = (int)$this->modx->getOption('resource', $data, 0);
         $mediaSource = $this->modx->getOption('mediaSource', $data, '');
+        $path = $this->modx->getOption('path', $data, '');
 
-        if (empty($mediaSource)) {
-            $mediaSource = Settings::getImageSetting($this->modx, $field, 'media_source', $namespace);
+        if (!empty($path)) {
+            Settings::setImageSetting($this->modx, $field, 'path', $path);
         }
+
+        if (!empty($mediaSource)) {
+            Settings::setImageSetting($this->modx, 'global', 'media_source', $mediaSource);
+        }
+
+        $mediaSource = Settings::getImageSetting($this->modx, $field, 'media_source', $namespace);
 
         if (empty($mediaSource)) {
             throw new LexiconException('modai.error.ms_required');
@@ -44,8 +51,8 @@ class Image extends API
             throw new LexiconException('modai.error.image_required');
         }
 
-        $additionalDomains = Settings::getSetting($this->modx, 'image.download_domains', '');
-        $additionalDomains = Utils::explodeAndClean($additionalDomains);
+        $additionalDomains = Settings::getImageSetting($this->modx, $field, 'download_domains', $namespace, false);
+        $additionalDomains = Utils::explodeAndClean(is_string($additionalDomains) ? $additionalDomains : '');
 
         $allowedDomains = array_merge($additionalDomains, $this->allowedDomains);
 

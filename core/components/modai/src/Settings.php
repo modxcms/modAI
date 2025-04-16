@@ -121,4 +121,24 @@ class Settings
     {
         return $modx->getOption("modai.api.$service.$key", null, $modx->getOption("modai.api.$key"));
     }
+
+    public static function setTextSetting(modX $modx, string $field, string $setting, string $value): void
+    {
+        self::setSetting($modx, "$field.text.$setting", $value);
+    }
+
+    public static function setImageSetting(modX $modx, string $field, string $setting, string $value): void
+    {
+        self::setSetting($modx, "$field.image.$setting", $value);
+    }
+
+    public static function setVisionSetting(modX $modx, string $field, string $setting, string $value): void
+    {
+        self::setSetting($modx, "$field.vision.$setting", $value);
+    }
+
+    public static function setSetting(modX $modx, string $key, string $value): void
+    {
+        $modx->setOption("#sys.$key", $value);
+    }
 }

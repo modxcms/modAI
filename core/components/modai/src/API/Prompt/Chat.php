@@ -39,7 +39,7 @@ class Chat extends API
         }
 
         if (!empty($model)) {
-            $this->modx->setOption('#sys.global.text.model', $model);
+            Settings::setTextSetting($this->modx, 'global', 'model', $model);
         }
 
         if (!empty($agent)) {
@@ -60,7 +60,7 @@ class Chat extends API
             }
 
             if (!empty($agent->model)) {
-                $this->modx->setOption('#sys.global.text.model', $agent->model);
+                Settings::setTextSetting($this->modx, 'global', 'model', $agent->model);
             }
 
             $advancedConfig = $agent->get('advanced_config');
@@ -68,7 +68,7 @@ class Chat extends API
                 $cfgCustomOptions = [];
                 foreach ($advancedConfig as $cfgItem) {
                     if (in_array($cfgItem['setting'], ['stream', 'model', 'temperature', 'max_tokens', 'base_output', 'base_prompt'])) {
-                        $this->modx->setOption("#sys.{$cfgItem['field']}.{$cfgItem['area']}.{$cfgItem['setting']}", $cfgItem['value']);
+                        Settings::setSetting($this->modx, "{$cfgItem['field']}.{$cfgItem['area']}.{$cfgItem['setting']}", $cfgItem['value']);
                         continue;
                     }
 
@@ -93,7 +93,7 @@ class Chat extends API
                             continue;
                         }
 
-                        $this->modx->setOption("#sys.$customOptionsKey.custom_options", json_encode($customOptionsValue));
+                        Settings::setSetting($this->modx, "$customOptionsKey.custom_options", json_encode($customOptionsValue));
                     }
 
                 }
