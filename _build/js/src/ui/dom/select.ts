@@ -73,6 +73,9 @@ export const buildSelect = <
       content.push(createElement('span', 'selectedItemName', displayValue));
       ariaLabel = displayValue;
     } else {
+      if (config.noSelectionText) {
+        content.push(createElement('span', 'selectedItemName', config.noSelectionText));
+      }
       ariaLabel = config.noSelectionText || lng('modai.ui.no_selection');
     }
 

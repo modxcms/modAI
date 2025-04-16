@@ -174,32 +174,33 @@ export const buildModalInput = (config: LocalChatConfig) => {
   );
   clearChatBtn.disable();
 
-  const agentSelectComponent = buildSelect(
-    globalState.config.availableAgents,
-    globalState.selectedAgent[config.key]?.id,
-    (selectedAgent) => {
-      globalState.modal.selectedAgent = selectedAgent ?? undefined;
-      globalState.selectedAgent[config.key] = selectedAgent ?? undefined;
-    },
-    {
-      idProperty: 'id',
-      displayProperty: 'name',
-      noSelectionText: '',
-      selectText: lng('modai.ui.select_agent'),
-      nullOptionDisplayText: lng('modai.ui.no_agent'),
-      icon: bot,
-    },
-  );
+  const availableOptions: HTMLElement[] = [...modeButtons, tryAgainBtn, clearChatBtn];
 
-  const options = createElement(
-    'div',
-    'options',
-    [...modeButtons, tryAgainBtn, clearChatBtn, agentSelectComponent],
-    {
-      ariaLabel: lng('modai.ui.options_toolbar'),
-      role: 'toolbar',
-    },
-  );
+  if (Object.keys(globalState.config.availableAgents).length > 0) {
+    const agentSelectComponent = buildSelect(
+      globalState.config.availableAgents,
+      globalState.selectedAgent[config.key]?.id,
+      (selectedAgent) => {
+        globalState.modal.selectedAgent = selectedAgent ?? undefined;
+        globalState.selectedAgent[config.key] = selectedAgent ?? undefined;
+      },
+      {
+        idProperty: 'id',
+        displayProperty: 'name',
+        noSelectionText: lng('modai.ui.agents'),
+        selectText: lng('modai.ui.select_agent'),
+        nullOptionDisplayText: lng('modai.ui.no_agent'),
+        icon: bot,
+      },
+    );
+
+    availableOptions.push(agentSelectComponent);
+  }
+
+  const options = createElement('div', 'options', availableOptions, {
+    ariaLabel: lng('modai.ui.options_toolbar'),
+    role: 'toolbar',
+  });
 
   const scrollWrapper = buildScrollToBottom();
   container.append(scrollWrapper);

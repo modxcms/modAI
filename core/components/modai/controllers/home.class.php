@@ -6,11 +6,6 @@ class ModAIHomeManagerController extends ModAIBaseManagerController
 {
     public function process(array $scriptProperties = [])
     {
-//        $provider = $this->modx->getObject(\modAI\Model\ContextProvider::class, ['enabled' => true, 'name' => 'elements', 'class' => \modAI\ContextProviders\Pinecone::class]);
-//        /** @var \modAI\ContextProviders\Pinecone $instance */
-//        $instance = $provider->getContextProviderInstance();
-//
-//        die(var_dump($instance->provideContext('header')));
     }
 
     public function getPageTitle()
