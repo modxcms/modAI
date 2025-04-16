@@ -20,6 +20,10 @@ class Image extends API
             throw APIException::unauthorized();
         }
 
+        if (!$this->modx->hasPermission('file_create')) {
+            throw APIException::unauthorized();
+        }
+
         $data = $request->getParsedBody();
 
         $url = $this->modx->getOption('url', $data);
@@ -77,6 +81,10 @@ class Image extends API
 
         if (!$source->initialize()) {
             throw new LexiconException('modai.error.source_init failed');
+        }
+
+        if (!$source->checkPolicy('create')) {
+            throw APIException::unauthorized();
         }
 
         $path = Settings::getImageSetting($this->modx, $field, 'path');
