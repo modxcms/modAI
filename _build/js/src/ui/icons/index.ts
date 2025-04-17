@@ -24,7 +24,33 @@ export const triangleError = `<svg xmlns="http://www.w3.org/2000/svg" width="24"
 
 export const x = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>`;
 
-export const sparkle = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkle"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path></svg>`;
+export const sparkle = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkle">
+  <style>
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes sparkleAnim {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0; transform: scale(0); }
+      }
+      .bonus-sparkle-1 {
+        animation: sparkleAnim 5s ease-in-out;
+        animation-iteration-count: infinite;
+        animation-delay: 0s;
+        transform-origin: center;
+        transform-box: fill-box;
+      }
+      .bonus-sparkle-2 {
+        animation: sparkleAnim 5s ease-in-out;
+        animation-iteration-count: infinite;
+        animation-delay: 4s;
+        transform-origin: center;
+        transform-box: fill-box;
+      }
+    }
+  </style>
+  <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
+  <path class="bonus-sparkle-1" d="M20 2.5a1 1 0 0 0-1-1 1 1 0 0 0 0 2 1 1 0 0 0 1-1z" stroke-width="1"></path>
+  <path class="bonus-sparkle-2" d="M5 21.5a1 1 0 0 0-1-1 1 1 0 0 0 0 2 1 1 0 0 0 1-1z" stroke-width="1"></path>
+</svg>`;
 
 export const arrowLeft = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>`;
 
