@@ -1,3 +1,4 @@
+import { lng } from './lng';
 import { ui } from './ui';
 import { button } from './ui/dom/button';
 import { icon } from './ui/dom/icon';
@@ -28,6 +29,9 @@ export const initGlobalButton = () => {
       ui.localChat.createModal(config);
     },
     'global-button',
+    {
+      title: lng('modai.ui.modai_assistant'),
+    },
   );
 
   shadowRoot.appendChild(trigger);
