@@ -4,12 +4,13 @@ import { scrollToBottom } from './modalActions';
 import { buildModalChat } from './modalChat';
 import { buildModalHeader } from './modalHeader';
 import { buildModalInput } from './modalInput';
-import { chatHistory, UpdatableHTMLElement } from '../../chatHistory';
+import { chatHistory } from '../../chatHistory';
 import { globalState } from '../../globalState';
 import { lng } from '../../lng';
 import { createModAIShadow } from '../dom/modAIShadow';
 
 import type { Modal, LocalChatConfig } from './types';
+import type { UpdatableHTMLElement } from '../../chatHistory';
 
 export const buildModal = (config: LocalChatConfig) => {
   const { shadow, shadowRoot } = createModAIShadow<Modal>(true, () => {

@@ -1,11 +1,10 @@
-import {
+import type {
   AssistantMessageContentType,
   Message,
   UserAttachment,
   UserMessageContext,
   BaseMessage,
 } from './chatHistory';
-
 import type { Metadata, ToolCalls, ToolResponseContent } from './executor/types';
 
 const DB_NAME = 'modAI';

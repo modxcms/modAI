@@ -1,7 +1,8 @@
 import { createGenerateButton } from './generateButton';
 import { createModal, verifyPermissions } from './localChat';
-import { LocalChatConfig } from './localChat/types';
 import { createLoadingOverlay } from './overlay';
+
+import type { LocalChatConfig } from './localChat/types';
 
 type LocalChat = {
   /**
