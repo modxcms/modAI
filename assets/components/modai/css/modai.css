@@ -1014,7 +1014,33 @@
         align-items: center;
     }
 
-    .btn,
+    .btn {
+        --button-h: 222;
+        --button-s: 49%;
+        --button-l: 60%;
+        --button-color: hsl(var(--button-h), var(--button-s), var(--button-l));
+        display: inline-block;
+        cursor: pointer;
+        color: var(--button-color);
+        background: transparent;
+        border: none;
+        padding: 3px 6px 4px;
+        height: 100%;
+        transition: 200ms all;
+
+        &:hover {
+            transform: scale(1.15);
+            --button-h: 191;
+            --button-s: 100%;
+            --button-l: 44%;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: initial;
+        }
+    }
+
     .history--next,
     .history--prev {
         --button-h: 191;
@@ -1023,8 +1049,8 @@
         --button-hover-darken: 15%;
         --button-border-darken: 20%;
         --button-color: hsl(var(--button-h), var(--button-s), var(--button-l));
-        --button-color-border: hsl( var(--button-h), var(--button-s), calc(var(--button-l) - var(--button-border-darken)) );
-        --button-color-hover: hsl( var(--button-h), var(--button-s), calc(var(--button-l) - var(--button-hover-darken)) );
+        --button-color-border: hsl(var(--button-h), var(--button-s), calc(var(--button-l) - var(--button-border-darken)));
+        --button-color-hover: hsl(var(--button-h), var(--button-s), calc(var(--button-l) - var(--button-hover-darken)));
         display: inline-block;
         cursor: pointer;
         background: var(--button-color);
@@ -1044,8 +1070,8 @@
         }
 
         &:disabled {
-            opacity:0.5;
-            cursor:initial;
+            opacity: 0.5;
+            cursor: initial;
         }
     }
 }
