@@ -199,7 +199,6 @@ build:
     - acls.gpm.php
   scriptsAfter:
     - lit.gpm.php
-    - seed.gpm.php
 
 database:
   tables:

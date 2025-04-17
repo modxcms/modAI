@@ -14,7 +14,6 @@ class modAIOnToolRegister extends Event
 
             \modAI\Tools\GetChunks::class,
             \modAI\Tools\CreateChunk::class,
-            \modAI\Tools\DeleteChunks::class,
 
             \modAI\Tools\GetTemplates::class,
             \modAI\Tools\CreateTemplate::class,
