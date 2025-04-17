@@ -17,7 +17,7 @@ class GetResources implements ToolInterface
 
     public static function getDescription(): string
     {
-        return "Get or search resources (modResource) from current MODX Revolution database. You can provide optional parameters to return only specific resources. You'll receive an array of resources with a properties of id, pagetitle, parent (ID of another resource), template (ID of a template) and edit url.";
+        return "Search for resources, also called pages or documents, on the website. You can provide optional parameters to return only specific resources. Returns matching resources with their id, pagetitle, parent resource ID, template ID, edit url, and public URL.";
     }
 
     public static function getParameters(): array
@@ -63,6 +63,8 @@ class GetResources implements ToolInterface
         }
 
         $where = [];
+        $where['deleted'] = false;
+        $where['searchable'] = true;
 
         if (is_array($parameters)) {
             if (!empty($parameters['query'])) {
@@ -97,6 +99,7 @@ class GetResources implements ToolInterface
                 'parent' => $resource->get('parent'),
                 'template' => $resource->get('template'),
                 'edit_url' => $this->modx->config['manager_url'] . '?a=resource/update&id=' . $resource->get('id'),
+                'url' => $this->modx->makeUrl($resource->get('id'), '', '', 'full'),
             ];
 
             $output[] = $arr;

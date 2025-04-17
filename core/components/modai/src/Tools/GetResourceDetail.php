@@ -17,7 +17,7 @@ class GetResourceDetail implements ToolInterface
 
     public static function getDescription(): string
     {
-        return "Use this tool to get more information about a resource, concept, or service you are unfamiliar with from of an array of integer resource IDs. Use the appropriate tool first to identify relevant resources on a topic. The tool will retrieve metadata, like title, description, published state, and last edit dates, as well as full HTML-formatted content. Provide at least one, or multiple resource IDs.";
+        return "Get more information about a resource, page, concept, or service you are unfamiliar with from of an array of integer resource IDs. Use the appropriate tool first to identify relevant resources on a topic. The tool will retrieve metadata, like title, description, published state, and last edit dates, as well as full HTML-formatted content. Provide at least one, or multiple resource IDs.";
     }
 
     public static function getParameters(): array
@@ -31,7 +31,7 @@ class GetResourceDetail implements ToolInterface
                     'items' => [
                         'type' => 'number'
                     ],
-                    "description" => 'Array of IDs of resources to get details for.'
+                    "description" => 'Array of IDs of resources to load.'
                 ],
             ],
             "required" => ['ids']

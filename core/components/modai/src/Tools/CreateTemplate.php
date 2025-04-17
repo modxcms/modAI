@@ -16,7 +16,7 @@ class CreateTemplate implements ToolInterface
 
     public static function getDescription(): string
     {
-        return "ALWAYS ask for explicit user confirmation in a separate message before calling this function, even if user asks directly for creating template, you HAVE TO ask for their confirmation in a separate message, provide a list of name, description and category name, DON'T output content, that you want to create. If needed, use an appropriate tool to first create categories, wait for it's response and then continue with calling this tool. Creates new MODX templates. Don't ask for the parameters, if they were not provided, make them up.";
+        return "Creates a new template for the website, which can be assigned to resources to determine how they are rendered in the frontend. Only use when explicitly asked to create a new template, and always check if appropriate templates already exist first. Always ask for explicit user confirmation in a separate message, providing the user with the template name and a summary of what the contents would be, BEFORE calling this function. Do NOT output the full template content. When generating template content you MUST make sure it uses the MODX templating syntax.";
     }
 
     public static function getParameters(): array

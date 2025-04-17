@@ -16,7 +16,7 @@ class CreateResource implements ToolInterface
 
     public static function getDescription(): string
     {
-        return "ALWAYS ask for explicit user confirmation in a separate message before calling this function, even if user asks directly for creating resource (page), you HAVE TO ask for their confirmation in a separate message, provide a list of page titles, DON'T output content, that you want to create. If needed, use an appropriate tool to first create categories or templates, wait for it's response and then continue with calling this tool. Creates new MODX resource (page). Don't ask for the parameters, if they were not provided, make them up.";
+        return "Creates a new resource, or page, on the website. ALWAYS ask for explicit user confirmation in a separate message before calling this function, even if user asks directly to create a resource, ask the user to confirm the resource before calling the tool with the information you intend to use. ";
     }
 
     public static function getParameters(): array

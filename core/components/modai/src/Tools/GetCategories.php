@@ -16,7 +16,7 @@ class GetCategories implements ToolInterface
 
     public static function getDescription(): string
     {
-        return "Get all categories in the current MODX Revolution database. Categories are used to separate chunks, snippets, templates, template variables and plugins. Each category can have parent to create a tree like structure. If parent is 0, the category is at root level.";
+        return "Lists all categories used to group templates and chunks. Each category can have a parent to create a tree like structure. If parent is 0, the category is at root level.";
     }
 
     public static function getParameters(): array
