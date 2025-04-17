@@ -20,8 +20,8 @@ $_lang['modai_admin_related_agent_delete'] = 'Unassign agent from a tool/context
 
 // region: Client permissions
 $_lang['modai.permissions.modai_client'] = 'Use modAI';
-$_lang['modai.permissions.modai_client_chat'] = 'Use modAI chat';
 $_lang['modai.permissions.modai_client_text'] = 'Use modAI text generation';
-$_lang['modai.permissions.modai_client_image'] = 'Use modAI image generation';
 $_lang['modai.permissions.modai_client_vision'] = 'Use modAI vision';
+$_lang['modai.permissions.modai_client_chat_text'] = 'Use modAI chat';
+$_lang['modai.permissions.modai_client_chat_image'] = 'Use modAI image generation';
 // endregion
