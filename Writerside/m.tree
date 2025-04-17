@@ -10,6 +10,7 @@
     <toc-element toc-title="Configuration">
         <toc-element topic="Configuration_Overview.md"/>
         <toc-element topic="Supported-Services.md"/>
+        <toc-element topic="Permissions.md"/>
     </toc-element>
     <toc-element toc-title="API">
         <toc-element topic="Init-modAI.md"/>
