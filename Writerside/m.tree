@@ -7,6 +7,7 @@
                  start-page="index.md">
 
     <toc-element topic="index.md"/>
+    <toc-element topic="Glossary.md"/>
     <toc-element toc-title="Configuration">
         <toc-element topic="Configuration_Overview.md"/>
         <toc-element topic="Supported-Services.md"/>
