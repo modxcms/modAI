@@ -1,5 +1,8 @@
 import { globalState } from '../../globalState';
+import { button } from '../dom/button';
 import { applyStyles, createElement } from '../utils';
+
+import type { Button } from '../dom/button';
 
 export type AttachmentsWrapper = HTMLDivElement & {
   visible: boolean;
@@ -12,7 +15,7 @@ export type AttachmentsWrapper = HTMLDivElement & {
   attachments: Attachment[];
 };
 
-export type Attachment = HTMLDivElement & {
+export type Attachment = Button & {
   __type: 'image';
   value: string;
 };
@@ -80,19 +83,19 @@ const addImageAttachment = (src: string) => {
     globalState.modal.attachments.removeAttachments();
   }
 
-  const attachment = createElement('div', 'imagePreview') as Attachment;
+  const attachment = button(
+    [
+      createElement('img', undefined, '', { src }),
+      createElement('div', 'trigger', '×', { tabIndex: -1 }),
+    ],
+    () => {
+      globalState.modal.attachments.removeAttachment(attachment);
+    },
+    'attachment imagePreview',
+  ) as Attachment;
+
   attachment.__type = 'image';
   attachment.value = src;
-
-  const img = createElement('img', undefined, '', { src });
-  const removeBtn = createElement('button', undefined, '×');
-
-  removeBtn.addEventListener('click', (e: MouseEvent) => {
-    e.stopPropagation();
-    globalState.modal.attachments.removeAttachment(attachment);
-  });
-
-  attachment.append(img, removeBtn);
 
   globalState.modal.attachments.addAttachment(attachment);
 };

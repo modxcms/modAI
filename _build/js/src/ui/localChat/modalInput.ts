@@ -93,8 +93,12 @@ export const buildModalInput = (config: LocalChatConfig) => {
 
   inputWrapper.append(textarea, loading, sendBtn, stopBtn);
 
-  inputSection.append(buildModalInputAttachments(), inputWrapper);
-  inputSection.append(buildModalInputContexts(), inputWrapper);
+  const inputAddons = createElement('div', 'inputAddons', [
+    buildModalInputAttachments(),
+    buildModalInputContexts(),
+  ]);
+
+  inputSection.append(inputAddons, inputWrapper);
 
   const modeButtons: Button[] = [];
 
@@ -272,6 +276,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
 
     if (imageFile) {
       await handleImageUpload(imageFile);
+      textarea.focus();
       return;
     }
 
@@ -281,6 +286,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
 
       if (isRemote) {
         await handleImageUpload(remoteImageUrl, true);
+        textarea.focus();
         return;
       }
 
@@ -296,10 +302,12 @@ export const buildModalInput = (config: LocalChatConfig) => {
       } catch {
         addErrorMessage(lng('modai.error.failed_to_fetch_image'));
       }
+      textarea.focus();
       return;
     }
 
     addErrorMessage(lng('modai.error.only_image_files_are_allowed'));
+    textarea.focus();
   });
 
   textarea.addEventListener('paste', async (e) => {

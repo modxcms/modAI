@@ -8,7 +8,7 @@ import { globalState } from '../../globalState';
 import { lng } from '../../lng';
 import { confirmDialog } from '../cofirmDialog';
 import { icon } from '../dom/icon';
-import { copy, edit, plus, triangleError } from '../icons';
+import { copy, edit, plus, textSelect, triangleError } from '../icons';
 import { createElement, nlToBr } from '../utils';
 
 import type { LocalChatConfig } from './types';
@@ -16,8 +16,43 @@ import type {
   AssistantMessage,
   Message,
   UpdatableHTMLElement,
+  UserAttachment,
   UserMessage,
+  UserMessageContext,
 } from '../../chatHistory';
+
+const contextRenderers: Record<string, undefined | ((context: UserMessageContext) => HTMLElement)> =
+  {
+    selection: (ctx) => {
+      const tooltipEl = createElement('span', 'tooltip', ctx.value, { tabIndex: -1 });
+      const btn = createElement('div', 'context', [icon(24, textSelect), tooltipEl], {
+        tabIndex: 0,
+      });
+
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          const scrollAmount = 30;
+          tooltipEl.scrollTop += e.key === 'ArrowDown' ? scrollAmount : -scrollAmount;
+        }
+      });
+
+      return btn;
+    },
+  };
+
+const attachmentRenderers: Record<
+  string,
+  undefined | ((attachment: UserAttachment) => HTMLElement)
+> = {
+  image: (attachment) => {
+    return createElement(
+      'div',
+      'attachment imagePreview',
+      createElement('img', undefined, undefined, { src: attachment.value }),
+    );
+  },
+};
 
 export const addUserMessage = (msg: UserMessage) => {
   const messageWrapper: UpdatableHTMLElement<UserMessage> = createElement(
@@ -29,32 +64,40 @@ export const addUserMessage = (msg: UserMessage) => {
   const messageElement = createElement('div', 'message user');
 
   const textContent = msg.content;
-  const imagesContent = [];
-
-  for (const attachment of msg.attachments ?? []) {
-    if (attachment.__type === 'image') {
-      imagesContent.push(attachment.value);
-    }
-  }
 
   const textDiv = createElement('div');
   textDiv.innerHTML = nlToBr(textContent);
   messageElement.appendChild(textDiv);
 
-  if (imagesContent.length > 0) {
-    const imageRow = createElement('div', 'imageRow');
+  const attachmentsWrapper = createElement('div', 'attachmentsWrapper');
+  const contextsWrapper = createElement('div', 'contextsWrapper');
 
-    for (const imgContent of imagesContent) {
-      const imageWrapper = createElement('div');
-
-      const img = createElement('img');
-      img.src = imgContent;
-
-      imageWrapper.appendChild(img);
-      imageRow.appendChild(imageWrapper);
+  for (const attachment of msg.attachments ?? []) {
+    const renderer = attachmentRenderers[attachment.__type];
+    if (!renderer) {
+      continue;
     }
-    messageElement.appendChild(imageRow);
+
+    attachmentsWrapper.appendChild(renderer(attachment));
+    if (!attachmentsWrapper.classList.contains('visible')) {
+      attachmentsWrapper.classList.add('visible');
+    }
   }
+
+  for (const context of msg.contexts ?? []) {
+    const renderer = context.renderer && contextRenderers[context.renderer];
+    if (!renderer) {
+      continue;
+    }
+
+    contextsWrapper.appendChild(renderer(context));
+    if (!contextsWrapper.classList.contains('visible')) {
+      contextsWrapper.classList.add('visible');
+    }
+  }
+
+  const inputAddons = createElement('div', 'inputAddons', [attachmentsWrapper, contextsWrapper]);
+  messageElement.appendChild(inputAddons);
 
   const actionsContainer = createElement('div', 'actions');
   actionsContainer.appendChild(
@@ -168,7 +211,7 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
         }
       }
 
-      return ''; // use external default escaping
+      return '';
     },
   });
 
