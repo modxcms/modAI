@@ -16,7 +16,7 @@ class CreateCategory implements ToolInterface
 
     public static function getDescription(): string
     {
-        return "ALWAYS ask for explicit user confirmation in a separate message before calling this function, even if user asks directly for creating categories, you HAVE TO ask for their confirmation in a separate message, provide a list of name, and parent category name that you want to create. If needed, use an appropriate tool to first list available categories. Creates new MODX categories and returns their IDs.";
+        return "Creates a new Category that any element (chunks or templates) can be grouped by. Use the get categories tool first to check if a category already exists. When successful, this tool returns the category ID to use when creating chunks or templates.";
     }
 
     public static function getParameters(): array

@@ -17,7 +17,7 @@ class GetTemplates implements ToolInterface
 
     public static function getDescription(): string
     {
-        return "Get or search templates (modTemplate) from current MODX Revolution database. You can provide optional parameters to return only specific templates. You'll receive an array of templates with a properties of id, name, description, category (ID of a category) and optionally content.";
+        return "Find templates available in the website. Templates are assigned to resources and determine how a page is rendered to visitors. You can provide optional parameters to return only specific templates. You'll receive an array of templates with a properties of id, name, description, category (ID of a category) and optionally content.";
     }
 
     public static function getParameters(): array
@@ -27,30 +27,26 @@ class GetTemplates implements ToolInterface
             'properties' => [
                 'query' => [
                     'type' => 'string',
-                    "description" => 'Search templates by name'
+                    "description" => 'Search templates by a simple search on the name'
                 ],
                 'name' => [
                     'type' => 'string',
-                    "description" => 'Get single template by name'
+                    "description" => 'Get a template by its exact name'
                 ],
                 'id' => [
                     'type' => 'number',
-                    "description" => 'Get single template by ID'
+                    "description" => 'Get a template by its ID'
                 ],
                 'categories' => [
                     'type' => 'array',
                     'items' => [
                         'type' => 'number',
                     ],
-                    "description" => 'Search templates by multiple category IDs'
-                ],
-                'category' => [
-                    'type' => 'number',
-                    "description" => 'Search templates by category ID'
+                    "description" => 'List templates within the provided categories'
                 ],
                 'returnContent' => [
                     'type' => 'boolean',
-                    "description" => 'Return template\'s content, use this only when you are tasked with updating template'
+                    "description" => 'Include the template content in the response, use this only when you are tasked with updating template'
                 ],
             ],
             "required" => []
@@ -94,12 +90,6 @@ class GetTemplates implements ToolInterface
             if (!empty($parameters['id'])) {
                 $where[] = [
                     'id' => $parameters['id'],
-                ];
-            }
-
-            if (!empty($parameters['category'])) {
-                $where[] = [
-                    'category' => $parameters['category'],
                 ];
             }
 

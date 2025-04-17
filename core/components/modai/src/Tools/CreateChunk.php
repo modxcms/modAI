@@ -16,7 +16,7 @@ class CreateChunk implements ToolInterface
 
     public static function getDescription(): string
     {
-        return "ALWAYS ask for explicit user confirmation in a separate message before calling this function, even if user asks directly for creating chunk, you HAVE TO ask for their confirmation in a separate message, provide a list of name, description and category name, DON'T output content, that you want to create. If needed, use an appropriate tool to first create categories, wait for it's response and then continue with calling this tool. Creates new MODX chunks. Don't ask for the parameters, unless they were already provided.";
+        return "Creates a new Chunk, which is a reusable piece of HTML or other code that can be inserted into pages, templates, or other elements. Use when explicitly asked to create a chunk or when creating templates to break up reusable pieces. Once created, chunks can be rendered by using [[\$name_of_chunk]] in a template or elsewhere. ALWAYS ask for explicit user confirmation with the chunk name, description, and category name in a separate message BEFORE calling this function.";
     }
 
     public static function getParameters(): array

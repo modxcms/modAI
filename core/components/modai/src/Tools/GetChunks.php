@@ -16,7 +16,7 @@ class GetChunks implements ToolInterface
 
     public static function getDescription(): string
     {
-        return "Get or search chunks (modChunk) from current MODX Revolution database. You can provide optional parameters to return only specific chunks - query: search chunks by name, broad match; name: return chunk with a given name; id: return chunk with a given ID. You'll receive an array of chunks with a properties of id, name, description, category (ID of a category) and optionally content.";
+        return "Find existing chunks in the website. Chunks are reusable pieces of HTML or other content. The tool can search for Get or search chunks (modChunk) from current MODX Revolution database. You can provide optional parameters to return only specific chunks - query: search chunks by name, broad match; name: return chunk with a given name; id: return chunk with a given ID. You'll receive an array of chunks with a properties of id, name, description, category (ID of a category) and optionally content.";
     }
 
     public static function getParameters(): array
@@ -26,26 +26,22 @@ class GetChunks implements ToolInterface
             'properties' => [
                 'query' => [
                     'type' => 'string',
-                    "description" => 'Search by category name'
+                    "description" => 'Simple wild-card search on the chunk name'
                 ],
                 'name' => [
                     'type' => 'string',
-                    "description" => 'Get single chunk by name'
+                    "description" => 'Get a single chunk by name if you already know the name'
                 ],
                 'id' => [
                     'type' => 'number',
-                    "description" => 'Get single chunk by ID'
+                    "description" => 'Get a single chunk by its ID'
                 ],
                 'categories' => [
                     'type' => 'array',
                     'items' => [
                         'type' => 'number',
                     ],
-                    "description" => 'Search chunks by multiple category IDs'
-                ],
-                'category' => [
-                    'type' => 'number',
-                    "description" => 'Search chunks by category ID'
+                    "description" => 'List chunks that are assigned to the provided category ID(s)'
                 ],
                 'returnContent' => [
                     'type' => 'boolean',
@@ -94,12 +90,6 @@ class GetChunks implements ToolInterface
             if (!empty($parameters['id'])) {
                 $where[] = [
                     'id' => $parameters['id'],
-                ];
-            }
-
-            if (!empty($parameters['category'])) {
-                $where[] = [
-                    'category' => $parameters['category'],
                 ];
             }
 
