@@ -18,17 +18,25 @@ class ContextProviderClass extends Processor
 
         $registeredContextProviders = $this->modx->invokeEvent('modAIOnContextProviderRegister');
         foreach ($registeredContextProviders as $registeredContextProvider) {
-            if (is_array($registeredContextProvider)) {
-                foreach ($registeredContextProvider as $contextProvider) {
-                    if ($this->validateClassName($contextProvider, $query)) {
-                        $classes[] = $contextProvider;
-                    }
+            $contextProviders = $registeredContextProvider;
+
+            if (!is_array($contextProviders)) {
+                $maybeJSON = json_decode($registeredContextProvider, true);
+                if (is_array($maybeJSON)) {
+                    $contextProviders = $maybeJSON;
+                } else {
+                    $contextProviders = [$registeredContextProvider];
                 }
+            }
+
+            if (!is_array($contextProviders)) {
                 continue;
             }
 
-            if ($this->validateClassName($registeredContextProvider, $query)) {
-                $classes[] = $registeredContextProvider;
+            foreach ($contextProviders as $contextProvider) {
+                if ($this->validateClassName($contextProvider, $query)) {
+                    $classes[] = $contextProvider;
+                }
             }
         }
 

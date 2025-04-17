@@ -6,7 +6,7 @@ class modAIOnToolRegister extends Event
 {
     public function run()
     {
-        $this->modx->event->output([
+        $this->modx->event->output(json_encode([
             \modAI\Tools\GetWeather::class,
 
             \modAI\Tools\GetCategories::class,
@@ -21,6 +21,6 @@ class modAIOnToolRegister extends Event
             \modAI\Tools\CreateResource::class,
             \modAI\Tools\GetResources::class,
             \modAI\Tools\GetResourceDetail::class,
-        ]);
+        ]));
     }
 }
