@@ -11,12 +11,8 @@ The modAI Plugin adds a sparkle button (✦) next to fields or labels in back-en
 ## Requirements
 
 - MODX Revolution 3.x
-- An API Key from your [Supported Provider](Supported-Providers.md)
+- An API Key from your [Supported AI Services](Supported-Services.md)
 - Pre-paid credits for API calls for ChatGPT if using—this is different from the $20/month ChatGPT Pro subscription
-
-<note> 
-    Image and vision support is currently only supported with the OpenAI and Gemini. Claude, Ollama and others only support text generation.
-</note>
 
 MODX’s modAI Extra works with the following Extras if installed:
 
@@ -25,7 +21,7 @@ MODX’s modAI Extra works with the following Extras if installed:
 
 <seealso>
     <category ref="related">
-        <a href="Supported-Providers.md" />
+        <a href="Supported-Services.md" />
     </category>
     <category ref="external">
         <a href="https://extras.modx.com/package/imageplustvinput">Image+</a>

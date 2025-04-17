@@ -9,7 +9,7 @@
     <toc-element topic="index.md"/>
     <toc-element toc-title="Configuration">
         <toc-element topic="Configuration_Overview.md"/>
-        <toc-element topic="Supported-Providers.md"/>
+        <toc-element topic="Supported-Services.md"/>
     </toc-element>
     <toc-element topic="Usage.md"/>
     <toc-element topic="Cost.md"/>
