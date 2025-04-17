@@ -159,7 +159,10 @@ class CustomOpenAI implements AIService
         $input = $config->getCustomOptions();
         $input['model'] = $config->getModel();
         $input['max_tokens'] = $config->getMaxTokens();
-        $input['temperature'] = $config->getTemperature();
+        $temperature = $config->getTemperature();
+        if ($temperature >= 0) {
+            $input['temperature'] = $config->getTemperature();
+        }
         $input['messages'] = $messages;
 
         $tools = [];

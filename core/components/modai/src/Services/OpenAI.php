@@ -28,21 +28,21 @@ class OpenAI implements AIService
         foreach ($contexts as $ctx) {
             if ($ctx['__type'] === 'selection') {
                 $messages[] = [
-                    'role' => 'system',
+                    'role' => 'developer',
                     'content' => "Next user message should act only on this text: " . $ctx['value']
                 ];
             }
 
             if ($ctx['__type'] === 'agent') {
                 $messages[] = [
-                    'role' => 'system',
+                    'role' => 'developer',
                     'content' => $ctx['value']
                 ];
             }
 
             if ($ctx['__type'] === 'ContextProvider') {
                 $messages[] = [
-                    'role' => 'system',
+                    'role' => 'developer',
                     'content' => $ctx['value']
                 ];
             }
@@ -136,7 +136,7 @@ class OpenAI implements AIService
         $system = $config->getSystemInstructions();
         if (!empty($system)) {
             $messages[] = [
-                'role' => 'system',
+                'role' => 'developer',
                 'content' => $system
             ];
         }
@@ -151,8 +151,12 @@ class OpenAI implements AIService
 
         $input = $config->getCustomOptions();
         $input['model'] = $config->getModel();
-        $input['max_tokens'] = $config->getMaxTokens();
-        $input['temperature'] = $config->getTemperature();
+        $input['max_completion_tokens'] = $config->getMaxTokens();
+        $temperature = $config->getTemperature();
+        if ($temperature >= 0) {
+            $input['temperature'] = $config->getTemperature();
+        }
+
         $input['messages'] = $messages;
 
         $tools = [];

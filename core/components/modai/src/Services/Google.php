@@ -197,9 +197,13 @@ class Google implements AIService
         $input["contents"] = $messages;
 
         $input["generationConfig"] = [
-            "temperature" => $config->getTemperature(),
             "maxOutputTokens" => $config->getMaxTokens(),
         ];
+
+        $temperature = $config->getTemperature();
+        if ($temperature >= 0) {
+            $input["generationConfig"]['temperature'] = $config->getTemperature();
+        }
 
         if (!empty($systemInstruction)) {
             $input['system_instruction'] = [
