@@ -8,6 +8,11 @@
 
     <toc-element topic="index.md"/>
     <toc-element topic="Glossary.md"/>
+    <toc-element toc-title="Admin">
+        <toc-element topic="Agents.md"/>
+        <toc-element topic="Context-Providers.md"/>
+        <toc-element topic="Tools.md"/>
+    </toc-element>
     <toc-element toc-title="Configuration">
         <toc-element topic="Configuration_Overview.md"/>
         <toc-element topic="Supported-Services.md"/>
