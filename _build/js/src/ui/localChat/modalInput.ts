@@ -195,6 +195,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
         selectText: lng('modai.ui.select_agent'),
         nullOptionDisplayText: lng('modai.ui.no_agent'),
         icon: bot,
+        tooltip: lng('modai.ui.select_agent'),
       },
     );
 

@@ -26,6 +26,7 @@ export const buildSelect = <
     icon?: string;
     iconSize?: number;
     nullOptionDisplayText?: string;
+    tooltip?: string;
   },
 ) => {
   const idKey: IdKey = options?.idProperty ?? ('id' as IdKey);
@@ -39,6 +40,7 @@ export const buildSelect = <
     icon: options?.icon,
     iconSize: options?.iconSize ?? 24,
     nullOptionDisplayText: options?.nullOptionDisplayText,
+    tooltip: options?.tooltip ?? lng('modai.ui.select_item'),
   };
 
   const container = createElement('div', 'selectContainer');
@@ -81,6 +83,7 @@ export const buildSelect = <
 
     button.innerHTML = '';
     button.append(...content);
+    button.append(createElement('span', 'tooltip', config.tooltip));
     button.setAttribute('aria-label', ariaLabel);
   };
 
