@@ -253,7 +253,17 @@ Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
                     value: config.record.description,
                     allowBlank: true,
                   },
-                  this.promptField
+                  {
+                    xtype: 'label',
+                    html: _('modai.admin.tool.description_desc'),
+                    cls: 'desc-under',
+                  },
+                  this.promptField,
+                  {
+                    xtype: 'label',
+                    html: _('modai.admin.tool.prompt_desc'),
+                    cls: 'desc-under',
+                  },
                 ],
               },
 

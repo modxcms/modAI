@@ -13,6 +13,7 @@ $_lang['modai.admin.global.any'] = 'Any';
 
 $_lang['modai.admin.context_provider.name'] = 'Name';
 $_lang['modai.admin.context_provider.description'] = 'Description';
+$_lang['modai.admin.context_provider.description_desc'] = 'Internal description of the context provider.';
 $_lang['modai.admin.context_provider.enabled'] = 'Enabled';
 $_lang['modai.admin.context_provider.enabled_desc'] = 'If disabled, context provider won\'t augument the prompt.';
 $_lang['modai.admin.context_provider.create'] = 'Create Context Provider';
@@ -29,6 +30,7 @@ $_lang['modai.admin.context_provider.agents'] = 'Agents';
 
 $_lang['modai.admin.tool.name'] = 'Name';
 $_lang['modai.admin.tool.description'] = 'Description';
+$_lang['modai.admin.tool.description_desc'] = 'Internal description of the tool.';
 $_lang['modai.admin.tool.enabled'] = 'Enabled';
 $_lang['modai.admin.tool.enabled_desc'] = 'If disabled, tool won\'t be available for the model.';
 $_lang['modai.admin.tool.default'] = 'Default';
@@ -46,6 +48,7 @@ $_lang['modai.admin.tool.class'] = "Tool Class";
 $_lang['modai.admin.tool.tool'] = 'Tool';
 $_lang['modai.admin.tool.agents'] = 'Agents';
 $_lang['modai.admin.tool.prompt'] = 'Prompt';
+$_lang['modai.admin.tool.prompt_desc'] = 'Description of the tool to the AI. By default it uses the default from the tool\'s class, but you can override it and customize.';
 
 $_lang['modai.admin.agent.name'] = 'Name';
 $_lang['modai.admin.agent.description'] = 'Description';

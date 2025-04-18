@@ -164,6 +164,11 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                     value: config.record.description,
                     allowBlank: true,
                   },
+                  {
+                    xtype: 'label',
+                    html: _('modai.admin.context_provider.description_desc'),
+                    cls: 'desc-under',
+                  },
                 ],
               },
 
