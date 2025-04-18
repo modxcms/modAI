@@ -15,6 +15,9 @@ Name of the tool, this name has to be unique across all configured tools. This i
 ### Description
 Internal description of the tool, doesn't have any special functionality.
 
+### Prompt
+Tool's prompt (aka description in AI docs), the prompt describes how to the tools works to the AI. If empty, the default prompt (from the tool class) will be used.
+
 ### Enabled
 If set to `false`, the tool won't be available for use, even when assigned to agents.
 
