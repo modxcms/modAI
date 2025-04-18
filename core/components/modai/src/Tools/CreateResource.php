@@ -14,7 +14,7 @@ class CreateResource implements ToolInterface
         return 'create_resource';
     }
 
-    public static function getDescription(): string
+    public static function getPrompt(): string
     {
         return "Creates a new resource, or page, on the website. ALWAYS ask for explicit user confirmation in a separate message before calling this function, even if user asks directly to create a resource, ask the user to confirm the resource before calling the tool with the information you intend to use. ";
     }
@@ -55,7 +55,7 @@ class CreateResource implements ToolInterface
         ];
     }
 
-    public static function getConfig(): array
+    public static function getConfig(modX $modx): array
     {
         return [];
     }
@@ -127,5 +127,10 @@ class CreateResource implements ToolInterface
     public static function checkPermissions(modX $modx): bool
     {
         return $modx->hasPermission('save_document');
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Creates a new resource';
     }
 }

@@ -43,7 +43,9 @@ class ContextProviderClass extends Processor
         return $this->outputArray(array_map(function($class) {
             return [
                 'class' => $class,
-                'config' => $class::getConfig(),
+                'config' => $class::getConfig($this->modx),
+                'description' => $class::getDescription(),
+                'suggestedName' => $class::getSuggestedName(),
             ];
         }, $classes), count($classes));
     }

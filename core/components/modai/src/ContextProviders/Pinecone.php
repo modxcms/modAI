@@ -220,42 +220,42 @@ class Pinecone implements ContextProviderInterface
         return str_replace($search, $replace, $msg);
     }
 
-    public static function getConfig(): array
+    public static function getConfig(modX $modx): array
     {
         return [
             'api_key' => [
-                'name' => 'API Key',
-                'description' => 'API Key to access Pinecone',
+                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.api_key'),
+                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.api_key_desc'),
                 'required' => true,
                 'type' => 'text-password'
             ],
             'endpoint' => [
-                'name' => 'API endpoint',
-                'description' => 'Endpoint of your Pinecone API instance.',
+                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.endpoint'),
+                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.endpoint_desc'),
                 'required' => true,
                 'type' => 'textfield'
             ],
             'namespace' => [
-                'name' => 'Namespace',
-                'description' => 'Namespace that will be used to store/query your data.',
+                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.namespace'),
+                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.namespace_desc'),
                 'required' => true,
                 'type' => 'textfield'
             ],
             'fields' => [
-                'name' => 'Fields to index',
-                'description' => 'Comma separated list of fields to index.',
+                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.fields'),
+                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.fields_desc'),
                 'required' => true,
                 'type' => 'textfield'
             ],
             'fields_map' => [
-                'name' => 'Map fields to a different name',
-                'description' => 'Comma separated list of original_name:new_name pairs',
+                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.fields_map'),
+                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.fields_map_desc'),
                 'required' => false,
                 'type' => 'textfield'
             ],
             'context_messages' => [
-                'name' => 'Context Messages',
-                'description' => 'Additional context messages that will be put in front of the data from DB. One message per line. Can contain {id} or any {field} (defined in fields config) placeholder, you can also reference a system setting with using ++ as a prefix, for example {++site_url}.',
+                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.context_messages'),
+                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.context_messages_desc'),
                 'required' => false,
                 'type' => 'textarea',
                 'extraProperties' => [
@@ -263,5 +263,15 @@ class Pinecone implements ContextProviderInterface
                 ],
             ],
         ];
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Pinecone\'s vector database';
+    }
+
+    public static function getSuggestedName(): string
+    {
+        return 'pinecone';
     }
 }

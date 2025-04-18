@@ -168,7 +168,7 @@ class OpenRouter implements AIService
                 'type' => 'function',
                 'function' => [
                     'name' => $toolName,
-                    'description' => $toolClass::getDescription(),
+                    'description' => $toolClass::getPrompt(),
                     'parameters' => (object)$toolClass::getParameters(),
                 ]
             ];

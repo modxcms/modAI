@@ -128,7 +128,17 @@ Ext.extend(modAIAdmin.panel.ContextProvider, MODx.FormPanel, {
                     xtype: 'modai-combo-context_provider_class',
                     value: config.record.class,
                     listeners: {
-                      select: (self, record) => {
+                      beforeselect: (self, record) => {
+                        const name = this.getForm().findField('name');
+                        if (name && (self.getValue() !== record.data.class || !name.getValue())) {
+                          name.setValue(record.data.suggestedName);
+                        }
+
+                        const description = this.getForm().findField('description');
+                        if (description && (self.getValue() !== record.data.class || !description.getValue())) {
+                          description.setValue(record.data.description);
+                        }
+
                         this.configSection.removeAll();
                         Object.entries(record.data.config).forEach(([key, config]) => {
                           this.configSection.add(modAIAdmin.formatConfigItem(key, config));

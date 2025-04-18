@@ -15,7 +15,7 @@ class GetResources implements ToolInterface
         return 'get_resources';
     }
 
-    public static function getDescription(): string
+    public static function getPrompt(): string
     {
         return "Search for resources, also called pages or documents, on the website. You can provide optional parameters to return only specific resources. Returns matching resources with their id, pagetitle, parent resource ID, template ID, edit url, and public URL.";
     }
@@ -42,7 +42,7 @@ class GetResources implements ToolInterface
         ];
     }
 
-    public static function getConfig(): array
+    public static function getConfig(modX $modx): array
     {
         return [];
     }
@@ -111,5 +111,10 @@ class GetResources implements ToolInterface
     public static function checkPermissions(modX $modx): bool
     {
         return true;
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Find existing resources';
     }
 }

@@ -15,7 +15,7 @@ class GetTemplates implements ToolInterface
         return 'get_templates';
     }
 
-    public static function getDescription(): string
+    public static function getPrompt(): string
     {
         return "Find templates available in the website. Templates are assigned to resources and determine how a page is rendered to visitors. You can provide optional parameters to return only specific templates. You'll receive an array of templates with a properties of id, name, description, category (ID of a category) and optionally content.";
     }
@@ -52,7 +52,7 @@ class GetTemplates implements ToolInterface
             "required" => []
         ];
     }
-    public static function getConfig(): array
+    public static function getConfig(modX $modx): array
     {
         return [];
     }
@@ -125,5 +125,10 @@ class GetTemplates implements ToolInterface
     public static function checkPermissions(modX $modx): bool
     {
         return true;
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Find existing templates';
     }
 }

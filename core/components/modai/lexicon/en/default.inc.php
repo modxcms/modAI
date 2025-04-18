@@ -90,6 +90,20 @@ $_lang['modai.admin.related_agent.view'] = 'View Agent';
 $_lang['modai.admin.related_agent.remove'] = 'Unassign Agent';
 $_lang['modai.admin.related_agent.remove_confirm'] = 'Are you sure you want to unassign "[[+name]]" agent?';
 
+$_lang['modai.admin.context_provider.pinecone.api_key'] = 'API Key';
+$_lang['modai.admin.context_provider.pinecone.api_key_desc'] = 'API Key to access Pinecone';
+$_lang['modai.admin.context_provider.pinecone.endpoint'] = 'API endpoint';
+$_lang['modai.admin.context_provider.pinecone.endpoint_desc'] = 'Endpoint of your Pinecone API instance.';
+$_lang['modai.admin.context_provider.pinecone.namespace'] = 'Namespace';
+$_lang['modai.admin.context_provider.pinecone.namespace_desc'] = 'Namespace that will be used to store/query your data.';
+$_lang['modai.admin.context_provider.pinecone.fields'] = 'Fields to index';
+$_lang['modai.admin.context_provider.pinecone.fields_desc'] = 'Comma separated list of fields to index.';
+$_lang['modai.admin.context_provider.pinecone.fields_map'] = 'Map fields to a different name';
+$_lang['modai.admin.context_provider.pinecone.fields_map_desc'] = 'Comma separated list of original_name:new_name pairs';
+$_lang['modai.admin.context_provider.pinecone.context_messages'] = 'Context Messages';
+$_lang['modai.admin.context_provider.pinecone.context_messages_desc'] = 'Additional context messages that will be put in front of the data from DB. One message per line. Can contain {id} or any {field} (defined in fields config) placeholder, you can also reference a system setting with using ++ as a prefix, for example {++site_url}.';
+
+
 $_lang['modai.admin.error.required'] = 'Field is required.';
 
 $_lang['modai.admin.error.context_provider_name_already_exists'] = 'Context Provider with this name already exists.';

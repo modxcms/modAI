@@ -14,7 +14,7 @@ class CreateCategory implements ToolInterface
         return 'create_category';
     }
 
-    public static function getDescription(): string
+    public static function getPrompt(): string
     {
         return "Creates a new Category that any element (chunks or templates) can be grouped by. Use the get categories tool first to check if a category already exists. When successful, this tool returns the category ID to use when creating chunks or templates.";
     }
@@ -54,7 +54,7 @@ class CreateCategory implements ToolInterface
         ];
     }
 
-    public static function getConfig(): array
+    public static function getConfig(modX $modx): array
     {
         return [];
     }
@@ -114,5 +114,10 @@ class CreateCategory implements ToolInterface
     public static function checkPermissions(modX $modx): bool
     {
         return $modx->hasPermission('save_category');
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Creates a new category';
     }
 }

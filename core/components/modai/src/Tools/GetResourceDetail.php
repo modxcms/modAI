@@ -15,7 +15,7 @@ class GetResourceDetail implements ToolInterface
         return 'get_resource_detail';
     }
 
-    public static function getDescription(): string
+    public static function getPrompt(): string
     {
         return "Get more information about a resource, page, concept, or service you are unfamiliar with from of an array of integer resource IDs. Use the appropriate tool first to identify relevant resources on a topic. The tool will retrieve metadata, like title, description, published state, and last edit dates, as well as full HTML-formatted content. Provide at least one, or multiple resource IDs.";
     }
@@ -38,7 +38,7 @@ class GetResourceDetail implements ToolInterface
         ];
     }
 
-    public static function getConfig(): array
+    public static function getConfig(modX $modx): array
     {
         return [];
     }
@@ -95,5 +95,10 @@ class GetResourceDetail implements ToolInterface
     public static function checkPermissions(modX $modx): bool
     {
         return true;
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Get resource details';
     }
 }

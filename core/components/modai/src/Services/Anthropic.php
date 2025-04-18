@@ -206,7 +206,7 @@ class Anthropic implements AIService
 
             $tools[] = [
                 'name' => $toolName,
-                'description' => $toolClass::getDescription(),
+                'description' => $toolClass::getPrompt(),
                 'input_schema' => (object)$params,
             ];
         }

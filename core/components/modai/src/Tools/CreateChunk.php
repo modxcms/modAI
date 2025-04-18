@@ -14,7 +14,7 @@ class CreateChunk implements ToolInterface
         return 'create_chunk';
     }
 
-    public static function getDescription(): string
+    public static function getPrompt(): string
     {
         return "Creates a new Chunk, which is a reusable piece of HTML or other code that can be inserted into pages, templates, or other elements. Use when explicitly asked to create a chunk or when creating templates to break up reusable pieces. Once created, chunks can be rendered by using [[\$name_of_chunk]] in a template or elsewhere. ALWAYS ask for explicit user confirmation with the chunk name, description, and category name in a separate message BEFORE calling this function.";
     }
@@ -55,7 +55,7 @@ class CreateChunk implements ToolInterface
         ];
     }
 
-    public static function getConfig(): array
+    public static function getConfig(modX $modx): array
     {
         return [];
     }
@@ -102,5 +102,10 @@ class CreateChunk implements ToolInterface
     public static function checkPermissions(modX $modx): bool
     {
         return $modx->hasPermission('save_chunk');
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Creates a new chunk';
     }
 }

@@ -133,7 +133,7 @@ modAIAdmin.combo.ContextProviderClass = function (config) {
         hiddenName: 'class',
         displayField: 'class',
         valueField: 'class',
-        fields: ['class', 'config'],
+        fields: ['class', 'config', 'suggestedName', 'description'],
         typeAhead: false,
         editable: true,
         forceSelection: true,
@@ -142,7 +142,13 @@ modAIAdmin.combo.ContextProviderClass = function (config) {
         url: MODx.config.connector_url,
         baseParams: {
             action: 'modAI\\Processors\\Combos\\ContextProviderClass',
-        }
+        },
+        tpl: new Ext.XTemplate('<tpl for=".">' +
+          '<div class="x-combo-list-item x-combo-list-item-grouped">' +
+          '<div class="x-combo-list-title">{class:htmlEncode}</div>' +
+          '{description:htmlEncode()}' +
+          '</div>' +
+          '</tpl>')
     });
     modAIAdmin.combo.ContextProviderClass.superclass.constructor.call(this, config);
 };
@@ -156,7 +162,7 @@ modAIAdmin.combo.ToolClass = function (config) {
         hiddenName: 'class',
         displayField: 'class',
         valueField: 'class',
-        fields: ['class', 'config', 'suggestedName'],
+        fields: ['class', 'config', 'suggestedName', 'description'],
         typeAhead: false,
         editable: true,
         forceSelection: true,
@@ -165,7 +171,13 @@ modAIAdmin.combo.ToolClass = function (config) {
         url: MODx.config.connector_url,
         baseParams: {
             action: 'modAI\\Processors\\Combos\\ToolClass',
-        }
+        },
+        tpl: new Ext.XTemplate('<tpl for=".">' +
+          '<div class="x-combo-list-item x-combo-list-item-grouped">' +
+          '<div class="x-combo-list-title">{class:htmlEncode}</div>' +
+          '{description:htmlEncode()}' +
+          '</div>' +
+          '</tpl>')
     });
     modAIAdmin.combo.ToolClass.superclass.constructor.call(this, config);
 };

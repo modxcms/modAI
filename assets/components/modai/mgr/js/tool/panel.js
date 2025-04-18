@@ -125,10 +125,15 @@ Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
                     xtype: 'modai-combo-tool_class',
                     value: config.record.class,
                     listeners: {
-                      select: (self, record) => {
+                      beforeselect: (self, record) => {
                         const name = this.getForm().findField('name');
-                        if (name && !name.getValue()) {
+                        if (name && (self.getValue() !== record.data.class || !name.getValue())) {
                           name.setValue(record.data.suggestedName);
+                        }
+
+                        const description = this.getForm().findField('description');
+                        if (description && (self.getValue() !== record.data.class ||!description.getValue())) {
+                          description.setValue(record.data.description);
                         }
 
                         this.configSection.removeAll();

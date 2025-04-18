@@ -14,7 +14,7 @@ class CreateTemplate implements ToolInterface
         return 'create_template';
     }
 
-    public static function getDescription(): string
+    public static function getPrompt(): string
     {
         return "Creates a new template for the website, which can be assigned to resources to determine how they are rendered in the frontend. Only use when explicitly asked to create a new template, and always check if appropriate templates already exist first. Always ask for explicit user confirmation in a separate message, providing the user with the template name and a summary of what the contents would be, BEFORE calling this function. Do NOT output the full template content. When generating template content you MUST make sure it uses the MODX templating syntax.";
     }
@@ -55,7 +55,7 @@ class CreateTemplate implements ToolInterface
         ];
     }
 
-    public static function getConfig(): array
+    public static function getConfig(modX $modx): array
     {
         return [];
     }
@@ -102,5 +102,10 @@ class CreateTemplate implements ToolInterface
     public static function checkPermissions(modX $modx): bool
     {
         return $modx->hasPermission('save_template');
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Creates a new template';
     }
 }

@@ -222,7 +222,7 @@ class Google implements AIService
 
             $tools[] = [
                 'name' => $toolName,
-                'description' => $toolClass::getDescription(),
+                'description' => $toolClass::getPrompt(),
                 'parameters' => $params,
             ];
         }

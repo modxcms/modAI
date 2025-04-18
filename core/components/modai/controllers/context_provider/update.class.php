@@ -21,7 +21,7 @@ class ModAIContextProviderUpdateManagerController extends ModAIBaseManagerContro
         }
 
         $this->contextProviderData = $contextProvider->toArray();
-        $this->contextProviderData['classConfig'] = $this->contextProviderData['class']::getConfig();
+        $this->contextProviderData['classConfig'] = $this->contextProviderData['class']::getConfig($this->modx);
     }
 
     public function getPageTitle()

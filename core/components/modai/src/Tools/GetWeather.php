@@ -13,7 +13,7 @@ class GetWeather implements ToolInterface
         return 'get_weather';
     }
 
-    public static function getDescription(): string
+    public static function getPrompt(): string
     {
         return "Get the current weather in the provided location. Location must be provided as latitude and longitude, but don't ask users for that. Instead ask users for the location and then transform that to latitude/longitude. You will get this information: temperature, apparent temperature, humidity, wind speed, wind direction, cloud cover, precipitation, rain, snowfall. Don't list all variables in your output but use natural language.";
     }
@@ -34,7 +34,7 @@ class GetWeather implements ToolInterface
         ];
     }
 
-    public static function getConfig(): array
+    public static function getConfig(modX $modx): array
     {
         return [];
     }
@@ -77,5 +77,10 @@ class GetWeather implements ToolInterface
     public static function checkPermissions(modX $modx): bool
     {
         return true;
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Get current weather';
     }
 }

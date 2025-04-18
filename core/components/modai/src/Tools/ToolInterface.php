@@ -23,8 +23,16 @@ interface ToolInterface
      */
     public static function getSuggestedName(): string;
 
+
     /**
-     * The description passed into the LLM, explaining when and how to use this particular tool.
+     * Internal description
+     *
+     * @return string
+     */
+    public static function getDescription(): string;
+
+    /**
+     * The prompt (description) passed into the LLM, explaining when and how to use this particular tool.
      *
      * This is a natural language prompt, so properly explaining its usage is important.
      *
@@ -33,7 +41,7 @@ interface ToolInterface
      *
      * @return string
      */
-    public static function getDescription(): string;
+    public static function getPrompt(): string;
 
     /**
      * Checks if user has permissions to run this tool.
@@ -55,9 +63,10 @@ interface ToolInterface
      *
      * Can be empty, but it is recommended to allow the user to configure the tool.
      *
+     * @param modX $modx
      * @return array
      */
-    public static function getConfig(): array;
+    public static function getConfig(modX $modx): array;
 
     /**
      * Your tool is being called by the model! Do the thing!
