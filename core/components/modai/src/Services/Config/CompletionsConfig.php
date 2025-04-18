@@ -3,6 +3,7 @@
 namespace modAI\Services\Config;
 
 use modAI\Model\Tool;
+use modAI\Tools\ToolInterface;
 
 class CompletionsConfig
 {
@@ -90,11 +91,24 @@ class CompletionsConfig
     }
 
     /**
-     * @return array<string, Tool>
+     * @return array<int, array{name: string, description: string, parameters: array}>
      */
     public function getTools(): array
     {
-        return $this->tools;
+        $tools = [];
+        foreach ($this->tools as $toolName => $tool) {
+            /** @var class-string<ToolInterface> $toolClass */
+            $toolClass = $tool->get('class');
+
+            $prompt = $tool->get('prompt');
+            $tools[] = [
+                'name' => $toolName,
+                'description' => !empty($prompt) ? $prompt : $toolClass::getPrompt(),
+                'parameters' => $toolClass::getParameters(),
+            ];
+        }
+
+        return $tools;
     }
 
     public function getToolChoice(): string

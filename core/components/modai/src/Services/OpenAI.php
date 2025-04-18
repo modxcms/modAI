@@ -160,16 +160,13 @@ class OpenAI implements AIService
         $input['messages'] = $messages;
 
         $tools = [];
-        foreach ($config->getTools() as $toolName => $tool) {
-            /** @var class-string<ToolInterface> $toolClass */
-            $toolClass = $tool->get('class');
-
+        foreach ($config->getTools() as $tool) {
             $tools[] = [
                 'type' => 'function',
                 'function' => [
-                    'name' => $toolName,
-                    'description' => $toolClass::getPrompt(),
-                    'parameters' => (object)$toolClass::getParameters(),
+                    'name' => $tool['name'],
+                    'description' => $tool['description'],
+                    'parameters' => (object)$tool['parameters'],
                 ]
             ];
         }

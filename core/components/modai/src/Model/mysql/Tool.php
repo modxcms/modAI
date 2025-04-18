@@ -19,6 +19,7 @@ class Tool extends \modAI\Model\Tool
             'class' => NULL,
             'name' => NULL,
             'description' => '',
+            'prompt' => NULL,
             'config' => NULL,
             'enabled' => 0,
             'default' => 0,
@@ -46,6 +47,12 @@ class Tool extends \modAI\Model\Tool
                 'phptype' => 'string',
                 'null' => true,
                 'default' => '',
+            ),
+            'prompt' => 
+            array (
+                'dbtype' => 'text',
+                'phptype' => 'string',
+                'null' => true,
             ),
             'config' => 
             array (

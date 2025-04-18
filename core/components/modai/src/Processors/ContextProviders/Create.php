@@ -38,7 +38,7 @@ class Create extends CreateProcessor
             return false;
         }
 
-        $config = $class::getConfig();
+        $config = $class::getConfig($this->modx);
         $configValues = [];
         foreach ($config as $key => $options) {
             $configValues[$key] = $this->getProperty("config_$key");

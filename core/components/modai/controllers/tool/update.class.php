@@ -22,6 +22,7 @@ class ModAIToolUpdateManagerController extends ModAIBaseManagerController
 
         $this->toolData = $tool->toArray();
         $this->toolData['classConfig'] = $this->toolData['class']::getConfig($this->modx);
+        $this->toolData['defaultPrompt'] = $this->toolData['class']::getPrompt();
     }
 
     public function getPageTitle()

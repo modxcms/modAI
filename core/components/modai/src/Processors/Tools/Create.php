@@ -38,7 +38,7 @@ class Create extends CreateProcessor
             return false;
         }
 
-        $config = $class::getConfig();
+        $config = $class::getConfig($this->modx);
         $configValues = [];
         foreach ($config as $key => $options) {
             $configValues[$key] = $this->getProperty("config_$key");
@@ -49,6 +49,11 @@ class Create extends CreateProcessor
         }
 
         $this->setProperty('config', empty($configValues) ? null : $configValues);
+
+        $prompt = $this->getProperty('prompt');
+        if (empty($prompt)) {
+            $this->setProperty('prompt', null);
+        }
 
         return parent::beforeSet();
     }

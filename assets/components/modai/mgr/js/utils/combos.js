@@ -162,7 +162,7 @@ modAIAdmin.combo.ToolClass = function (config) {
         hiddenName: 'class',
         displayField: 'class',
         valueField: 'class',
-        fields: ['class', 'config', 'suggestedName', 'description'],
+        fields: ['class', 'config', 'suggestedName', 'description', 'defaultPrompt'],
         typeAhead: false,
         editable: true,
         forceSelection: true,

@@ -22,6 +22,95 @@ modAIAdmin.panel.Tool = function (config) {
     items: configItems,
   });
 
+  this.promptField = new Ext.form.TextArea({
+    fieldLabel: _('modai.admin.tool.prompt'),
+    name: 'prompt',
+    msgTarget: 'under',
+    value: config.record.prompt || config.record.defaultPrompt,
+    disabled: !config.record.prompt,
+    allowBlank: true,
+    grow: true,
+    defaultPrompt: config.record.defaultPrompt,
+    editBtn: null,
+    resetBtn: null,
+    renderEditButton: function() {
+      if (this.editBtn) {
+        return;
+      }
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'modai-admin-label_button';
+      btn.title = 'Edit Prompt';
+      btn.addEventListener('click', () => {
+        this.enable();
+        btn.remove();
+        this.editBtn = null;
+
+        this.renderResetButton();
+      });
+
+      const i = document.createElement('i');
+      i.className = 'icon icon-edit';
+      btn.appendChild(i);
+
+      this.editBtn = btn;
+      this.label.dom.append(btn);
+    },
+    renderResetButton: function() {
+      if (this.resetBtn) {
+        return;
+      }
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'modai-admin-label_button';
+      btn.title = 'Reset to the default Prompt';
+      btn.addEventListener('click', () => {
+        this.setValue(this.defaultPrompt)
+        this.disable();
+        btn.remove();
+        this.resetBtn = null;
+
+        this.renderEditButton();
+      });
+
+      const i = document.createElement('i');
+      i.className = 'icon icon-refresh';
+      btn.appendChild(i);
+
+      this.resetBtn = btn;
+      this.label.dom.append(btn);
+    },
+    initPrompt: function(prompt, defaultPrompt) {
+      this.defaultPrompt = defaultPrompt;
+      if (this.editBtn) {
+        this.editBtn.remove();
+        this.editBtn = null;
+      }
+
+      if (this.resetBtn) {
+        this.resetBtn.remove();
+        this.resetBtn = null;
+      }
+
+      if (prompt) {
+        this.setValue(prompt);
+        this.renderResetButton();
+        return;
+      }
+
+      this.disable();
+      this.setValue(this.defaultPrompt);
+      this.renderEditButton();
+    },
+    listeners: {
+      afterrender: function () {
+        this.initPrompt(config.record.prompt, config.record.defaultPrompt);
+      }
+    }
+  });
+
   Ext.applyIf(config, {
     border: false,
     cls: 'container',
@@ -44,6 +133,7 @@ modAIAdmin.panel.Tool = function (config) {
 
 Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
   configSection: null,
+  promptField: null,
 
   success: function (o, r) {
     if (this.config.isUpdate === false) {
@@ -136,6 +226,8 @@ Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
                           description.setValue(record.data.description);
                         }
 
+                        this.promptField.initPrompt(undefined, record.data.defaultPrompt);
+
                         this.configSection.removeAll();
                         Object.entries(record.data.config).forEach(([key, config]) => {
                           this.configSection.add(modAIAdmin.formatConfigItem(key, config));
@@ -154,13 +246,14 @@ Ext.extend(modAIAdmin.panel.Tool, MODx.FormPanel, {
                     value: config.record.name,
                   },
                   {
-                    fieldLabel: _('modai.admin.context_provider.description'),
+                    fieldLabel: _('modai.admin.tool.description'),
                     xtype: 'textarea',
                     name: 'description',
                     msgTarget: 'under',
                     value: config.record.description,
                     allowBlank: true,
                   },
+                  this.promptField
                 ],
               },
 

@@ -68,6 +68,7 @@
         <field key="class" dbtype="varchar" precision="200" phptype="string" null="false" />
         <field key="name" dbtype="varchar" precision="200" phptype="string" null="false" />
         <field key="description" dbtype="varchar" precision="500" phptype="string" null="true" default="" />
+        <field key="prompt" dbtype="text" phptype="string" null="true" />
         <field key="config" dbtype="text" phptype="json" null="true" />
         <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
         <field key="default" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />

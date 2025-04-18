@@ -46,6 +46,7 @@ class ToolClass extends Processor
                 'config' => $class::getConfig($this->modx),
                 'suggestedName' => $class::getSuggestedName(),
                 'description' => $class::getDescription(),
+                'defaultPrompt' => $class::getPrompt(),
             ];
         }, $classes), count($classes));
     }

@@ -16,3 +16,10 @@
 .modai-admin--invalid_row {
     background-color: #ffeaea;
 }
+
+.modai-admin-label_button {
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+}

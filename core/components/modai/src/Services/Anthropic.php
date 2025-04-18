@@ -192,10 +192,8 @@ class Anthropic implements AIService
         }
 
         $tools = [];
-        foreach ($config->getTools() as $toolName => $tool) {
-            /** @var class-string<ToolInterface> $toolClass */
-            $toolClass = $tool->get('class');
-            $params = $toolClass::getParameters();
+        foreach ($config->getTools() as $tool) {
+            $params = $tool['parameters'];
 
             if (empty($params)) {
                 $params = [
@@ -205,8 +203,8 @@ class Anthropic implements AIService
             }
 
             $tools[] = [
-                'name' => $toolName,
-                'description' => $toolClass::getPrompt(),
+                'name' => $tool['name'],
+                'description' => $tool['description'],
                 'input_schema' => (object)$params,
             ];
         }

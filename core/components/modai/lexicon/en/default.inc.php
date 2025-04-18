@@ -45,6 +45,7 @@ $_lang['modai.admin.tool.context_provider'] = "Tool";
 $_lang['modai.admin.tool.class'] = "Tool Class";
 $_lang['modai.admin.tool.tool'] = 'Tool';
 $_lang['modai.admin.tool.agents'] = 'Agents';
+$_lang['modai.admin.tool.prompt'] = 'Prompt';
 
 $_lang['modai.admin.agent.name'] = 'Name';
 $_lang['modai.admin.agent.description'] = 'Description';
