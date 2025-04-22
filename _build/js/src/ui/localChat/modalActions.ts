@@ -272,7 +272,7 @@ export const switchType = (type: ModalType, config: LocalChatConfig) => {
     });
   }
 
-  scrollToBottom();
+  scrollToBottom('instant');
 };
 
 export const clearChat = () => {
@@ -312,6 +312,9 @@ export const handleImageUpload = async (fileOrUrl: File | string, isRemoteUrl: b
   globalState.modal.attachments.addImageAttachment(dataURL);
 };
 
-export const scrollToBottom = () => {
-  globalState.modal.chatContainer.scrollTop = globalState.modal.chatContainer.scrollHeight;
+export const scrollToBottom = (behavior: 'smooth' | 'instant' = 'smooth') => {
+  globalState.modal.chatContainer.scrollTo({
+    top: globalState.modal.chatContainer.scrollHeight,
+    behavior: behavior,
+  });
 };

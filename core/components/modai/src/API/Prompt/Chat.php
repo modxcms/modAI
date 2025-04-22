@@ -10,7 +10,6 @@ use modAI\Model\Tool;
 use modAI\Services\AIServiceFactory;
 use modAI\Services\Config\CompletionsConfig;
 use modAI\Settings;
-use modAI\Tools\GetWeather;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Chat extends API

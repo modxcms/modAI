@@ -14,7 +14,7 @@ import type { UpdatableHTMLElement } from '../../chatHistory';
 
 export const buildModal = (config: LocalChatConfig) => {
   const { shadow, shadowRoot } = createModAIShadow<Modal>(true, () => {
-    scrollToBottom();
+    scrollToBottom('instant');
     shadow.messageInput.focus();
   });
 

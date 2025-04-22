@@ -10,6 +10,7 @@ import { confirmDialog } from '../cofirmDialog';
 import { icon } from '../dom/icon';
 import { copy, edit, plus, textSelect, triangleError } from '../icons';
 import { createElement, nlToBr } from '../utils';
+import { scrollToBottom } from './modalActions';
 
 import type { LocalChatConfig } from './types';
 import type {
@@ -59,7 +60,6 @@ export const addUserMessage = (msg: UserMessage) => {
     'div',
     `message-wrapper user ${msg.init ? '' : 'new'}`,
   );
-  messageWrapper.style.setProperty('--user-msg-height', '-10px');
 
   const messageElement = createElement('div', 'message user');
 
@@ -160,6 +160,10 @@ export const addUserMessage = (msg: UserMessage) => {
   messageWrapper.appendChild(messageElement);
   globalState.modal.chatMessages.appendChild(messageWrapper);
 
+  const userMsgHeight = messageWrapper.firstElementChild?.clientHeight ?? 0;
+  const msgHeight = userMsgHeight < 100 ? -10 : -1 * (userMsgHeight - 62);
+  messageWrapper.style.setProperty('--user-msg-height', `${msgHeight}px`);
+
   return messageWrapper;
 };
 
@@ -187,11 +191,15 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
     'div',
     `message-wrapper ai ${msg.init ? '' : 'new'}`,
   );
+
   if (globalState.modal.chatMessages.lastElementChild?.firstElementChild) {
-    messageWrapper.style.setProperty(
-      '--user-msg-height',
-      `${globalState.modal.chatMessages.lastElementChild.firstElementChild.clientHeight}px`,
-    );
+    const msgHeight =
+      globalState.modal.chatMessages.lastElementChild.firstElementChild.clientHeight < 100
+        ? globalState.modal.chatMessages.lastElementChild.firstElementChild.clientHeight
+        : globalState.modal.chatMessages.lastElementChild.firstElementChild.clientHeight -
+          (globalState.modal.chatMessages.lastElementChild.firstElementChild.clientHeight - 62) +
+          10;
+    messageWrapper.style.setProperty('--user-msg-height', `${msgHeight}px`);
   }
 
   const messageElement = createElement('div', 'message ai');
@@ -363,25 +371,15 @@ export const renderMessage = (msg: Message, config: LocalChatConfig) => {
 
   if (msg.__type === 'UserMessage') {
     const el = addUserMessage(msg);
-    el.firstElementChild?.scrollIntoView({
-      behavior: msg.init === true ? 'instant' : 'smooth',
-      block: 'start',
-    });
+    if (!msg.init) {
+      scrollToBottom('smooth');
+    }
 
     return el;
   }
 
   if (msg.__type === 'AssistantMessage') {
-    const el = addAssistantMessage(msg, config);
-
-    if (msg.init === true) {
-      el.firstElementChild?.scrollIntoView({
-        behavior: 'instant',
-        block: 'start',
-      });
-    }
-
-    return el;
+    return addAssistantMessage(msg, config);
   }
 
   return;
