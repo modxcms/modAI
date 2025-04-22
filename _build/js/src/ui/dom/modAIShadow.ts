@@ -29,7 +29,9 @@ export const createModAIShadow = <R extends HTMLElement>(
     }
 
     if (onLoad) {
-      onLoad();
+      setTimeout(() => {
+        onLoad();
+      }, 1);
     }
   };
 
