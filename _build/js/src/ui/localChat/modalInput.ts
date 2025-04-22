@@ -41,13 +41,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
     textarea.value = value;
     textarea.focus();
 
-    if (value.trim() !== '') {
-      sendBtn.disabled = false;
-      applyStyles(sendBtn, 'active');
-    } else {
-      sendBtn.disabled = true;
-      applyStyles(sendBtn, '');
-    }
+    textarea.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
   };
 
   const loading = createElement(
