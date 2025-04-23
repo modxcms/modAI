@@ -68,7 +68,7 @@ class CreateCategory implements ToolInterface
      * @param array $arguments
      * @return string
      */
-    public function runTool($arguments): string
+    public function runTool(array $arguments): string
     {
         if (!self::checkPermissions($this->modx)) {
             return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);

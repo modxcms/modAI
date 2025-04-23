@@ -2,6 +2,7 @@
 
 namespace modAI\API\Tools;
 
+use JsonException;
 use modAI\API\API;
 use modAI\Exceptions\APIException;
 use modAI\Exceptions\LexiconException;
@@ -50,10 +51,16 @@ class Run extends API
             if (isset($tools[$toolCall['name']])) {
                 $tool = $tools[$toolCall['name']]->getToolInstance();
 
+                try {
+                    $arguments = (array) json_decode($toolCall['arguments'], true, 512, JSON_THROW_ON_ERROR);
+                } catch (JsonException) {
+                    $arguments = [];
+                }
+
                 $content[] = [
                     'id' => $toolCall['id'],
                     'name' => $toolCall['name'],
-                    'content' => $tool->runTool(json_decode($toolCall['arguments'], true)),
+                    'content' => $tool->runTool($arguments),
                 ];
             }
         }

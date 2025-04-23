@@ -71,8 +71,8 @@ interface ToolInterface
     /**
      * Your tool is being called by the model! Do the thing!
      *
-     * @param array | null $arguments
+     * @param array $arguments
      * @return string
      */
-    public function runTool($arguments): string;
+    public function runTool(array $arguments): string;
 }
