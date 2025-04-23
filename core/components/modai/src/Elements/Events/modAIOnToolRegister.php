@@ -1,7 +1,6 @@
 <?php
 namespace modAI\Elements\Events;
 
-
 class modAIOnToolRegister extends Event
 {
     public function run()
@@ -14,9 +13,11 @@ class modAIOnToolRegister extends Event
 
             \modAI\Tools\GetChunks::class,
             \modAI\Tools\CreateChunk::class,
+            \modAI\Tools\EditChunk::class,
 
             \modAI\Tools\GetTemplates::class,
             \modAI\Tools\CreateTemplate::class,
+            \modAI\Tools\EditTemplate::class,
 
             \modAI\Tools\CreateResource::class,
             \modAI\Tools\GetResources::class,
