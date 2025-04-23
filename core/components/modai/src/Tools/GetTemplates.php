@@ -63,10 +63,10 @@ class GetTemplates implements ToolInterface
     }
 
     /**
-     * @param array | null $parameters
+     * @param array | null $arguments
      * @return string
      */
-    public function runTool($parameters): string
+    public function runTool($arguments): string
     {
         if (!self::checkPermissions($this->modx)) {
             return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
@@ -74,28 +74,28 @@ class GetTemplates implements ToolInterface
 
         $where = [];
 
-        if (is_array($parameters)) {
-            if (!empty($parameters['query'])) {
+        if (is_array($arguments)) {
+            if (!empty($arguments['query'])) {
                 $where[] = [
-                    'templatename:LIKE' => '%' . $parameters['query'] . '%',
+                    'templatename:LIKE' => '%' . $arguments['query'] . '%',
                 ];
             }
 
-            if (!empty($parameters['name'])) {
+            if (!empty($arguments['name'])) {
                 $where[] = [
-                    'templatename' => $parameters['query'],
+                    'templatename' => $arguments['query'],
                 ];
             }
 
-            if (!empty($parameters['id'])) {
+            if (!empty($arguments['id'])) {
                 $where[] = [
-                    'id' => $parameters['id'],
+                    'id' => $arguments['id'],
                 ];
             }
 
-            if (!empty($parameters['categories'])) {
+            if (!empty($arguments['categories'])) {
                 $where[] = [
-                    'category:IN' => $parameters['categories'],
+                    'category:IN' => $arguments['categories'],
                 ];
             }
         }
@@ -112,7 +112,7 @@ class GetTemplates implements ToolInterface
                 'category' => $template->get('category'),
             ];
 
-            if ($parameters['returnContent'] === true) {
+            if ($arguments['returnContent'] === true) {
                 $arr['content'] = $template->get('content');
             }
 

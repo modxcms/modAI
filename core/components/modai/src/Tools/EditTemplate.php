@@ -14,7 +14,7 @@ class EditTemplate implements ToolInterface
         return 'edit_template';
     }
 
-    public static function getDescription(): string
+    public static function getPrompt(): string
     {
         return "Edits an existing template, which is used to render a resource on the front-end of the website. Use when explicitly asked to edit a template. In most cases, you should also check other templates to see the preferred coding style and structure of the website. Get the current content of the template with the get_templates tool. ALWAYS ask for explicit user confirmation with the template name and a summary of the changes you are making BEFORE calling this function.";
     }
@@ -48,7 +48,7 @@ class EditTemplate implements ToolInterface
         ];
     }
 
-    public static function getConfig(): array
+    public static function getConfig(modX $modx): array
     {
         return [];
     }
@@ -59,25 +59,25 @@ class EditTemplate implements ToolInterface
     }
 
     /**
-     * @param array $parameters
+     * @param array $arguments
      * @return string
      */
-    public function runTool($parameters): string
+    public function runTool($arguments): string
     {
         if (!self::checkPermissions($this->modx)) {
             return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
         }
 
-        if (empty($parameters)) {
+        if (empty($arguments)) {
             return json_encode(['success' => false, 'message' => 'Parameters are required.']);
         }
 
-        $template = $this->modx->getObject(modTemplate::class, ['templatename' => $parameters['template']['name']]);
+        $template = $this->modx->getObject(modTemplate::class, ['templatename' => $arguments['template']['name']]);
         if (!$template) {
             return json_encode(['success' => false, 'message' => 'Template not found with name.']);
         }
-        $template->set('description', (string)$parameters['template']['description']);
-        $template->set('content', (string)$parameters['template']['content']);
+        $template->set('description', (string)$arguments['template']['description']);
+        $template->set('content', (string)$arguments['template']['content']);
         if ($template->save()) {
             return json_encode(['success' => true, 'message' => 'Template updated.']);
         }
@@ -88,5 +88,10 @@ class EditTemplate implements ToolInterface
     public static function checkPermissions(modX $modx): bool
     {
         return $modx->hasPermission('save_template');
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Allows the assistant to edit templates.';
     }
 }

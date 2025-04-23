@@ -66,22 +66,22 @@ class CreateChunk implements ToolInterface
     }
 
     /**
-     * @param array $parameters
+     * @param array $arguments
      * @return string
      */
-    public function runTool($parameters): string
+    public function runTool($arguments): string
     {
         if (!self::checkPermissions($this->modx)) {
             return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
         }
 
-        if (empty($parameters)) {
+        if (empty($arguments)) {
             return json_encode(['success' => false, 'message' => 'Parameters are required.']);
         }
 
         $output = [];
 
-        foreach ($parameters['chunks'] as $data) {
+        foreach ($arguments['chunks'] as $data) {
             if ($exists = $this->modx->getObject('modChunk', ['name' => $data['name']])) {
                 $output[] = [
                     'id' => $exists->get('id'),

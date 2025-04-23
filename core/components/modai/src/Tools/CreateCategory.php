@@ -65,22 +65,22 @@ class CreateCategory implements ToolInterface
     }
 
     /**
-     * @param array $parameters
+     * @param array $arguments
      * @return string
      */
-    public function runTool($parameters): string
+    public function runTool($arguments): string
     {
         if (!self::checkPermissions($this->modx)) {
             return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
         }
 
-        if (empty($parameters)) {
+        if (empty($arguments)) {
             return json_encode(['success' => false, 'message' => 'Parameters are required.']);
         }
 
         $output = [];
 
-        foreach ($parameters['categories'] as $data) {
+        foreach ($arguments['categories'] as $data) {
             $category = $this->modx->newObject(modCategory::class);
             $category->set('category', $data['name']);
             $category->set('parent', $data['parent_id']);
