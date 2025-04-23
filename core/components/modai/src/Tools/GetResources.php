@@ -53,10 +53,10 @@ class GetResources implements ToolInterface
     }
 
     /**
-     * @param array | null $parameters
+     * @param array | null $arguments
      * @return string
      */
-    public function runTool($parameters): string
+    public function runTool($arguments): string
     {
         if (!self::checkPermissions($this->modx)) {
             return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
@@ -66,24 +66,24 @@ class GetResources implements ToolInterface
         $where['deleted'] = false;
         $where['searchable'] = true;
 
-        if (is_array($parameters)) {
-            if (!empty($parameters['query'])) {
+        if (is_array($arguments)) {
+            if (!empty($arguments['query'])) {
                 $where[] = [
-                    'pagetitle:LIKE' => '%' . $parameters['query'] . '%',
-                    'OR:longtitle:LIKE' => '%' . $parameters['query'] . '%',
-                    'OR:introtext:LIKE' => '%' . $parameters['query'] . '%',
+                    'pagetitle:LIKE' => '%' . $arguments['query'] . '%',
+                    'OR:longtitle:LIKE' => '%' . $arguments['query'] . '%',
+                    'OR:introtext:LIKE' => '%' . $arguments['query'] . '%',
                 ];
             }
 
-            if (!empty($parameters['id'])) {
+            if (!empty($arguments['id'])) {
                 $where[] = [
-                    'id' => $parameters['id'],
+                    'id' => $arguments['id'],
                 ];
             }
 
-            if (!empty($parameters['parent'])) {
+            if (!empty($arguments['parent'])) {
                 $where[] = [
-                    'parent' => $parameters['parent'],
+                    'parent' => $arguments['parent'],
                 ];
             }
         }

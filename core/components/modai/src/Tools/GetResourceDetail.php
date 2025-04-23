@@ -49,21 +49,21 @@ class GetResourceDetail implements ToolInterface
     }
 
     /**
-     * @param array | null $parameters
+     * @param array | null $arguments
      * @return string
      */
-    public function runTool($parameters): string
+    public function runTool($arguments): string
     {
         if (!self::checkPermissions($this->modx)) {
             return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
         }
 
-        if (empty($parameters)) {
+        if (empty($arguments)) {
             return json_encode(['success' => false, 'message' => 'Parameters are required.']);
         }
 
         $where = [
-            'id:IN' => $parameters['ids'],
+            'id:IN' => $arguments['ids'],
         ];
 
         $output = [];

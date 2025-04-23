@@ -66,22 +66,22 @@ class CreateResource implements ToolInterface
     }
 
     /**
-     * @param array $parameters
+     * @param array $arguments
      * @return string
      */
-    public function runTool($parameters): string
+    public function runTool($arguments): string
     {
         if (!self::checkPermissions($this->modx)) {
             return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
         }
 
-        if (empty($parameters)) {
+        if (empty($arguments)) {
             return json_encode(['success' => false, 'message' => 'Parameters are required.']);
         }
 
         $output = [];
 
-        foreach ($parameters['resources'] as $data) {
+        foreach ($arguments['resources'] as $data) {
             if (!isset($data['parent'])) {
                 return json_encode(['success' => false, 'message' => 'parent is required.']);
             }

@@ -63,10 +63,10 @@ class GetChunks implements ToolInterface
     }
 
     /**
-     * @param array | null $parameters
+     * @param array | null $arguments
      * @return string
      */
-    public function runTool($parameters): string
+    public function runTool($arguments): string
     {
         if (!self::checkPermissions($this->modx)) {
             return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
@@ -74,28 +74,28 @@ class GetChunks implements ToolInterface
 
         $where = [];
 
-        if (is_array($parameters)) {
-            if (!empty($parameters['query'])) {
+        if (is_array($arguments)) {
+            if (!empty($arguments['query'])) {
                 $where[] = [
-                    'name:LIKE' => '%' . $parameters['query'] . '%',
+                    'name:LIKE' => '%' . $arguments['query'] . '%',
                 ];
             }
 
-            if (!empty($parameters['name'])) {
+            if (!empty($arguments['name'])) {
                 $where[] = [
-                    'name' => $parameters['query'],
+                    'name' => $arguments['query'],
                 ];
             }
 
-            if (!empty($parameters['id'])) {
+            if (!empty($arguments['id'])) {
                 $where[] = [
-                    'id' => $parameters['id'],
+                    'id' => $arguments['id'],
                 ];
             }
 
-            if (!empty($parameters['categories'])) {
+            if (!empty($arguments['categories'])) {
                 $where[] = [
-                    'category:IN' => $parameters['categories'],
+                    'category:IN' => $arguments['categories'],
                 ];
             }
         }
@@ -112,7 +112,7 @@ class GetChunks implements ToolInterface
                 'category' => $chunk->get('category'),
             ];
 
-            if ($parameters['returnContent'] === true) {
+            if ($arguments['returnContent'] === true) {
                 $arr['content'] = $chunk->get('content');
             }
 

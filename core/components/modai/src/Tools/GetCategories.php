@@ -35,10 +35,10 @@ class GetCategories implements ToolInterface
     }
 
     /**
-     * @param array | null $parameters
+     * @param array | null $arguments
      * @return string
      */
-    public function runTool($parameters): string
+    public function runTool($arguments): string
     {
         if (!self::checkPermissions($this->modx)) {
             return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);

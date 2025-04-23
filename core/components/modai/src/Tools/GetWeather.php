@@ -45,10 +45,10 @@ class GetWeather implements ToolInterface
     }
 
     /**
-     * @param array | null $parameters
+     * @param array | null $arguments
      * @return string
      */
-    public function runTool($parameters): string
+    public function runTool($arguments): string
     {
         if (!self::checkPermissions($this->modx)) {
             return json_encode(['success' => false, "message" => "You do not have permission to use this tool."]);
@@ -56,7 +56,7 @@ class GetWeather implements ToolInterface
 
         try {
             $res = file_get_contents(
-                "https://api.open-meteo.com/v1/forecast?latitude={$parameters['latitude']}&longitude={$parameters['longitude']}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto&forecast_days=1"
+                "https://api.open-meteo.com/v1/forecast?latitude={$arguments['latitude']}&longitude={$arguments['longitude']}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto&forecast_days=1"
             );
             $data = json_decode($res, true);
 
