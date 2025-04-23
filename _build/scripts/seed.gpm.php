@@ -34,9 +34,11 @@ return new class() {
 
             \modAI\Tools\GetChunks::class,
             \modAI\Tools\CreateChunk::class,
+            \modAI\Tools\EditChunk::class,
 
             \modAI\Tools\GetTemplates::class,
             \modAI\Tools\CreateTemplate::class,
+            \modAI\Tools\EditTemplate::class,
 
             \modAI\Tools\CreateResource::class,
             \modAI\Tools\GetResources::class,
