@@ -82,6 +82,13 @@ class CreateTemplate implements ToolInterface
         $output = [];
 
         foreach ($parameters['templates'] as $data) {
+            if ($exists = $this->modx->getObject(modTemplate::class, ['templatename' => $data['name']])) {
+                $output[] = [
+                    'id' => $exists->get('id'),
+                    'name' => 'Template with name ' . $data['name'] . ' already exists - failed to create.',
+                ];
+                continue;
+            }
             $chunk = $this->modx->newObject(modTemplate::class);
             $chunk->set('templatename', $data['name']);
             $chunk->set('description', $data['description']);

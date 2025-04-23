@@ -82,6 +82,13 @@ class CreateChunk implements ToolInterface
         $output = [];
 
         foreach ($parameters['chunks'] as $data) {
+            if ($exists = $this->modx->getObject('modChunk', ['name' => $data['name']])) {
+                $output[] = [
+                    'id' => $exists->get('id'),
+                    'name' => 'Chunk with name ' . $data['name'] . ' already exists - failed to create.',
+                ];
+                continue;
+            }
             $chunk = $this->modx->newObject(modChunk::class);
             $chunk->set('name', $data['name']);
             $chunk->set('description', $data['description']);
