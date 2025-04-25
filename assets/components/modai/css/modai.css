@@ -35,6 +35,8 @@
     --icon-size: 20px;
 
     --user-msg-height: 54px;
+
+    font: normal 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 .icon {
     display: flex;
