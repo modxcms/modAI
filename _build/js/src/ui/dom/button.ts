@@ -7,7 +7,7 @@ export type Button = HTMLButtonElement & {
 
 export const button = (
   content: string | HTMLElement | Element | (HTMLElement | Element | string)[],
-  onClick: () => Promise<void> | void,
+  onClick: (e: MouseEvent) => Promise<void> | void,
   styleObj?: string,
   btnProps?: Partial<HTMLButtonElement>,
 ) => {

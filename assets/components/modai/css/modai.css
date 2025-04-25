@@ -119,25 +119,31 @@
             padding-left: var(--spacing-sm);
         }
 
-        .closeBtn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: var(--spacing-sm);
+        .buttonsWrapper {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background-color var(--transition-speed);
+            justify-items: center;
 
-            &:hover, &:focus {
-                background-color: var(--border-light);
+            button {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: var(--spacing-sm);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                transition: background-color var(--transition-speed);
+
+                &:hover, &:focus {
+                    background-color: var(--border-light);
+                }
+
+                &:focus {
+                    outline: 2px solid var(--primary);
+                    outline-offset: 2px;
+                }
             }
 
-            &:focus {
-                outline: 2px solid var(--primary);
-                outline-offset: 2px;
-            }
         }
     }
 
