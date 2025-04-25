@@ -158,11 +158,23 @@ export const addUserMessage = (msg: UserMessage) => {
   };
 
   messageWrapper.appendChild(messageElement);
+  const lastMsg = globalState.modal.chatMessages.lastElementChild;
   globalState.modal.chatMessages.appendChild(messageWrapper);
 
-  const userMsgHeight = messageWrapper.firstElementChild?.clientHeight ?? 0;
-  const msgHeight = userMsgHeight < 100 ? -10 : -1 * (userMsgHeight - 62);
-  messageWrapper.style.setProperty('--user-msg-height', `${msgHeight}px`);
+  if (lastMsg) {
+    lastMsg.classList.remove('new');
+  }
+
+  messageWrapper.syncHeight = () => {
+    const userMsgHeight = messageElement.clientHeight;
+    const msgHeight = userMsgHeight < 100 ? -10 : -1 * (userMsgHeight - 62);
+    messageWrapper.style.setProperty(
+      '--user-msg-height',
+      `${globalState.modal.chatContainer.clientHeight - msgHeight - 50}px`,
+    );
+  };
+
+  messageWrapper.syncHeight?.();
 
   return messageWrapper;
 };
@@ -191,16 +203,6 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
     'div',
     `message-wrapper ai ${msg.init ? '' : 'new'}`,
   );
-
-  if (globalState.modal.chatMessages.lastElementChild?.firstElementChild) {
-    const msgHeight =
-      globalState.modal.chatMessages.lastElementChild.firstElementChild.clientHeight < 100
-        ? globalState.modal.chatMessages.lastElementChild.firstElementChild.clientHeight
-        : globalState.modal.chatMessages.lastElementChild.firstElementChild.clientHeight -
-          (globalState.modal.chatMessages.lastElementChild.firstElementChild.clientHeight - 62) +
-          10;
-    messageWrapper.style.setProperty('--user-msg-height', `${msgHeight}px`);
-  }
 
   const messageElement = createElement('div', 'message ai');
   messageElement.dataset.id = msg.id;
@@ -353,13 +355,37 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
 
   messageWrapper.appendChild(messageElement);
 
+  const lastMsg = globalState.modal.chatMessages.lastElementChild;
+
   globalState.modal.chatMessages.appendChild(messageWrapper);
+
+  if (lastMsg) {
+    lastMsg.classList.remove('new');
+  }
+
+  messageWrapper.syncHeight = () => {
+    if (lastMsg?.firstElementChild) {
+      const msgHeight = lastMsg.classList.contains('user')
+        ? lastMsg.firstElementChild.clientHeight < 100
+          ? lastMsg.firstElementChild.clientHeight
+          : lastMsg.firstElementChild.clientHeight -
+            (lastMsg.firstElementChild.clientHeight - 62) +
+            10
+        : -10;
+      messageWrapper.style.setProperty(
+        '--user-msg-height',
+        `${globalState.modal.chatContainer.clientHeight - msgHeight - 50}px`,
+      );
+    }
+  };
 
   messageWrapper.update = (msg) => {
     const content =
       msg.contentType === 'image' ? `<img src="${textContent}" />` : md.render(msg.content ?? '');
     shadow.updateContent(content);
   };
+
+  messageWrapper.syncHeight?.();
 
   return messageWrapper;
 };
@@ -379,7 +405,12 @@ export const renderMessage = (msg: Message, config: LocalChatConfig) => {
   }
 
   if (msg.__type === 'AssistantMessage') {
-    return addAssistantMessage(msg, config);
+    const el = addAssistantMessage(msg, config);
+    if (!msg.init && !el.previousElementSibling?.classList.contains('user')) {
+      scrollToBottom('smooth');
+    }
+
+    return el;
   }
 
   return;

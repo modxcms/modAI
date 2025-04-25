@@ -12,6 +12,7 @@ export type AssistantMessageContentType = 'text' | 'image';
 
 export type UpdatableHTMLElement<M extends Message = Message> = HTMLElement & {
   update?: (msg: M) => void;
+  syncHeight?: () => void;
 };
 
 export type UserMessageContext = {

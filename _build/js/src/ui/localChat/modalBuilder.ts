@@ -22,6 +22,16 @@ export const buildModal = (config: LocalChatConfig) => {
     ariaLabel: lng('modai.ui.modai_assistant_chat_dialog'),
   });
 
+  const resizeObserver = new ResizeObserver(() => {
+    const msg = globalState.modal.chatMessages.lastElementChild as UpdatableHTMLElement | null;
+
+    if (msg) {
+      msg.syncHeight?.();
+    }
+  });
+
+  resizeObserver.observe(chatModal);
+
   shadow.modal = chatModal;
   globalState.modal = shadow;
 
