@@ -14,12 +14,59 @@ const errorHandler = async (res: Response) => {
   }
 };
 
+const formatBody = (details: ForExecutor) => {
+  const isForm = details.contentType.toLowerCase() === 'multipart/form-data';
+  if (!isForm) {
+    return JSON.stringify(details.body);
+  }
+
+  const formData = new FormData();
+  for (const [name, value] of Object.entries(details.body)) {
+    const type = typeof value;
+
+    if (value === null || type === 'undefined') {
+      continue;
+    }
+
+    if (type === 'string' || type === 'number' || type === 'boolean') {
+      formData.append(name, String(value));
+      continue;
+    }
+
+    formData.append(name, JSON.stringify(value));
+  }
+
+  for (const [name, value] of Object.entries(details.binary)) {
+    value.forEach((file, index) => {
+      const binaryString = atob(file.base64);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      const blob = new Blob([bytes], { type: file.mimeType });
+
+      formData.append(name, blob, `source_${name}_${index}`);
+    });
+  }
+
+  return formData;
+};
+
 const callService = async (details: ForExecutor, signal?: AbortSignal) => {
+  const headers = details.headers;
+
+  const isForm = details.contentType.toLowerCase() === 'multipart/form-data';
+  if (!isForm) {
+    headers['Content-Type'] = details.contentType;
+  }
+
   const res = await fetch(details.url, {
     signal,
     method: 'POST',
-    body: details.body,
-    headers: details.headers,
+    body: formatBody(details),
+    headers,
   });
 
   await errorHandler(res);
@@ -44,11 +91,18 @@ const callStreamService = async <D extends ServiceResponse>(
     executorDetails.model,
   );
 
+  const headers = executorDetails.headers;
+
+  const isForm = executorDetails.contentType.toLowerCase() === 'multipart/form-data';
+  if (!isForm) {
+    headers['Content-Type'] = executorDetails.contentType;
+  }
+
   const res = await fetch(executorDetails.url, {
     signal,
     method: 'POST',
-    body: executorDetails.body,
-    headers: executorDetails.headers,
+    body: formatBody(executorDetails),
+    headers,
   });
 
   await errorHandler(res);

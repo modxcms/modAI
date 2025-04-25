@@ -12,6 +12,7 @@ class ImageConfig
     private string $quality;
     private string $style;
     private string $responseFormat;
+    private array $attachments;
 
     public function size(string $size): self
     {
@@ -41,6 +42,18 @@ class ImageConfig
         return $this;
     }
 
+    public function attachments($attachments): self
+    {
+        if (!is_array($attachments)) {
+            $this->attachments = [];
+            return $this;
+        }
+
+        $this->attachments = $attachments;
+
+        return $this;
+    }
+
     public function getN(): int
     {
         return $this->n;
@@ -64,5 +77,10 @@ class ImageConfig
     public function getResponseFormat(): string
     {
         return $this->responseFormat;
+    }
+
+    public function getAttachments(): array
+    {
+        return $this->attachments;
     }
 }

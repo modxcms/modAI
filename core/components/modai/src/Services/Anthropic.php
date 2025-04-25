@@ -222,7 +222,6 @@ class Anthropic implements AIService
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)
             ->withHeaders([
-                'Content-Type' => 'application/json',
                 'anthropic-version' => '2023-06-01',
                 'x-api-key' =>  $apiKey
             ])
@@ -257,7 +256,6 @@ class Anthropic implements AIService
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)
             ->withHeaders([
-                'Content-Type' => 'application/json',
                 'anthropic-version' => '2023-06-01',
                 'x-api-key' =>  $apiKey
             ])

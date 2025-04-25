@@ -169,6 +169,7 @@ export const sendMessage = async (
       const data = await executor.prompt.image(
         {
           prompt: message,
+          attachments: attachments,
         },
         globalState.modal.abortController,
       );

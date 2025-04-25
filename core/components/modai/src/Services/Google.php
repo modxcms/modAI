@@ -241,9 +241,6 @@ class Google implements AIService
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl($url)
-            ->withHeaders([
-                'Content-Type' => 'application/json',
-            ])
             ->withBody($input);
     }
 
@@ -285,9 +282,6 @@ class Google implements AIService
             ->withStream($config->isStream())
             ->withParser('content')
             ->withUrl($url)
-            ->withHeaders([
-                'Content-Type' => 'application/json',
-            ])
             ->withBody($input);
     }
 
@@ -310,9 +304,6 @@ class Google implements AIService
         return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withParser('image')
             ->withUrl($url)
-            ->withHeaders([
-                'Content-Type' => 'application/json',
-            ])
             ->withBody($input);
     }
 

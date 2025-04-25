@@ -200,7 +200,6 @@ class CustomOpenAI implements AIService
             ->withParser('content')
             ->withUrl($url)
             ->withHeaders([
-                'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $apiKey
             ])
             ->withBody($input);
@@ -252,7 +251,6 @@ class CustomOpenAI implements AIService
             ->withParser('content')
             ->withUrl($url)
             ->withHeaders([
-                'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $apiKey
             ])
             ->withBody($input);
@@ -298,7 +296,6 @@ class CustomOpenAI implements AIService
             ->withParser('image')
             ->withUrl($url)
             ->withHeaders([
-                'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $apiKey
             ])
             ->withBody($input);

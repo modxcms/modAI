@@ -10,17 +10,20 @@ class AIResponse
     private string $parser;
     private array $headers = [];
     private array $body = [];
+    private array $binary = [];
     private bool $stream = false;
+    private string $contentType;
 
-    private function __construct(string $service, string $model)
+    private function __construct(string $service, string $model, string $contentType)
     {
         $this->service = $service;
         $this->model = $model;
+        $this->contentType = $contentType;
     }
 
-    public static function new(string $service, string $model): self
+    public static function new(string $service, string $model, string $contentType = 'application/json'): self
     {
-        return new self($service, $model);
+        return new self($service, $model, $contentType);
     }
 
     public function withUrl(string $url): self
@@ -38,6 +41,12 @@ class AIResponse
     public function withBody(array $body): self
     {
         $this->body = $body;
+        return $this;
+    }
+
+    public function withBinary(array $binary): self
+    {
+        $this->binary = $binary;
         return $this;
     }
 
@@ -78,9 +87,19 @@ class AIResponse
         return $this->headers;
     }
 
-    public function getBody(): string
+    public function getContentType(): string
     {
-        return json_encode($this->body);
+        return $this->contentType;
+    }
+
+    public function getBody(): array
+    {
+        return $this->body;
+    }
+
+    public function getBinary(): array
+    {
+        return $this->binary;
     }
 
     public function isStream(): bool

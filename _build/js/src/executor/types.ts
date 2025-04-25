@@ -66,10 +66,12 @@ export type StreamHandler = (
 
 export type ForExecutor = {
   url: string;
-  body: string;
+  contentType: string;
+  body: Record<string, unknown>;
+  binary: Record<string, { base64: string; mimeType: string }[]>;
   service: string;
   model: string;
-  headers: HeadersInit;
+  headers: Record<string, string>;
   parser: string;
   stream: boolean;
 };
@@ -122,6 +124,7 @@ export type VisionParams = {
 
 export type ImageParams = {
   prompt: string;
+  attachments?: UserAttachment[];
   field?: string;
   namespace?: string;
 };

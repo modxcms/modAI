@@ -2,11 +2,13 @@
 
 namespace modAI\Services;
 
+use modAI\Exceptions\LexiconException;
 use modAI\Services\Config\CompletionsConfig;
 use modAI\Services\Config\ImageConfig;
 use modAI\Services\Config\VisionConfig;
 use modAI\Services\Response\AIResponse;
 use modAI\Tools\ToolInterface;
+use modAI\Utils;
 use MODX\Revolution\modX;
 
 class OpenAI implements AIService
@@ -16,6 +18,7 @@ class OpenAI implements AIService
     private modX $modx;
 
     const COMPLETIONS_API = 'https://api.openai.com/v1/chat/completions';
+    const IMAGES_EDIT_API = 'https://api.openai.com/v1/images/edits';
     const IMAGES_API = 'https://api.openai.com/v1/images/generations';
 
     public function __construct(modX &$modx)
@@ -190,7 +193,6 @@ class OpenAI implements AIService
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)
             ->withHeaders([
-                'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $apiKey
             ])
             ->withBody($input);
@@ -232,7 +234,6 @@ class OpenAI implements AIService
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)
             ->withHeaders([
-                'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $apiKey
             ])
             ->withBody($input);
@@ -241,6 +242,11 @@ class OpenAI implements AIService
 
     public function generateImage(string $prompt, ImageConfig $config): AIResponse
     {
+        $attachments = $config->getAttachments();
+        if (!empty($attachments)) {
+            return $this->editImage($prompt, $config);
+        }
+
         $apiKey = $this->getApiKey();
 
         $input = $config->getCustomOptions();
@@ -268,10 +274,74 @@ class OpenAI implements AIService
             ->withParser('image')
             ->withUrl(self::IMAGES_API)
             ->withHeaders([
-                'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $apiKey
             ])
             ->withBody($input);
+    }
+
+    public function editImage(string $prompt, ImageConfig $config): AIResponse
+    {
+        $apiKey = $this->getApiKey();
+
+        $input = $config->getCustomOptions();
+        $input['prompt'] = $prompt;
+        $input['model'] = $config->getModel();
+        $input['n'] = $config->getN();
+
+        if (!empty($config->getSize())) {
+            $input['size'] = $config->getSize();
+        }
+
+        if (!empty($config->getQuality())) {
+            $input['quality'] = $config->getQuality();
+        }
+
+        if (!empty($config->getStyle())) {
+            $input['style'] = $config->getStyle();
+        }
+
+        if (!empty($config->getResponseFormat())) {
+            $input['response_format'] = $config->getResponseFormat();
+        }
+
+        $binary = [];
+        $attachments = $config->getAttachments();
+        foreach ($attachments as $i => $attachment) {
+            if ($attachment['__type'] !== 'image') {
+                continue;
+            }
+
+            $data = Utils::parseDataURL($attachment['value']);
+            if (is_string($data)) {
+                $imageData = file_get_contents($data);
+                if ($imageData === false) {
+                    throw new LexiconException("modai.error.failed_to_fetch_image");
+                }
+                $info = new \finfo(FILEINFO_MIME_TYPE);
+                $mimeType = $info->buffer($imageData);
+                $base64 = base64_encode($imageData);
+
+                $data = [
+                    'base64' => $base64,
+                    'mimeType' => $mimeType
+                ];
+            }
+
+            if (!isset($binary['image'])) {
+                $binary['image'] = [];
+            }
+
+            $binary['image'][] = $data;
+        }
+
+        return AIResponse::new(self::getServiceName(), $config->getRawModel(), "multipart/form-data")
+            ->withParser('image')
+            ->withUrl(self::IMAGES_EDIT_API)
+            ->withHeaders([
+                'Authorization' => 'Bearer ' . $apiKey
+            ])
+            ->withBody($input)
+            ->withBinary($binary);
     }
 
     public static function getServiceName(): string

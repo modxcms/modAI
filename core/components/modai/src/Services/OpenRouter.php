@@ -190,7 +190,6 @@ class OpenRouter implements AIService
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)
             ->withHeaders([
-                'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $apiKey,
                 'X-Title' => 'MODX modAI',
                 'HTTP-Referer' => 'https://extras.modx.com/package/modai'
@@ -234,7 +233,6 @@ class OpenRouter implements AIService
             ->withParser('content')
             ->withUrl(self::COMPLETIONS_API)
             ->withHeaders([
-                'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $apiKey,
                 'X-Title' => 'MODX modAI',
                 'HTTP-Referer' => 'https://extras.modx.com/package/modai'
@@ -272,7 +270,6 @@ class OpenRouter implements AIService
             ->withParser('image')
             ->withUrl(self::IMAGES_API)
             ->withHeaders([
-                'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $apiKey,
                 'X-Title' => 'MODX modAI',
                 'HTTP-Referer' => 'https://extras.modx.com/package/modai'

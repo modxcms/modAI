@@ -25,6 +25,7 @@ class Image extends API
         $prompt = $this->modx->getOption('prompt', $data);
         $field = $this->modx->getOption('field', $data, '');
         $namespace = $this->modx->getOption('namespace', $data, 'modai');
+        $attachments = $this->modx->getOption('attachments', $data, null);
 
         if (empty($prompt)) {
             throw new LexiconException('modai.error.prompt_required');
@@ -44,6 +45,7 @@ class Image extends API
                 ->customOptions($customOptions)
                 ->size($size)
                 ->quality($quality)
+                ->attachments($attachments)
                 ->responseFormat($responseFormat)
                 ->style($style)
         );

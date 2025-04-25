@@ -8,6 +8,7 @@ use modAI\Exceptions\LexiconException;
 use modAI\modAI;
 use modAI\Services\Response\AIResponse;
 use modAI\Settings;
+use modAI\Utils;
 use MODX\Revolution\modX;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -164,8 +165,10 @@ abstract class API
                     'stream' => $aiResponse->isStream(),
                     'parser' => $aiResponse->getParser(),
                     'url' => $aiResponse->getUrl(),
+                    'contentType' => $aiResponse->getContentType(),
                     'headers' => $aiResponse->getHeaders(),
-                    'body' => $aiResponse->getBody()
+                    'body' => $aiResponse->getBody(),
+                    'binary' => $aiResponse->getBinary(),
                 ]
             ]);
             return;
@@ -174,14 +177,51 @@ abstract class API
         header("x-modai-proxy: 1");
 
         $headers = [];
+        $boundary = '--------------------------' . microtime(true);
+        $isFormData = false;
+        $contentType = $aiResponse->getContentType();
+
+        if (strtolower($contentType) === 'multipart/form-data') {
+            $isFormData = true;
+            $headers[] = "Content-Type:$contentType; boundary=$boundary";
+        } else {
+            $headers[] = "Content-Type:$contentType";
+        }
+
         foreach ($aiResponse->getHeaders() as $key => $value) {
             $headers[] = "$key:$value";
+        }
+
+        $body = '';
+        if (!$isFormData) {
+            $body = json_encode($aiResponse->getBody());
+        } else {
+            $binary = $aiResponse->getBinary();
+            foreach ($binary as $name => $files) {
+                foreach ($files as $i => $file) {
+                    $body .= '--' . $boundary . "\r\n";
+                    $body .= 'Content-Disposition: form-data; name="'.$name.'[]"; filename="source_image_' . $i . '.png"' . "\r\n";
+                    $body .= 'Content-Type: ' . $file['mimeType'] . "\r\n";
+                    $body .= "\r\n";
+                    $body .= base64_decode($file['base64']) . "\r\n";
+                }
+            }
+
+            $input = $aiResponse->getBody();
+            foreach ($input as $name => $value) {
+                $body .= '--' . $boundary . "\r\n";
+                $body .= 'Content-Disposition: form-data; name="' . $name . '"' . "\r\n";
+                $body .= "\r\n";
+                $body .= $value . "\r\n";
+            }
+
+            $body .= '--' . $boundary . '--' . "\r\n";
         }
 
         $ch = curl_init($aiResponse->getUrl());
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, !$aiResponse->isStream());
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $aiResponse->getBody());
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_HEADER, false);
 
