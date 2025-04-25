@@ -67,3 +67,12 @@ export type LocalChatConfig = {
     mediaSource?: number | string;
   };
 };
+
+export type ModalState = {
+  position?: {
+    width?: string;
+    height?: string;
+    left?: string;
+    top?: string;
+  };
+};

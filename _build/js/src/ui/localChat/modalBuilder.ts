@@ -1,9 +1,10 @@
-import { createElement } from '../utils';
+import { createElement, debounce } from '../utils';
 import { renderMessage } from './messageHandlers';
 import { scrollToBottom } from './modalActions';
 import { buildModalChat } from './modalChat';
 import { buildModalHeader } from './modalHeader';
 import { buildModalInput } from './modalInput';
+import { loadModalState, saveModalState } from './state';
 import { chatHistory } from '../../chatHistory';
 import { globalState } from '../../globalState';
 import { lng } from '../../lng';
@@ -11,6 +12,8 @@ import { createModAIShadow } from '../dom/modAIShadow';
 
 import type { Modal, LocalChatConfig } from './types';
 import type { UpdatableHTMLElement } from '../../chatHistory';
+
+const debouncedSaveModalState = debounce(saveModalState, 300);
 
 export const buildModal = (config: LocalChatConfig) => {
   const { shadow, shadowRoot } = createModAIShadow<Modal>(true, () => {
@@ -22,7 +25,17 @@ export const buildModal = (config: LocalChatConfig) => {
     ariaLabel: lng('modai.ui.modai_assistant_chat_dialog'),
   });
 
+  const modalState = loadModalState();
+  if (modalState.position) {
+    chatModal.style.width = modalState.position.width ?? '';
+    chatModal.style.height = modalState.position.height ?? '';
+    chatModal.style.top = modalState.position.top ?? '';
+    chatModal.style.left = modalState.position.left ?? '';
+    chatModal.style.transform = 'none';
+  }
+
   const resizeObserver = new ResizeObserver(() => {
+    debouncedSaveModalState();
     const msg = globalState.modal.chatMessages.lastElementChild as UpdatableHTMLElement | null;
 
     if (msg) {

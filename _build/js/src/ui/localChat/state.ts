@@ -1,5 +1,6 @@
 import { globalState } from '../../globalState';
 
+import type { ModalState } from './types';
 import type { Button } from '../dom/button';
 
 export const setLoadingState = (loading: boolean) => {
@@ -52,4 +53,35 @@ export const setLoadingState = (loading: boolean) => {
       button?.enable?.();
     }
   });
+};
+
+const MODAL_STORAGE_KEY = 'modai__state';
+
+export const saveModalState = () => {
+  const currentState = loadModalState();
+  currentState.position = {
+    width: globalState.modal.modal.style.width,
+    height: globalState.modal.modal.style.height,
+    left: globalState.modal.modal.style.left,
+    top: globalState.modal.modal.style.top,
+  };
+
+  try {
+    localStorage.setItem(MODAL_STORAGE_KEY, JSON.stringify(currentState));
+  } catch {
+    /* not needed */
+  }
+};
+
+export const loadModalState = (): ModalState => {
+  try {
+    const savedStateString = localStorage.getItem(MODAL_STORAGE_KEY);
+    if (savedStateString) {
+      return JSON.parse(savedStateString);
+    }
+
+    return {};
+  } catch {
+    return {};
+  }
 };
