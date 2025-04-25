@@ -11,6 +11,7 @@ class ImageConfig
     private string $size;
     private string $quality;
     private string $style;
+    private string $responseFormat;
 
     public function size(string $size): self
     {
@@ -33,6 +34,13 @@ class ImageConfig
         return $this;
     }
 
+    public function responseFormat(string $responseFormat): self
+    {
+        $this->responseFormat = $responseFormat;
+
+        return $this;
+    }
+
     public function getN(): int
     {
         return $this->n;
@@ -51,5 +59,10 @@ class ImageConfig
     public function getStyle(): string
     {
         return $this->style;
+    }
+
+    public function getResponseFormat(): string
+    {
+        return $this->responseFormat;
     }
 }

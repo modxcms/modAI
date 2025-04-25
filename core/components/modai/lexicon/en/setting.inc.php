@@ -57,6 +57,8 @@ $_lang['setting_modai.global.image.style'] = 'Style';
 $_lang['setting_modai.global.image.style_desc'] = 'Valid options for DALL-E-3 are vivid and natural (default)';
 $_lang['setting_modai.global.image.custom_options'] = 'Custom Options';
 $_lang['setting_modai.global.image.custom_options_desc'] = 'A JSON object of custom options passed to the body of the AI request. Please consult the documentation for your model for supported options.';
+$_lang['setting_modai.global.image.response_format'] = 'Response Format';
+$_lang['setting_modai.global.image.response_format_desc'] = 'Response format of the image, if the model supports it.';
 
 $_lang['setting_modai.res.fields'] = 'Use with MODX Resource Fields';
 $_lang['setting_modai.res.fields_desc'] = 'The default Resource fields to attached modAI generative AI buttons to.';

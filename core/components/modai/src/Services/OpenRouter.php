@@ -251,10 +251,22 @@ class OpenRouter implements AIService
         $input['prompt'] = $prompt;
         $input['model'] = $config->getModel();
         $input['n'] = $config->getN();
-        $input['size'] = $config->getSize();
-        $input['quality'] = $config->getQuality();
-        $input['style'] = $config->getStyle();
-        $input['response_format'] = 'url';
+
+        if (!empty($config->getSize())) {
+            $input['size'] = $config->getSize();
+        }
+
+        if (!empty($config->getQuality())) {
+            $input['quality'] = $config->getQuality();
+        }
+
+        if (!empty($config->getStyle())) {
+            $input['style'] = $config->getStyle();
+        }
+
+        if (!empty($config->getResponseFormat())) {
+            $input['response_format'] = $config->getResponseFormat();
+        }
 
         return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withParser('image')

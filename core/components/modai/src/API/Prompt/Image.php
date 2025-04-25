@@ -31,10 +31,11 @@ class Image extends API
         }
 
         $model = Settings::getImageSetting($this->modx, $field, 'model', $namespace);
-        $size = Settings::getImageSetting($this->modx, $field, 'size', $namespace);
-        $quality = Settings::getImageSetting($this->modx, $field, 'quality', $namespace);
-        $style = Settings::getImageSetting($this->modx, $field, 'style', $namespace);
+        $size = Settings::getImageSetting($this->modx, $field, 'size', $namespace, false) ?? '';
+        $quality = Settings::getImageSetting($this->modx, $field, 'quality', $namespace, false) ?? '';
+        $style = Settings::getImageSetting($this->modx, $field, 'style', $namespace, false) ?? '';
         $customOptions = Settings::getImageSetting($this->modx, $field, 'custom_options', $namespace, false);
+        $responseFormat = Settings::getImageSetting($this->modx, $field, 'response_format', $namespace, false) ?? '';
 
         $aiService = AIServiceFactory::new($model, $this->modx);
         $result = $aiService->generateImage(
@@ -43,6 +44,7 @@ class Image extends API
                 ->customOptions($customOptions)
                 ->size($size)
                 ->quality($quality)
+                ->responseFormat($responseFormat)
                 ->style($style)
         );
 

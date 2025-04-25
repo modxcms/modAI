@@ -1,5 +1,5 @@
 name: modAI
-version: 0.12.0-alpha
+version: 0.12.0-alpha3
 lowCaseName: modai
 namespace: modAI
 author: 'John Peca'
@@ -115,16 +115,19 @@ systemSettings:
 
   - key: global.image.model
     area: image
-    value: openai/dall-e-3
+    value: openai/gpt-image-1
   - key: global.image.style
     area: image
-    value: natural
+    value:
+  - key: global.image.response_format
+    area: image
+    value:
   - key: global.image.size
     area: image
-    value: "1792x1024"
+    value: "1024x1024"
   - key: global.image.quality
     area: image
-    value: standard
+    value: auto
   - key: global.image.path
     area: image
     value: "assets/ai/{resourceId}/{hash}.png"
