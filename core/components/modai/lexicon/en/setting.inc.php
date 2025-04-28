@@ -40,6 +40,8 @@ $_lang['setting_modai.global.vision.stream'] = 'Stream';
 $_lang['setting_modai.global.vision.stream_desc'] = 'If enabled and execute on server is disabled, supported models will stream the response.';
 $_lang['setting_modai.global.vision.custom_options'] = 'Custom Options';
 $_lang['setting_modai.global.vision.custom_options_desc'] = 'A JSON object of custom options passed to the body of the AI request. Please consult the documentation for your model for supported options.';
+$_lang['setting_modai.global.vision.max_tokens'] = 'Default Maximum Tokens';
+$_lang['setting_modai.global.vision.max_tokens_desc'] = 'To manage costs, 1000 tokens is roughly equal to 750 words.';
 
 $_lang['setting_modai.global.image.model'] = 'Image Model';
 $_lang['setting_modai.global.image.model_desc'] = 'Valid options are `dall-e-2` and `dall-e-3` (default). See https://platform.openai.com/docs/guides/images/image-generation-beta for full details including DALL-E-2 specifics.';
@@ -79,5 +81,11 @@ $_lang['setting_modai.api.execute_on_server_desc'] = 'If enabled, allAI requests
 $_lang['setting_modai.cache.lit'] = 'Last Install Time';
 $_lang['setting_modai.cache.lit_desc'] = '';
 
-$_lang['setting_modai.contexts.resources.name'] = 'Context Provider Name';
+$_lang['setting_modai.contexts.resources.name'] = 'Resources Context Provider Name';
 $_lang['setting_modai.contexts.resources.name_desc'] = 'Name of the context provider that will be used to index resources. It has to be enabled.';
+$_lang['setting_modai.contexts.chunks.name'] = 'Chunks Context Provider Name';
+$_lang['setting_modai.contexts.chunks.name_desc'] = 'Name of the context provider that will be used to index chunks. It has to be enabled.';
+$_lang['setting_modai.contexts.snippets.name'] = 'Snippets Context Provider Name';
+$_lang['setting_modai.contexts.snippets.name_desc'] = 'Name of the context provider that will be used to index snippets. It has to be enabled.';
+$_lang['setting_modai.contexts.templates.name'] = 'Templates Context Provider Name';
+$_lang['setting_modai.contexts.templates.name_desc'] = 'Name of the context provider that will be used to index templates. It has to be enabled.';
