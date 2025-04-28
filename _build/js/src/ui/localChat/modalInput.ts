@@ -184,6 +184,35 @@ export const buildModalInput = (config: LocalChatConfig) => {
     availableOptions.push(agentSelectComponent);
   }
 
+  if (globalState.config.chatAdditionalControls[config.type]) {
+    globalState.config.chatAdditionalControls[config.type].forEach((item) => {
+      availableOptions.push(
+        buildSelect(
+          Object.entries(item.values).reduce(
+            (acc, [value, name]) => {
+              acc[value] = { name, value };
+              return acc;
+            },
+            {} as Record<string, { name: string; value: string }>,
+          ),
+          null,
+          (selected) => {
+            console.log(selected);
+          },
+          {
+            idProperty: 'value',
+            displayProperty: 'name',
+            noSelectionText: item.label,
+            selectText: item.label,
+            nullOptionDisplayText: `Default ${item.label}`,
+            icon: item.icon,
+            tooltip: `Select ${item.label}`,
+          },
+        ),
+      );
+    });
+  }
+
   const options = createElement('div', 'options', availableOptions, {
     ariaLabel: lng('modai.ui.options_toolbar'),
     role: 'toolbar',
