@@ -1075,3 +1075,27 @@
         }
     }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+    .lucide-sparkle {
+        .bonus-sparkle-1 {
+            animation: sparkleAnim 5s ease-in-out;
+            animation-iteration-count: infinite;
+            animation-delay: 0s;
+            transform-origin: center;
+            transform-box: fill-box;
+        }
+        .bonus-sparkle-2 {
+            animation: sparkleAnim 5s ease-in-out;
+            animation-iteration-count: infinite;
+            animation-delay: 4s;
+            transform-origin: center;
+            transform-box: fill-box;
+        }
+    }
+}
+
+@keyframes sparkleAnim {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0; transform: scale(0); }
+}
