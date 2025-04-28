@@ -4,7 +4,9 @@
   "scripts": {
     "build": "node esbuild.build.mjs",
     "dev": "node esbuild.dev.mjs",
-    "lint": "eslint"
+    "lint": "eslint",
+    "changelog:pkg": "git cliff -c cliff_pkg.toml --output core/components/modai/docs/CHANGELOG.md --unreleased",
+    "changelog": "git cliff --output CHANGELOG.md"
   },
   "engines": {
     "node": "22"

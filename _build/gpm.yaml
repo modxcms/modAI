@@ -1,5 +1,5 @@
 name: modAI
-version: 0.12.0-alpha5
+version: 0.12.0-beta
 lowCaseName: modai
 namespace: modAI
 author: 'John Peca'
@@ -197,6 +197,8 @@ systemSettings:
     value: ''
 
 build:
+  readme: core/components/modai/docs/README.md
+  changelog: core/components/modai/docs/CHANGELOG.md
   scriptsBefore:
     - custom_events.gpm.php
     - acls.gpm.php
