@@ -196,6 +196,11 @@ systemSettings:
     area: contexts
     value: ''
 
+  - key: chat.additional_controls
+    area: chat
+    type: textarea
+    value:
+
 build:
   readme: core/components/modai/docs/README.md
   changelog: core/components/modai/docs/CHANGELOG.md
