@@ -1009,30 +1009,42 @@
     height: 24px;
     vertical-align: middle;
     padding-left: 5px;
-
-    .history--wrapper {
-        align-items: center;
-    }
+    gap: 8px;
+    
+    /* Common variables for consistent styling */
+    --sparkle-h: 222;
+    --sparkle-s: 49%;
+    --sparkle-l: 60%;
+    --nav-h: 191;
+    --nav-s: 100%; 
+    --nav-l: 44%;
+    --button-transition: 200ms all;
 
     .btn {
-        --button-h: 222;
-        --button-s: 49%;
-        --button-l: 60%;
-        --button-color: hsl(var(--button-h), var(--button-s), var(--button-l));
-        display: inline-block;
+        --button-color: hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l));
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
         color: var(--button-color);
         background: transparent;
         border: none;
         padding: 3px 6px 4px;
         height: 100%;
-        transition: 200ms all;
+        transition: var(--button-transition);
 
         &:hover {
             transform: scale(1.15);
-            --button-h: 191;
-            --button-s: 100%;
-            --button-l: 44%;
+            --button-color: hsl(var(--nav-h), var(--nav-s), var(--nav-l));
+        }
+
+        &:focus {
+            outline: 2px solid hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l), 0.5);
+            outline-offset: 2px;
+        }
+        
+        &:focus:not(:focus-visible) {
+            outline: none;
         }
 
         &:disabled {
@@ -1041,37 +1053,86 @@
         }
     }
 
+    .history--wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 0;
+        padding: 0;
+        border-radius: 4px;
+        height: 100%;
+        background: hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l));
+        color: white;
+        overflow: hidden;
+    }
+
     .history--next,
     .history--prev {
-        --button-h: 191;
-        --button-s: 100%;
-        --button-l: 44%;
-        --button-hover-darken: 15%;
-        --button-border-darken: 20%;
-        --button-color: hsl(var(--button-h), var(--button-s), var(--button-l));
-        --button-color-border: hsl(var(--button-h), var(--button-s), calc(var(--button-l) - var(--button-border-darken)));
-        --button-color-hover: hsl(var(--button-h), var(--button-s), calc(var(--button-l) - var(--button-hover-darken)));
-        display: inline-block;
+        --button-color: white;
+        --button-hover-darken: 10%;
+        --button-color-hover: rgba(255, 255, 255, 0.8);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
-        background: var(--button-color);
-        color: #ffffff;
-        border-radius: 4px;
-        margin-right: 6px;
+        background: transparent;
+        color: var(--button-color);
+        border-radius: 0;
+        margin: 0;
         padding: 3px 6px 4px;
-        border: 2px solid var(--button-color-border);
-        border-top-width: 1px;
-        border-left-width: 1px;
+        border: none;
         height: 100%;
-        transition: 200ms all;
+        transition: var(--button-transition);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        min-width: 24px;
 
         &:hover {
             transform: scale(1.15);
-            background: var(--button-color-hover);
+            color: var(--button-color-hover);
+        }
+
+        &:focus {
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+        
+        &:focus:not(:focus-visible) {
+            outline: none;
         }
 
         &:disabled {
             opacity: 0.5;
             cursor: initial;
+        }
+    }
+
+    /* Style the counter to match the buttons */
+    .history--wrapper > div:not(.history--next):not(.history--prev) {
+        font-size: 12px;
+        color: white;
+        font-weight: 500;
+        transition: var(--button-transition);
+        padding: 3px 6px 4px;
+        min-width: 32px;
+        text-align: center;
+        cursor: pointer;
+    }
+    
+    /* Animation for counter updates */
+    .history--wrapper > div.updated {
+        animation: counterUpdate 0.3s ease-in-out forwards;
+    }
+    
+    /* Ensure buttons maintain their appearance at different screen sizes */
+    @media (max-width: 480px) {
+        .history--wrapper {
+            gap: 0;
+        }
+        
+        .history--next,
+        .history--prev {
+            padding: 3px 4px;
         }
     }
 }
