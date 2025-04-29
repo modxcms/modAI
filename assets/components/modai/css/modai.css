@@ -1060,16 +1060,16 @@
         padding: 0;
         border-radius: 4px;
         height: 100%;
-        background: hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l));
-        color: white;
+        border: 1px solid hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l));
+        color: hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l));
         overflow: hidden;
     }
 
     .history--next,
     .history--prev {
-        --button-color: white;
+        --button-color: hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l));
         --button-hover-darken: 10%;
-        --button-color-hover: rgba(255, 255, 255, 0.8);
+        --button-color-hover: hsl(var(--nav-h), var(--nav-s), var(--nav-l));
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -1087,13 +1087,19 @@
         stroke-linejoin: round;
         min-width: 24px;
 
+        svg {
+            stroke: currentColor;
+            width: 14px;
+            height: 14px;
+        }
+
         &:hover {
             transform: scale(1.15);
             color: var(--button-color-hover);
         }
 
         &:focus {
-            outline: 2px solid white;
+            outline: 2px solid hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l), 0.5);
             outline-offset: 2px;
         }
         
@@ -1110,7 +1116,7 @@
     /* Style the counter to match the buttons */
     .history--wrapper > div:not(.history--next):not(.history--prev) {
         font-size: 12px;
-        color: white;
+        color: hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l));
         font-weight: 500;
         transition: var(--button-transition);
         padding: 3px 6px 4px;
