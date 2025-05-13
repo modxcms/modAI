@@ -2,15 +2,20 @@
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
 }
 
 @keyframes modai--dot-bounds {
-    0%, 80%, 100% {
+
+    0%,
+    80%,
+    100% {
         transform: scale(0);
     }
+
     40% {
         transform: scale(1.0);
     }
@@ -38,6 +43,7 @@
 
     font: normal 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
+
 .icon {
     display: flex;
     align-items: center;
@@ -70,14 +76,15 @@
 ::-webkit-resizer {
     display: none;
     z-index: 1;
-    background: rgba(0,0,0,0);
+    background: rgba(0, 0, 0, 0);
     left: -20px;
 }
 
 .chat-modal {
-    padding-bottom: 20px; /* webkit fix for resizer */
-    width: clamp(374px,800px,90%);
-    height: clamp(500px,80vh,90%);
+    padding-bottom: 20px;
+    /* webkit fix for resizer */
+    width: clamp(374px, 800px, 90%);
+    height: clamp(500px, 80vh, 90%);
     min-width: 374px;
     min-height: 500px;
     max-width: 90%;
@@ -136,7 +143,8 @@
                 border-radius: 50%;
                 transition: background-color var(--transition-speed);
 
-                &:hover, &:focus {
+                &:hover,
+                &:focus {
                     background-color: var(--border-light);
                 }
 
@@ -246,7 +254,7 @@
                                     padding-block: 0;
 
                                     &:hover .trigger,
-                                    &:focus .trigger{
+                                    &:focus .trigger {
                                         opacity: 1;
                                     }
 
@@ -291,7 +299,7 @@
                                     }
 
                                     &:hover .trigger,
-                                    &:focus .trigger{
+                                    &:focus .trigger {
                                         opacity: 1;
                                     }
 
@@ -400,7 +408,8 @@
                             border-radius: 28px;
                             line-height: 1;
 
-                            &:focus, &:hover {
+                            &:focus,
+                            &:hover {
                                 background-color: var(--border-light);
                             }
 
@@ -502,7 +511,8 @@
                 gap: 5px;
                 cursor: pointer;
 
-                &:hover, &:focus {
+                &:hover,
+                &:focus {
                     background-color: var(--border-light);
                 }
             }
@@ -542,7 +552,7 @@
                         padding-block: 0;
 
                         &:hover .trigger,
-                        &:focus .trigger{
+                        &:focus .trigger {
                             opacity: 1;
                         }
 
@@ -555,7 +565,8 @@
                             background-color: #f8fafc;
                             transition: transform 0.2s ease;
 
-                            &:hover, &:focus {
+                            &:hover,
+                            &:focus {
                                 transform: scale(1.05);
                             }
 
@@ -610,7 +621,7 @@
                         }
 
                         &:hover .trigger,
-                        &:focus .trigger{
+                        &:focus .trigger {
                             opacity: 1;
                         }
 
@@ -757,7 +768,8 @@
                     pointer-events: none;
                     color: var(--text-light);
 
-                    &:hover, &:focus {
+                    &:hover,
+                    &:focus {
                         background-color: var(--primary-dark);
                     }
 
@@ -822,7 +834,8 @@
                     z-index: 2;
                 }
 
-                &:focus, &:hover {
+                &:focus,
+                &:hover {
                     background-color: var(--border-light);
                     opacity: 1;
                 }
@@ -836,7 +849,8 @@
                     background-color: var(--primary);
                     color: var(--text-light);
 
-                    &:hover, &:focus {
+                    &:hover,
+                    &:focus {
                         background-color: var(--primary);
                         color: var(--text-light);
                     }
@@ -988,6 +1002,7 @@
                 outline-offset: 2px;
             }
         }
+
         .confirmBtn {
             padding: 8px 16px;
             border: none;
@@ -1005,18 +1020,16 @@
 }
 
 .generate {
-    display: inline-flex;
-    height: 24px;
+    display: inline-block;
     vertical-align: middle;
     padding-left: 5px;
-    gap: 8px;
-    
+
     /* Common variables for consistent styling */
     --sparkle-h: 222;
     --sparkle-s: 49%;
     --sparkle-l: 60%;
     --nav-h: 191;
-    --nav-s: 100%; 
+    --nav-s: 100%;
     --nav-l: 44%;
     --button-transition: 200ms all;
 
@@ -1042,7 +1055,7 @@
             outline: 2px solid hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l), 0.5);
             outline-offset: 2px;
         }
-        
+
         &:focus:not(:focus-visible) {
             outline: none;
         }
@@ -1054,37 +1067,18 @@
     }
 
     .history--wrapper {
-        display: inline-flex;
         align-items: center;
-        gap: 0;
-        padding: 0;
-        border-radius: 4px;
-        height: 100%;
-        border: 1px solid hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l));
-        color: hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l));
-        overflow: hidden;
     }
 
     .history--next,
     .history--prev {
         --button-color: hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l));
-        --button-hover-darken: 10%;
         --button-color-hover: hsl(var(--nav-h), var(--nav-s), var(--nav-l));
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
         cursor: pointer;
         background: transparent;
         color: var(--button-color);
-        border-radius: 0;
-        margin: 0;
-        padding: 3px 6px 4px;
         border: none;
-        height: 100%;
         transition: var(--button-transition);
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
         min-width: 24px;
 
         svg {
@@ -1102,7 +1096,7 @@
             outline: 2px solid hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l), 0.5);
             outline-offset: 2px;
         }
-        
+
         &:focus:not(:focus-visible) {
             outline: none;
         }
@@ -1114,28 +1108,27 @@
     }
 
     /* Style the counter to match the buttons */
-    .history--wrapper > div:not(.history--next):not(.history--prev) {
-        font-size: 12px;
+    .history--wrapper>div:not(.history--next):not(.history--prev) {
         color: hsl(var(--sparkle-h), var(--sparkle-s), var(--sparkle-l));
-        font-weight: 500;
         transition: var(--button-transition);
-        padding: 3px 6px 4px;
-        min-width: 32px;
+        font-weight: 600;
+        min-width: 26px;
+        padding-bottom: 3px;
         text-align: center;
         cursor: pointer;
     }
-    
+
     /* Animation for counter updates */
-    .history--wrapper > div.updated {
+    .history--wrapper>div.updated {
         animation: counterUpdate 0.3s ease-in-out forwards;
     }
-    
+
     /* Ensure buttons maintain their appearance at different screen sizes */
     @media (max-width: 480px) {
         .history--wrapper {
             gap: 0;
         }
-        
+
         .history--next,
         .history--prev {
             padding: 3px 4px;
@@ -1152,6 +1145,7 @@
             transform-origin: center;
             transform-box: fill-box;
         }
+
         .bonus-sparkle-2 {
             animation: sparkleAnim 5s ease-in-out;
             animation-iteration-count: infinite;
@@ -1163,6 +1157,15 @@
 }
 
 @keyframes sparkleAnim {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0; transform: scale(0); }
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0;
+        transform: scale(0);
+    }
 }
