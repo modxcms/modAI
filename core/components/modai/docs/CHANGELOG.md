@@ -2,7 +2,7 @@
 
 This is a shortened version, [view full Changelog here](https://github.com/modxcms/modAI/blob/main/CHANGELOG.md).
 
-## 0.12.0-beta - 2025-04-28
+## 0.12.0-pl - 2025-05-14
 
 ### Features
 

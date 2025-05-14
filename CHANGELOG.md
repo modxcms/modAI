@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## 0.12.0-beta - 2025-04-28
+## 0.12.0-pl - 2025-05-14
 
 ### 🚀 Features
 
@@ -83,6 +83,10 @@ All notable changes to this project will be documented in this file.
 - Improve docs ([478b1cd](https://github.com/modxcms/modAI/commit/478b1cd0221d4ed5469a77837c55130af63791a8))
 - Admin ([a2121c3](https://github.com/modxcms/modAI/commit/a2121c39d58c671105c2df2bcd40d5a734d35974))
 - Add tool's prompt ([1ca1a92](https://github.com/modxcms/modAI/commit/1ca1a927e66d023d7c2ebd83ddb55a33416fb3da))
+
+### 🎨 Styling
+
+- New spark button ([8026e60](https://github.com/modxcms/modAI/commit/8026e6065a6eeba01bad4d7ebe3dd9880dbf0552))
 
 ### ⚙️ Miscellaneous Tasks
 
