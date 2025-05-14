@@ -21,6 +21,20 @@
     }
 }
 
+@keyframes modai--sparkle {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
 :host {
     --primary: #4499E1;
     --primary-dark: #3a87c7;
@@ -1104,6 +1118,7 @@
         &:disabled {
             opacity: 0.5;
             cursor: initial;
+            pointer-events: none;
         }
     }
 
@@ -1113,9 +1128,8 @@
         transition: var(--button-transition);
         font-weight: 600;
         min-width: 26px;
-        padding-bottom: 3px;
+        padding-bottom: 2px;
         text-align: center;
-        cursor: pointer;
     }
 
     /* Animation for counter updates */
@@ -1139,7 +1153,7 @@
 @media (prefers-reduced-motion: no-preference) {
     .lucide-sparkle {
         .bonus-sparkle-1 {
-            animation: sparkleAnim 5s ease-in-out;
+            animation: modai--sparkle 5s ease-in-out;
             animation-iteration-count: infinite;
             animation-delay: 0s;
             transform-origin: center;
@@ -1147,25 +1161,11 @@
         }
 
         .bonus-sparkle-2 {
-            animation: sparkleAnim 5s ease-in-out;
+            animation: modai--sparkle 5s ease-in-out;
             animation-iteration-count: infinite;
             animation-delay: 4s;
             transform-origin: center;
             transform-box: fill-box;
         }
-    }
-}
-
-@keyframes sparkleAnim {
-
-    0%,
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    50% {
-        opacity: 0;
-        transform: scale(0);
     }
 }
