@@ -100,8 +100,8 @@ const createHistoryNav = (cache: ReturnType<typeof history.init<DataContext>>) =
   wrapper.info = info;
 
   wrapper.appendChild(prevButton);
-  wrapper.appendChild(nextButton);
   wrapper.appendChild(info);
+  wrapper.appendChild(nextButton);
 
   wrapper.hide();
   prevButton.disable();
