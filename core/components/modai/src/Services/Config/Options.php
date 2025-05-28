@@ -24,9 +24,11 @@ trait Options
             }
         }
 
+        if (empty($parsedOptions)) {
+            return $this;
+        }
+
         $this->options = array_merge(...$parsedOptions);
-
-
         return $this;
     }
 
