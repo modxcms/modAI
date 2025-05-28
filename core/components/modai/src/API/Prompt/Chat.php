@@ -14,6 +14,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Chat extends API
 {
+    use AdditionalOptions;
+
     public function post(ServerRequestInterface $request): void
     {
         if (!$this->modx->hasPermission('modai_client_chat_text')) {
@@ -38,8 +40,10 @@ class Chat extends API
         }
 
         if (!empty($model)) {
-            Settings::setTextSetting($this->modx, 'global', 'model', $model);
+            Settings::setTextSetting($this->modx, $field, 'model', $model);
         }
+
+        $additionalOptions = $this->getAdditionalOptions($data, $field, 'text');
 
         if (!empty($agent)) {
             /** @var Agent $agent */
@@ -59,14 +63,14 @@ class Chat extends API
             }
 
             if (!empty($agent->model)) {
-                Settings::setTextSetting($this->modx, 'global', 'model', $agent->model);
+                Settings::setTextSetting($this->modx, $field, 'model', $agent->model);
             }
 
             $advancedConfig = $agent->get('advanced_config');
             if (!empty($advancedConfig)) {
                 $cfgCustomOptions = [];
                 foreach ($advancedConfig as $cfgItem) {
-                    if (in_array($cfgItem['setting'], ['stream', 'model', 'temperature', 'max_tokens', 'base_output', 'base_prompt'])) {
+                    if (in_array($cfgItem['setting'], ['stream', 'model', 'base_output', 'base_prompt'])) {
                         Settings::setSetting($this->modx, "{$cfgItem['field']}.{$cfgItem['area']}.{$cfgItem['setting']}", $cfgItem['value']);
                         continue;
                     }
@@ -92,7 +96,7 @@ class Chat extends API
                             continue;
                         }
 
-                        Settings::setSetting($this->modx, "$customOptionsKey.custom_options", json_encode($customOptionsValue));
+                        Settings::setSetting($this->modx, "$customOptionsKey.agent_options", json_encode($customOptionsValue));
                     }
 
                 }
@@ -108,6 +112,7 @@ class Chat extends API
         $output = Settings::getTextSetting($this->modx, $field, 'base_output', $namespace, false);
         $base = Settings::getTextSetting($this->modx, $field, 'base_prompt', $namespace, false);
         $customOptions = Settings::getTextSetting($this->modx, $field, 'custom_options', $namespace, false);
+        $agentOptions = Settings::getTextSetting($this->modx, $field, 'agent_options', $namespace, false);
 
         if (!empty($output)) {
             $systemInstructions[] = $output;
@@ -165,9 +170,7 @@ class Chat extends API
             CompletionsConfig::new($model)
                 ->tools($tools)
                 ->messages($messages)
-                ->customOptions($customOptions)
-                ->maxTokens($maxTokens)
-                ->temperature($temperature)
+                ->options(['max_tokens' => $maxTokens, 'temperature' => $temperature], $customOptions, $additionalOptions, $agentOptions)
                 ->systemInstructions($systemInstructions)
                 ->stream($stream)
         );

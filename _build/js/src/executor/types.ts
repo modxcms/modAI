@@ -92,6 +92,7 @@ export type ChatParams = {
   prompt: string;
   field?: string;
   agent?: string;
+  additionalOptions?: Record<string, unknown>;
   contexts?: UserMessageContext[];
   attachments?: UserAttachment[];
   namespace?: string;
@@ -107,6 +108,7 @@ export type ChatParams = {
 export type TextParams = {
   field?: string;
   namespace?: string;
+  additionalOptions?: Record<string, unknown>;
 } & (
   | {
       resourceId: string | number;
@@ -118,12 +120,14 @@ export type TextParams = {
 
 export type VisionParams = {
   field?: string;
+  additionalOptions?: Record<string, unknown>;
   namespace?: string;
   image: string;
 };
 
 export type ImageParams = {
   prompt: string;
+  additionalOptions?: Record<string, unknown>;
   attachments?: UserAttachment[];
   field?: string;
   namespace?: string;

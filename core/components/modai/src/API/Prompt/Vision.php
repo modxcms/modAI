@@ -44,9 +44,8 @@ class Vision extends API
             $prompt,
             $image,
             VisionConfig::new($model)
-                ->customOptions($customOptions)
+                ->options(['max_tokens' => $maxTokens], $customOptions)
                 ->stream($stream)
-                ->maxTokens($maxTokens)
         );
 
         $this->proxyAIResponse($result);
