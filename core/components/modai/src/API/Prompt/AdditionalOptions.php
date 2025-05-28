@@ -23,8 +23,8 @@ trait AdditionalOptions {
         }
 
         $allowedOptions = [];
-        if (!empty($definedAdditionalControls['text'])) {
-            foreach ($definedAdditionalControls['text'] as $option) {
+        if (!empty($definedAdditionalControls[$type])) {
+            foreach ($definedAdditionalControls[$type] as $option) {
                 $allowedOptions[$option['name']] = array_flip(array_keys($option['values']));
             }
         }
