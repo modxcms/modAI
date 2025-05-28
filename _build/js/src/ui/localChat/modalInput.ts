@@ -6,13 +6,12 @@ import {
   sendMessage,
   stopGeneration,
   switchType,
-  tryAgain,
 } from './modalActions';
 import { buildModalInputAttachments } from './modalInputAttachments';
 import { buildModalInputContexts } from './modalInputContext';
 import { button } from '../dom/button';
 import { icon } from '../dom/icon';
-import { image, refresh, arrowUp, square, text, trash, bot } from '../icons';
+import { image, arrowUp, square, text, trash, bot } from '../icons';
 import { buildScrollToBottom } from './scrollBottom';
 import { globalState } from '../../globalState';
 import { lng } from '../../lng';
@@ -160,63 +159,80 @@ export const buildModalInput = (config: LocalChatConfig) => {
   );
   clearChatBtn.disable();
 
-  const availableOptions: HTMLElement[] = [...modeButtons, clearChatBtn];
+  const defaultOptions: HTMLElement[] = [...modeButtons, clearChatBtn];
+  let additionalOptions: HTMLElement[] = [];
 
-  if (Object.keys(globalState.config.availableAgents).length > 0) {
-    const agentSelectComponent = buildSelect(
-      globalState.config.availableAgents,
-      globalState.selectedAgent[config.key]?.id,
-      (selectedAgent) => {
-        globalState.modal.selectedAgent = selectedAgent ?? undefined;
-        globalState.selectedAgent[config.key] = selectedAgent ?? undefined;
-      },
-      {
-        idProperty: 'id',
-        displayProperty: 'name',
-        noSelectionText: lng('modai.ui.agents'),
-        selectText: lng('modai.ui.select_agent'),
-        nullOptionDisplayText: lng('modai.ui.no_agent'),
-        icon: bot,
-        tooltip: lng('modai.ui.select_agent'),
-      },
-    );
-
-    availableOptions.push(agentSelectComponent);
-  }
-
-  if (globalState.config.chatAdditionalControls[config.type]) {
-    globalState.config.chatAdditionalControls[config.type].forEach((item) => {
-      availableOptions.push(
-        buildSelect(
-          Object.entries(item.values).reduce(
-            (acc, [value, name]) => {
-              acc[value] = { name, value };
-              return acc;
-            },
-            {} as Record<string, { name: string; value: string }>,
-          ),
-          null,
-          (selected) => {
-            console.log(selected);
-          },
-          {
-            idProperty: 'value',
-            displayProperty: 'name',
-            noSelectionText: item.label,
-            selectText: item.label,
-            nullOptionDisplayText: `Default ${item.label}`,
-            icon: item.icon,
-            tooltip: `Select ${item.label}`,
-          },
-        ),
-      );
-    });
-  }
-
-  const options = createElement('div', 'options', availableOptions, {
+  const options = createElement('div', 'options', [], {
     ariaLabel: lng('modai.ui.options_toolbar'),
     role: 'toolbar',
   });
+
+  const loadChatControls = () => {
+    additionalOptions = [];
+    if (config.type === 'text' && Object.keys(globalState.config.availableAgents).length > 0) {
+      const agentSelectComponent = buildSelect(
+        globalState.config.availableAgents,
+        globalState.selectedAgent[`${config.key}/${config.type}`]?.id,
+        (selectedAgent) => {
+          globalState.selectedAgent[`${config.key}/${config.type}`] = selectedAgent ?? undefined;
+        },
+        {
+          idProperty: 'id',
+          displayProperty: 'name',
+          noSelectionText: lng('modai.ui.agents'),
+          selectText: lng('modai.ui.select_agent'),
+          nullOptionDisplayText: lng('modai.ui.no_agent'),
+          icon: bot,
+          tooltip: lng('modai.ui.select_agent'),
+        },
+      );
+
+      additionalOptions.push(agentSelectComponent);
+    }
+
+    if (globalState.config.chatAdditionalControls[config.type]) {
+      globalState.config.chatAdditionalControls[config.type].forEach((item) => {
+        additionalOptions.push(
+          buildSelect(
+            Object.entries(item.values).reduce(
+              (acc, [value, name]) => {
+                acc[value] = { name, value };
+                return acc;
+              },
+              {} as Record<string, { name: string; value: string }>,
+            ),
+            globalState.additionalControls[`${config.key}/${config.type}`]?.[item.name]?.value,
+            (selected) => {
+              const controlsKey = `${config.key}/${config.type}`;
+
+              if (!globalState.additionalControls[controlsKey]) {
+                globalState.additionalControls[controlsKey] = {};
+              }
+
+              if (selected) {
+                globalState.additionalControls[controlsKey][item.name] = selected;
+              } else {
+                delete globalState.additionalControls[controlsKey][item.name];
+              }
+            },
+            {
+              idProperty: 'value',
+              displayProperty: 'name',
+              noSelectionText: item.label,
+              selectText: item.label,
+              nullOptionDisplayText: `Default ${item.label}`,
+              icon: item.icon,
+              tooltip: `Select ${item.label}`,
+            },
+          ),
+        );
+      });
+    }
+
+    options.innerHTML = '';
+    options.append(...defaultOptions, ...additionalOptions);
+  };
+  loadChatControls();
 
   const scrollWrapper = buildScrollToBottom();
   container.append(scrollWrapper);
@@ -344,6 +360,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
   globalState.modal.stopBtn = stopBtn;
   globalState.modal.modeButtons = modeButtons;
   globalState.modal.actionButtons = [clearChatBtn];
+  globalState.modal.reloadChatControls = loadChatControls;
 
   return container;
 };

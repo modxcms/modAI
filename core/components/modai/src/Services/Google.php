@@ -193,17 +193,33 @@ class Google implements AIService
             $this->addMessage($messages, $msg);
         }
 
-        $input = $config->getCustomOptions();
+        $input = $config->getOptions(function ($options) {
+            $cfg = [];
+            $generationConfig = [];
+
+            foreach ($options as $key => $value) {
+                switch ($key) {
+                    case 'max_tokens':
+                        $generationConfig['maxOutputTokens'] = $value;
+                        break;
+                    case 'temperature':
+                        $value = floatval($value);
+                        if ($value >= 0) {
+                            $generationConfig['temperature'] = $value;
+                        }
+                        break;
+                    default:
+                        $cfg[$key] = $value;
+                }
+            }
+
+            if (!empty($generationConfig)) {
+                $cfg['generationConfig'] = $generationConfig;
+            }
+
+            return $cfg;
+        });
         $input["contents"] = $messages;
-
-        $input["generationConfig"] = [
-            "maxOutputTokens" => $config->getMaxTokens(),
-        ];
-
-        $temperature = $config->getTemperature();
-        if ($temperature >= 0) {
-            $input["generationConfig"]['temperature'] = $config->getTemperature();
-        }
 
         if (!empty($systemInstruction)) {
             $input['system_instruction'] = [
@@ -250,7 +266,27 @@ class Google implements AIService
 
         $image = str_replace('data:image/png;base64,', '', $image);
 
-        $input = $config->getCustomOptions();
+        $input = $config->getOptions(function ($options) {
+            $cfg = [];
+            $generationConfig = [];
+
+            foreach ($options as $key => $value) {
+                switch ($key) {
+                    case 'max_tokens':
+                        $generationConfig['maxOutputTokens'] = $value;
+                        break;
+                    default:
+                        $cfg[$key] = $value;
+                }
+            }
+
+            if (!empty($generationConfig)) {
+                $cfg['generationConfig'] = $generationConfig;
+            }
+
+            return $cfg;
+        });
+
         $input['contents'] = [
             'parts' => [
                 [
@@ -263,10 +299,6 @@ class Google implements AIService
                     ]
                 ],
             ]
-        ];
-
-        $input["generationConfig"] = [
-            "maxOutputTokens" => $config->getMaxTokens(),
         ];
 
         $url = self::COMPLETIONS_API;
@@ -293,12 +325,18 @@ class Google implements AIService
         $url = str_replace("{model}", $config->getModel(), $url);
         $url = str_replace("{apiKey}", $apiKey, $url);
 
-        $input = $config->getCustomOptions();
+        $input = $config->getOptions(function ($options) {
+            $cfg = [
+                'parameters' => [
+                    'sampleCount' => 1
+                ]
+            ];
+
+            return $cfg;
+        });
+
         $input["instances"] = [
             "prompt" => $prompt,
-        ];
-        $input["parameters"] = [
-            "sampleCount" => $config->getN()
         ];
 
         return AIResponse::new(self::getServiceName(), $config->getRawModel())

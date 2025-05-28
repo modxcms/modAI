@@ -5,7 +5,7 @@ namespace modAI\Services\Config;
 class VisionConfig
 {
     use Model;
-    use CustomOptions;
+    use Options;
 
     private int $maxTokens;
 
@@ -18,20 +18,8 @@ class VisionConfig
         return $this;
     }
 
-    public function maxTokens(int $maxTokens): self
-    {
-        $this->maxTokens = $maxTokens;
-
-        return $this;
-    }
-
     public function isStream(): bool
     {
         return $this->stream;
-    }
-
-    public function getMaxTokens(): int
-    {
-        return $this->maxTokens;
     }
 }
