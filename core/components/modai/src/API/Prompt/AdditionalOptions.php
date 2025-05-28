@@ -35,11 +35,11 @@ trait AdditionalOptions {
                 continue;
             }
 
-            if (!empty($additionalOptions['model'])) {
+            if ($key === 'model' && !empty($value)) {
                 if ($type === 'image') {
-                    Settings::setImageSetting($this->modx, $field, 'model', $additionalOptions['model']);
+                    Settings::setImageSetting($this->modx, $field, 'model', $value);
                 } else {
-                    Settings::setTextSetting($this->modx, $field, 'model', $additionalOptions['model']);
+                    Settings::setTextSetting($this->modx, $field, 'model', $value);
                 }
                 continue;
             }
