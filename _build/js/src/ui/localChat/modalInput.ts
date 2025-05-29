@@ -148,18 +148,6 @@ export const buildModalInput = (config: LocalChatConfig) => {
     modeButtons.push(imageModeBtn);
   }
 
-  const tryAgainBtn = button(
-    [icon(24, refresh), createElement('span', 'tooltip', lng('modai.ui.retry_last_message'))],
-    () => {
-      tryAgain(config);
-    },
-    '',
-    {
-      ariaLabel: lng('modai.ui.retry_last_message'),
-    },
-  );
-  tryAgainBtn.disable();
-
   const clearChatBtn = button(
     [icon(24, trash), createElement('span', 'tooltip', lng('modai.ui.clear_chat'))],
     () => {
@@ -172,7 +160,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
   );
   clearChatBtn.disable();
 
-  const availableOptions: HTMLElement[] = [...modeButtons, tryAgainBtn, clearChatBtn];
+  const availableOptions: HTMLElement[] = [...modeButtons, clearChatBtn];
 
   if (Object.keys(globalState.config.availableAgents).length > 0) {
     const agentSelectComponent = buildSelect(
@@ -326,7 +314,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
   globalState.modal.sendBtn = sendBtn;
   globalState.modal.stopBtn = stopBtn;
   globalState.modal.modeButtons = modeButtons;
-  globalState.modal.actionButtons = [tryAgainBtn, clearChatBtn];
+  globalState.modal.actionButtons = [clearChatBtn];
 
   return container;
 };

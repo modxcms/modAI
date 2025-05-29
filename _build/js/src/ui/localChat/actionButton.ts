@@ -1,6 +1,6 @@
 import { globalState } from '../../globalState';
-import { lng } from '../../lng';
 import { button } from '../dom/button';
+import { icon } from '../dom/icon';
 import { check } from '../icons';
 import { createElement } from '../utils';
 
@@ -9,7 +9,7 @@ import type { Message } from '../../chatHistory';
 
 type ActionButtonConfig<M extends Message = Message> = {
   label: string;
-  icon: Element;
+  icon: string;
   message: M;
   loadingText?: string;
   completedText?: string;
@@ -34,7 +34,6 @@ export const createActionButton = <M extends Message>(config: ActionButtonConfig
   };
 
   const onClick = async () => {
-    const originalHTML = btn.innerHTML;
     const result = config.onClick(config.message, globalState.modal);
 
     if (result instanceof Promise) {
@@ -45,29 +44,29 @@ export const createActionButton = <M extends Message>(config: ActionButtonConfig
         createElement('span', 'dot left'),
       ]);
 
-      icon.innerHTML = '';
-      icon.appendChild(spinner);
-      label.innerHTML = config.loadingText || '';
+      iconEl.innerHTML = '';
+      iconEl.appendChild(spinner);
 
       await result;
     }
 
     if (!config.disableCompletedState) {
-      icon.innerHTML = check;
-      label.innerHTML = config.completedText || lng('modai.ui.completed');
-
+      iconEl.innerHTML = check;
       await new Promise((resolve) => setTimeout(resolve, 2000));
     }
 
-    btn.innerHTML = originalHTML;
+    iconEl.innerHTML = config.icon;
+
+    btn.innerHTML = '';
+    btn.append(iconEl, tooltip);
   };
 
-  const icon = config.icon;
-  icon.ariaHidden = 'true';
+  const iconEl = icon(14, config.icon);
+  iconEl.ariaHidden = 'true';
 
-  const label = createElement('div', undefined, config.label);
+  const tooltip = createElement('span', 'tooltip', config.label);
 
-  const btn = button([icon, label], onClick, 'action-button', {
+  const btn = button([iconEl, tooltip], onClick, 'action-button', {
     ariaLabel: config.label,
     tabIndex: 0,
   });

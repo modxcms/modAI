@@ -421,6 +421,7 @@
                             padding: 4px 8px;
                             border-radius: 28px;
                             line-height: 1;
+                            position: relative;
 
                             &:focus,
                             &:hover {
@@ -432,6 +433,27 @@
                                 outline-offset: 2px;
                             }
 
+                            .tooltip {
+                                position: absolute;
+                                bottom: -28px;
+                                left: 50%;
+                                transform: translateX(-50%);
+                                background-color: var(--text-dark);
+                                color: var(--text-light);
+                                padding: 6px 10px;
+                                border-radius: 8px;
+                                font-size: 12px;
+                                white-space: nowrap;
+                                opacity: 0;
+                                pointer-events: none;
+                                transition: opacity var(--transition-speed);
+                                z-index: 2;
+                            }
+
+                            &:hover .tooltip,
+                            &:focus .tooltip {
+                                opacity: 1;
+                            }
 
                             .spinner {
                                 display: inline-block;

@@ -8,9 +8,9 @@ import { globalState } from '../../globalState';
 import { lng } from '../../lng';
 import { confirmDialog } from '../cofirmDialog';
 import { icon } from '../dom/icon';
-import { copy, edit, plus, textSelect, triangleError } from '../icons';
+import { copy, edit, plus, refresh, textSelect, triangleError } from '../icons';
 import { createElement, nlToBr } from '../utils';
-import { scrollToBottom } from './modalActions';
+import { scrollToBottom, sendMessage } from './modalActions';
 
 import type { LocalChatConfig } from './types';
 import type {
@@ -55,7 +55,7 @@ const attachmentRenderers: Record<
   },
 };
 
-export const addUserMessage = (msg: UserMessage) => {
+export const addUserMessage = (msg: UserMessage, config: LocalChatConfig) => {
   const messageWrapper: UpdatableHTMLElement<UserMessage> = createElement(
     'div',
     `message-wrapper user ${msg.init ? '' : 'new'}`,
@@ -100,14 +100,45 @@ export const addUserMessage = (msg: UserMessage) => {
   messageElement.appendChild(inputAddons);
 
   const actionsContainer = createElement('div', 'actions');
+
   actionsContainer.appendChild(
     createActionButton({
       message: msg,
       disabled: globalState.modal.isLoading,
-      icon: icon(14, copy),
-      label: lng('modai.ui.copy'),
-      completedText: lng('modai.ui.copied'),
-      onClick: copyToClipboard,
+      disableCompletedState: true,
+      icon: refresh,
+      label: lng('modai.ui.retry_message'),
+      onClick: (msg) => {
+        confirmDialog({
+          title: lng('modai.ui.confirm_retry_message'),
+          content: lng('modai.ui.confirm_edit_retry_message'),
+          confirmText: lng('modai.ui.retry_message'),
+          onConfirm: () => {
+            globalState.modal.messageInput.setValue(msg.content);
+
+            if (msg.contexts) {
+              msg.contexts.forEach((ctx) => {
+                globalState.modal.context.addContext(ctx);
+              });
+            }
+
+            if (msg.attachments) {
+              msg.attachments.forEach((ctx) => {
+                if (ctx.__type === 'image') {
+                  globalState.modal.attachments.addImageAttachment(ctx.value);
+                }
+              });
+            }
+
+            globalState.modal.history.clearHistoryFrom(msg.id);
+            if (globalState.modal.history.getMessages().length === 0) {
+              globalState.modal.welcomeMessage.style.display = 'block';
+            }
+
+            void sendMessage(config);
+          },
+        });
+      },
     }),
   );
 
@@ -116,7 +147,7 @@ export const addUserMessage = (msg: UserMessage) => {
       message: msg,
       disabled: globalState.modal.isLoading,
       disableCompletedState: true,
-      icon: icon(14, edit),
+      icon: edit,
       label: lng('modai.ui.edit'),
       onClick: (msg) => {
         confirmDialog({
@@ -147,6 +178,17 @@ export const addUserMessage = (msg: UserMessage) => {
           },
         });
       },
+    }),
+  );
+
+  actionsContainer.appendChild(
+    createActionButton({
+      message: msg,
+      disabled: globalState.modal.isLoading,
+      icon: copy,
+      label: lng('modai.ui.copy'),
+      completedText: lng('modai.ui.copied'),
+      onClick: copyToClipboard,
     }),
   );
 
@@ -243,7 +285,7 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
         createActionButton({
           message: msg,
           disabled: globalState.modal.isLoading,
-          icon: icon(14, copy),
+          icon: copy,
           label: lng('modai.ui.copy'),
           completedText: lng('modai.ui.copied'),
           onClick:
@@ -259,7 +301,7 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
         createActionButton({
           message: msg,
           disabled: globalState.modal.isLoading,
-          icon: icon(14, plus),
+          icon: plus,
           label: lng('modai.ui.insert'),
           completedText: lng('modai.ui.inserted'),
           onClick: config.textActions.insert,
@@ -274,7 +316,7 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
         createActionButton({
           message: msg,
           disabled: globalState.modal.isLoading,
-          icon: icon(14, copy),
+          icon: copy,
           label: lng('modai.ui.copy'),
           loadingText: lng('modai.ui.downloading'),
           completedText: lng('modai.ui.copied'),
@@ -313,7 +355,7 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
         createActionButton({
           message: msg,
           disabled: globalState.modal.isLoading,
-          icon: icon(14, plus),
+          icon: plus,
           label: lng('modai.ui.insert'),
           completedText: lng('modai.ui.inserted'),
           loadingText: lng('modai.ui.downloading'),
@@ -396,7 +438,7 @@ export const renderMessage = (msg: Message, config: LocalChatConfig) => {
   }
 
   if (msg.__type === 'UserMessage') {
-    const el = addUserMessage(msg);
+    const el = addUserMessage(msg, config);
     if (!msg.init) {
       scrollToBottom('smooth');
     }
