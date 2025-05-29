@@ -76,7 +76,6 @@ class Text extends API
         $fieldPrompt = Settings::getTextSetting($this->modx, $field, 'prompt', $namespace);
         $customOptions = Settings::getTextSetting($this->modx, $field, 'custom_options', $namespace, false);
 
-
         if (!empty($output)) {
             $systemInstructions[] = $output;
         }
@@ -93,9 +92,7 @@ class Text extends API
         $result = $aiService->getCompletions(
             [['content' => $content]],
             CompletionsConfig::new($model)
-                ->customOptions($customOptions)
-                ->maxTokens($maxTokens)
-                ->temperature($temperature)
+                ->options(['max_tokens' => $maxTokens, 'temperature' => $temperature], $customOptions)
                 ->systemInstructions($systemInstructions)
                 ->stream($stream)
             //                ->toolChoice('none')

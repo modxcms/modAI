@@ -149,14 +149,25 @@ class OpenRouter implements AIService
             $this->addMessage($messages, $msg);
         }
 
-        $input = $config->getCustomOptions();
-        $input['model'] = $config->getModel();
-        $input['max_tokens'] = $config->getMaxTokens();
-        $temperature = $config->getTemperature();
-        if ($temperature >= 0) {
-            $input['temperature'] = $config->getTemperature();
-        }
+        $input = $config->getOptions(function ($options) {
+            $gptConfig = [];
 
+            foreach ($options as $key => $value) {
+                switch ($key) {
+                    case 'temperature':
+                        $value = floatval($value);
+                        if ($value >= 0) {
+                            $gptConfig['temperature'] = $value;
+                        }
+                        break;
+                    default:
+                        $gptConfig[$key] = $value;
+                }
+            }
+
+            return $gptConfig;
+        });
+        $input['model'] = $config->getModel();
         $input['messages'] = $messages;
 
         $tools = [];
@@ -201,9 +212,8 @@ class OpenRouter implements AIService
     {
         $apiKey = $this->getApiKey();
 
-        $input = $config->getCustomOptions();
+        $input = $config->getOptions();
         $input['model'] = $config->getModel();
-        $input['max_tokens'] = $config->getMaxTokens();
         $input['messages'] = [
             [
                 'role' => 'user',
@@ -245,26 +255,23 @@ class OpenRouter implements AIService
     {
         $apiKey = $this->getApiKey();
 
-        $input = $config->getCustomOptions();
+        $input = $config->getOptions(function ($options) {
+            $gptConfig = [
+                'n' => 1,
+            ];
+
+            foreach ($options as $key => $value) {
+                if (empty($value)) {
+                    continue;
+                }
+
+                $gptConfig[$key] = $value;
+            }
+
+            return $gptConfig;
+        });
         $input['prompt'] = $prompt;
         $input['model'] = $config->getModel();
-        $input['n'] = $config->getN();
-
-        if (!empty($config->getSize())) {
-            $input['size'] = $config->getSize();
-        }
-
-        if (!empty($config->getQuality())) {
-            $input['quality'] = $config->getQuality();
-        }
-
-        if (!empty($config->getStyle())) {
-            $input['style'] = $config->getStyle();
-        }
-
-        if (!empty($config->getResponseFormat())) {
-            $input['response_format'] = $config->getResponseFormat();
-        }
 
         return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withParser('image')

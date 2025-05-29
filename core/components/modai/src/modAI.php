@@ -151,6 +151,16 @@ class modAI
         return "{$assetsUrl}css/modai.css?lit=$lit";
     }
 
+    public function getChatAdditionalControls()
+    {
+        $additionalControls = $this->modx->getOption('modai.chat.additional_controls', null, '');
+        try {
+            return json_decode($additionalControls, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
     public function getBaseConfig()
     {
         $firstName = explode(' ', $this->modx->user->Profile->fullname)[0];
@@ -162,6 +172,7 @@ class modAI
             'cssURL' => $this->getCSSFile(),
             'availableAgents' => $this->getAvailableAgents(),
             'permissions' => $this->getClientPermissions(),
+            'chatAdditionalControls' => $this->getChatAdditionalControls(),
         ];
     }
 

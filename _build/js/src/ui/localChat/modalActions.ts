@@ -29,6 +29,7 @@ const callTools = async (
   config: LocalChatConfig,
   toolCalls: ToolCalls,
   agent?: string,
+  additionalOptions?: Record<string, unknown>,
   controller?: AbortController,
 ) => {
   globalState.modal.history.addToolCallsMessage(toolCalls, true);
@@ -40,6 +41,7 @@ const callTools = async (
   const aiRes = await executor.prompt.chat(
     {
       namespace: config.namespace,
+      additionalOptions,
       agent,
       field: config.field || '',
       prompt: '',
@@ -58,7 +60,13 @@ const callTools = async (
   }
 
   if (aiRes.toolCalls) {
-    await callTools(config, aiRes.toolCalls, agent, globalState.modal.abortController);
+    await callTools(
+      config,
+      aiRes.toolCalls,
+      agent,
+      additionalOptions,
+      globalState.modal.abortController,
+    );
   }
 };
 
@@ -110,14 +118,16 @@ export const sendMessage = async (
     hidePrompt,
   );
 
+  const selectedAgent = globalState.selectedAgent[`${config.key}/${config.type}`];
+
   if (
-    globalState.modal.selectedAgent &&
-    globalState.modal.selectedAgent.contextProviders &&
-    globalState.modal.selectedAgent.contextProviders.length > 0
+    selectedAgent &&
+    selectedAgent.contextProviders &&
+    selectedAgent.contextProviders.length > 0
   ) {
     const remoteContexts = await executor.context.get({
       prompt: message,
-      agent: globalState.modal.selectedAgent.name,
+      agent: selectedAgent.name,
     });
     remoteContexts.contexts.map((ctx) => {
       contexts.push({
@@ -131,11 +141,27 @@ export const sendMessage = async (
 
   globalState.modal.history.updateMessage(userMsg, { contexts });
 
+  const additionalOptions = Object.entries(
+    globalState.additionalControls[`${config.key}/${config.type}`] ?? {},
+  ).reduce(
+    (acc, [key, item]) => {
+      if (!item) {
+        return acc;
+      }
+
+      acc[key] = item['value'];
+
+      return acc;
+    },
+    {} as Record<string, unknown>,
+  );
+
   try {
     if (config.type === 'text') {
       const data = await executor.prompt.chat(
         {
-          agent: globalState.modal.selectedAgent?.name,
+          agent: selectedAgent?.name,
+          additionalOptions,
           namespace: config.namespace,
           contexts: contexts,
           attachments: attachments,
@@ -159,7 +185,8 @@ export const sendMessage = async (
         await callTools(
           config,
           data.toolCalls,
-          globalState.modal.selectedAgent?.name,
+          selectedAgent?.name,
+          additionalOptions,
           globalState.modal.abortController,
         );
       }
@@ -169,6 +196,7 @@ export const sendMessage = async (
       const data = await executor.prompt.image(
         {
           prompt: message,
+          additionalOptions,
           attachments: attachments,
         },
         globalState.modal.abortController,
@@ -272,6 +300,8 @@ export const switchType = (type: ModalType, config: LocalChatConfig) => {
       btn.disable();
     });
   }
+
+  globalState.modal.reloadChatControls();
 
   scrollToBottom('instant');
 };

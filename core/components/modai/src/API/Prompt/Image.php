@@ -12,6 +12,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Image extends API
 {
+    use AdditionalOptions;
+
     public function post(ServerRequestInterface $request): void
     {
         if (!$this->modx->hasPermission('modai_client_chat_image')) {
@@ -31,6 +33,8 @@ class Image extends API
             throw new LexiconException('modai.error.prompt_required');
         }
 
+        $additionalOptions = $this->getAdditionalOptions($data, $field, 'image');
+
         $model = Settings::getImageSetting($this->modx, $field, 'model', $namespace);
         $size = Settings::getImageSetting($this->modx, $field, 'size', $namespace, false) ?? '';
         $quality = Settings::getImageSetting($this->modx, $field, 'quality', $namespace, false) ?? '';
@@ -42,12 +46,8 @@ class Image extends API
         $result = $aiService->generateImage(
             $prompt,
             ImageConfig::new($model)
-                ->customOptions($customOptions)
-                ->size($size)
-                ->quality($quality)
+                ->options(['quality' => $quality, 'style' => $style, 'size' => $size, 'response_format' => $responseFormat], $customOptions, $additionalOptions)
                 ->attachments($attachments)
-                ->responseFormat($responseFormat)
-                ->style($style)
         );
 
         $this->proxyAIResponse($result);
