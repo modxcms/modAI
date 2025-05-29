@@ -43,8 +43,6 @@ class Chat extends API
             Settings::setTextSetting($this->modx, $field, 'model', $model);
         }
 
-        $additionalOptions = $this->getAdditionalOptions($data, $field, 'text');
-
         if (!empty($agent)) {
             /** @var Agent $agent */
             $agent = $this->modx->getObject(Agent::class, ['name' => $agent]);
@@ -102,6 +100,8 @@ class Chat extends API
                 }
             }
         }
+
+        $additionalOptions = $this->getAdditionalOptions($data, $field, 'text');
 
         $systemInstructions = [];
 
@@ -170,7 +170,7 @@ class Chat extends API
             CompletionsConfig::new($model)
                 ->tools($tools)
                 ->messages($messages)
-                ->options(['max_tokens' => $maxTokens, 'temperature' => $temperature], $customOptions, $additionalOptions, $agentOptions)
+                ->options(['max_tokens' => $maxTokens, 'temperature' => $temperature], $customOptions, $agentOptions, $additionalOptions)
                 ->systemInstructions($systemInstructions)
                 ->stream($stream)
         );
