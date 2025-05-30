@@ -10,6 +10,11 @@ type DataItem<IdKey extends string = 'id', DisplayKey extends string = 'name'> =
 
 type SelectOption<T extends DataItem<string, string>> = T | null;
 
+export type Select = HTMLDivElement & {
+  enable: () => void;
+  disable: () => void;
+};
+
 export const buildSelect = <
   IdKey extends string,
   DisplayKey extends string,
@@ -43,7 +48,7 @@ export const buildSelect = <
     tooltip: options?.tooltip ?? lng('modai.ui.select_item'),
   };
 
-  const container = createElement('div', 'selectContainer');
+  const container = createElement('div', 'selectContainer') as Select;
 
   let selectedItem: SelectOption<T> = null;
   if (initialValueId !== null && initialValueId !== undefined) {
@@ -61,6 +66,14 @@ export const buildSelect = <
     ariaExpanded: 'false',
     ariaLabel: config.selectText,
   });
+
+  container.enable = () => {
+    button.disabled = false;
+  };
+
+  container.disable = () => {
+    button.disabled = true;
+  };
 
   const updateButtonContent = () => {
     const content: (HTMLElement | string)[] = [];
@@ -228,13 +241,16 @@ export const buildSelect = <
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (!container.contains(event.target as Node)) {
+    if (!event.composedPath().includes(container)) {
       closeDropdown();
     }
   };
 
   button.addEventListener('click', (e) => {
+    e.preventDefault();
     e.stopPropagation();
+    e.stopImmediatePropagation();
+
     if (isOpen) {
       closeDropdown();
       return;

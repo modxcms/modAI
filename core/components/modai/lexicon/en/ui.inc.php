@@ -44,6 +44,7 @@ $_lang['modai.ui.no_agent'] = 'No Agent';
 $_lang['modai.ui.options_toolbar'] = 'Chat options';
 $_lang['modai.ui.model_info'] = 'Generated with [[+model]]';
 $_lang['modai.ui.agents'] = 'Agents';
+$_lang['modai.ui.prompt_library'] = 'Prompt Library';
 
 $_lang['modai.error.failed'] = 'Failed';
 $_lang['modai.error.failed_request'] = 'Failed to process your request.';

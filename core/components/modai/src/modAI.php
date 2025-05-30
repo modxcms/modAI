@@ -171,6 +171,7 @@ class modAI
             'apiURL' => $this->getAPIUrl(),
             'cssURL' => $this->getCSSFile(),
             'availableAgents' => $this->getAvailableAgents(),
+            'promptLibrary' => $this->getPromptLibrary(),
             'permissions' => $this->getClientPermissions(),
             'chatAdditionalControls' => $this->getChatAdditionalControls(),
         ];
@@ -229,6 +230,40 @@ class modAI
         }
 
         return $output;
+    }
+
+    public function getPromptLibrary()
+    {
+        $raw = $this->modx->getOption('modai.chat.prompt_library', null, '');
+        try {
+            $data =  json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+
+            $addIDs = function(array &$items, string $path = '') use (&$addIDs) {
+                foreach ($items as &$item) {
+                    $currentPath = $path . '/' . $item['name'];
+                    $item['id'] = substr(md5($currentPath), 0, 10);
+                    if (isset($item['children'])) {
+                        $addIDs($item['children'], $currentPath);
+                    }
+                }
+            };
+
+            if (!empty($data['text'])) {
+                $addIDs($data['text']);
+            } else {
+                $data['text'] = [];
+            }
+
+            if (!empty($data['image'])) {
+                $addIDs($data['image']);
+            } else {
+                $data['image'] = [];
+            }
+
+            return $data;
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     public function getAdminPermissions()

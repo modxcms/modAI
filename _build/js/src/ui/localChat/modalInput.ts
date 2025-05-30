@@ -11,11 +11,12 @@ import { buildModalInputAttachments } from './modalInputAttachments';
 import { buildModalInputContexts } from './modalInputContext';
 import { button } from '../dom/button';
 import { icon } from '../dom/icon';
-import { image, arrowUp, square, text, trash, bot } from '../icons';
+import { image, arrowUp, square, text, trash, bot, library } from '../icons';
 import { buildScrollToBottom } from './scrollBottom';
 import { globalState } from '../../globalState';
 import { lng } from '../../lng';
-import { buildSelect } from '../dom/select';
+import { buildNestedSelect } from '../dom/nestedSelect';
+import { buildSelect, Select } from '../dom/select';
 
 import type { LocalChatConfig } from './types';
 import type { Button } from '../dom/button';
@@ -159,15 +160,25 @@ export const buildModalInput = (config: LocalChatConfig) => {
   );
   clearChatBtn.disable();
 
-  const defaultOptions: HTMLElement[] = [...modeButtons, clearChatBtn];
-  let additionalOptions: HTMLElement[] = [];
+  // const defaultOptions: Button[] = [...modeButtons, ];
+  let additionalOptions: (Button | Select)[] = [];
 
   const options = createElement('div', 'options', [], {
     ariaLabel: lng('modai.ui.options_toolbar'),
     role: 'toolbar',
   });
 
+  const optionsLeft = createElement('div', 'optionsLeft');
+  const optionsRight = createElement('div', 'optionsRight');
+
+  options.append(optionsLeft, optionsRight);
+
+  optionsRight.append(clearChatBtn);
+
   const loadChatControls = () => {
+    optionsLeft.innerHTML = '';
+    const controlButtons: (Button | Select)[] = [];
+
     additionalOptions = [];
     if (config.type === 'text' && Object.keys(globalState.config.availableAgents).length > 0) {
       const agentSelectComponent = buildSelect(
@@ -229,9 +240,33 @@ export const buildModalInput = (config: LocalChatConfig) => {
       });
     }
 
-    options.innerHTML = '';
-    options.append(...defaultOptions, ...additionalOptions);
+    const promptsForType = globalState.config.promptLibrary[config.type];
+    if (promptsForType && promptsForType.length > 0) {
+      const promptLibrary = buildNestedSelect(
+        promptsForType,
+        undefined,
+        (item) => {
+          if ('value' in item) {
+            textarea.setValue(item.value);
+          }
+        },
+        {
+          icon: library,
+          tooltip: lng('modai.ui.prompt_library'),
+          showSelectedValue: false,
+          highlightSelectedValue: false,
+        },
+      );
+
+      controlButtons.push(promptLibrary);
+    }
+
+    controlButtons.push(...additionalOptions);
+
+    optionsLeft.append(...modeButtons, ...controlButtons);
+    globalState.modal.controlButtons = controlButtons;
   };
+
   loadChatControls();
 
   const scrollWrapper = buildScrollToBottom();

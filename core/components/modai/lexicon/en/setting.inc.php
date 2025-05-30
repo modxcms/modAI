@@ -90,6 +90,7 @@ $_lang['setting_modai.contexts.snippets.name_desc'] = 'Name of the context provi
 $_lang['setting_modai.contexts.templates.name'] = 'Templates Context Provider Name';
 $_lang['setting_modai.contexts.templates.name_desc'] = 'Name of the context provider that will be used to index templates. It has to be enabled.';
 
-
 $_lang['setting_modai.chat.additional_controls'] = 'Additional Chat Controls';
 $_lang['setting_modai.chat.additional_controls_desc'] = 'Define additional options for the chat window. Check docs for more info: https://modxcms.github.io/modAI';
+$_lang['setting_modai.chat.prompt_library'] = 'Prompt Library';
+$_lang['setting_modai.chat.prompt_library_desc'] = 'Define prompt library for the chat window. Check docs for more info: https://modxcms.github.io/modAI';

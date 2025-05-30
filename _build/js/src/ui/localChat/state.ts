@@ -35,6 +35,14 @@ export const setLoadingState = (loading: boolean) => {
   });
 
   const hasMessages = globalState.modal.history.getMessages().length > 0;
+  globalState.modal.controlButtons.forEach((btn) => {
+    if (loading) {
+      btn.disable();
+    } else {
+      btn.enable();
+    }
+  });
+
   globalState.modal.actionButtons.forEach((btn) => {
     if (loading || !hasMessages) {
       btn.disable();
@@ -54,7 +62,8 @@ export const setLoadingState = (loading: boolean) => {
     }
   });
 };
-
+// @ts-expect-error asd
+window.setLoadingState = setLoadingState;
 const MODAL_STORAGE_KEY = 'modai__state';
 
 export const saveModalState = () => {

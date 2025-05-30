@@ -1,5 +1,5 @@
 name: modAI
-version: 0.12.0-pl
+version: 0.13.0-alpha1
 lowCaseName: modai
 namespace: modAI
 author: 'John Peca'
@@ -199,7 +199,12 @@ systemSettings:
   - key: chat.additional_controls
     area: chat
     type: textarea
-    value:
+    value: ''
+
+  - key: chat.prompt_library
+    area: chat
+    type: textarea
+    value: ''
 
 build:
   readme: core/components/modai/docs/README.md

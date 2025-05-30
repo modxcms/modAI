@@ -9,6 +9,7 @@ import { initOnResource } from './resource';
 import { ui } from './ui';
 
 import type { Permissions } from './permissions';
+import type { NestedSelectData } from './ui/dom/nestedSelect';
 
 export type AvailableAgent = {
   id: string;
@@ -23,6 +24,7 @@ export type Config = {
   cssURL: string;
   translateFn?: (key: string, params?: Record<string, string>) => string;
   availableAgents: Record<string, AvailableAgent>;
+  promptLibrary: { text?: NestedSelectData; image?: NestedSelectData };
   permissions: Record<Permissions, 1 | 0>;
   chatAdditionalControls: Record<
     string,

@@ -1,4 +1,5 @@
 import { AvailableAgent } from '../../index';
+import { Select } from '../dom/select';
 
 import type { UserInput } from './modalInput';
 import type { AttachmentsWrapper } from './modalInputAttachments';
@@ -21,7 +22,8 @@ export type Modal = HTMLDivElement & {
   messageInput: UserInput;
 
   modeButtons: Button[];
-  actionButtons: Button[];
+  controlButtons: (Button | Select)[];
+  actionButtons: (Button | Select)[];
   stopBtn: Button;
   sendBtn: Button;
   closeModalBtn: Button;
