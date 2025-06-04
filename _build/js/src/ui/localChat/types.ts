@@ -19,13 +19,14 @@ export type Modal = HTMLDivElement & {
   attachments: AttachmentsWrapper;
   context: ContextWrapper;
   messageInput: UserInput;
-  selectedAgent?: AvailableAgent;
 
   modeButtons: Button[];
   actionButtons: Button[];
   stopBtn: Button;
   sendBtn: Button;
   closeModalBtn: Button;
+
+  reloadChatControls: () => void;
 
   isDragging: boolean;
   isLoading: boolean;

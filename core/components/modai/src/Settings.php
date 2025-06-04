@@ -124,16 +124,30 @@ class Settings
 
     public static function setTextSetting(modX $modx, string $field, string $setting, string $value): void
     {
+        if (empty($field)) {
+            $field = 'global';
+        }
+
         self::setSetting($modx, "$field.text.$setting", $value);
     }
 
     public static function setImageSetting(modX $modx, string $field, string $setting, string $value): void
     {
+        if (empty($field)) {
+            $field = 'global';
+        }
+
+
         self::setSetting($modx, "$field.image.$setting", $value);
     }
 
     public static function setVisionSetting(modX $modx, string $field, string $setting, string $value): void
     {
+        if (empty($field)) {
+            $field = 'global';
+        }
+
+
         self::setSetting($modx, "$field.vision.$setting", $value);
     }
 

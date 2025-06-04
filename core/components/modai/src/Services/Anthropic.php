@@ -173,13 +173,26 @@ class Anthropic implements AIService
             $this->addMessage($messages, $msg);
         }
 
-        $input = $config->getCustomOptions();
+        $input = $config->getOptions(function ($options) {
+            $gptConfig = [];
+
+            foreach ($options as $key => $value) {
+                switch ($key) {
+                    case 'temperature':
+                        $value = floatval($value);
+                        if ($value >= 0) {
+                            $gptConfig['temperature'] = $value;
+                        }
+                        break;
+                    default:
+                        $gptConfig[$key] = $value;
+                }
+            }
+
+            return $gptConfig;
+        });
+
         $input["model"] = $config->getModel();
-        $input["max_tokens"] = $config->getMaxTokens();
-        $temperature = $config->getTemperature();
-        if ($temperature >= 0) {
-            $input['temperature'] = $config->getTemperature();
-        }
         $input["messages"] = $messages;
 
         if ($config->isStream()) {
@@ -232,9 +245,8 @@ class Anthropic implements AIService
     {
         $apiKey = $this->getApiKey();
 
-        $input = $config->getCustomOptions();
+        $input = $config->getOptions();
         $input['model'] = $config->getModel();
-        $input["max_tokens"] = $config->getMaxTokens();
         $input['messages'] = [
             [
                 'role' => 'user',

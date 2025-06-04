@@ -24,6 +24,15 @@ export type Config = {
   translateFn?: (key: string, params?: Record<string, string>) => string;
   availableAgents: Record<string, AvailableAgent>;
   permissions: Record<Permissions, 1 | 0>;
+  chatAdditionalControls: Record<
+    string,
+    {
+      name: string;
+      label: string;
+      icon?: string;
+      values: Record<string, string>;
+    }[]
+  >;
 };
 
 export const init = (config: Config) => {

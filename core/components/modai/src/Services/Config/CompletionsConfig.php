@@ -2,16 +2,13 @@
 
 namespace modAI\Services\Config;
 
-use modAI\Model\Tool;
 use modAI\Tools\ToolInterface;
 
 class CompletionsConfig
 {
     use Model;
-    use CustomOptions;
+    use Options;
 
-    private float $temperature;
-    private int $maxTokens;
     private string $systemInstructions = '';
     private bool $stream = false;
     private array $messages = [];
@@ -27,20 +24,6 @@ class CompletionsConfig
     public function toolChoice(string $toolChoice): self
     {
         $this->toolChoice = $toolChoice;
-        return $this;
-    }
-
-    public function temperature(float $temperature): self
-    {
-        $this->temperature = $temperature;
-
-        return $this;
-    }
-
-    public function maxTokens(int $maxTokens): self
-    {
-        $this->maxTokens = $maxTokens;
-
         return $this;
     }
 
@@ -63,16 +46,6 @@ class CompletionsConfig
         $this->messages = $messages;
 
         return $this;
-    }
-
-    public function getTemperature(): float
-    {
-        return $this->temperature;
-    }
-
-    public function getMaxTokens(): int
-    {
-        return $this->maxTokens;
     }
 
     public function getSystemInstructions(): string
