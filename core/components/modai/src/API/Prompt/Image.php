@@ -51,7 +51,6 @@ class Image extends API
                 ->attachments($attachments)
         );
 
-        Debug::imageResponse();
-//        $this->proxyAIResponse($result);
+        $this->proxyAIResponse($result);
     }
 }
