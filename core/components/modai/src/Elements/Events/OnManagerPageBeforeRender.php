@@ -15,13 +15,24 @@ class OnManagerPageBeforeRender extends Event
             $action = $_REQUEST['a'];
         }
 
-
-
         foreach ($this->modAI->getUILexiconTopics() as $topic) {
             $this->modx->controller->addLexiconTopic($topic);
         }
 
         $this->modx->regClientStartupScript($this->modAI->getJSFile());
+
+        $initGlobalChat = intval($this->modx->getOption('modai.init.global_chat', null, '0')) === 1;
+        $initMediaBrowser = intval($this->modx->getOption('modai.init.media_browser', null, '0')) === 1;
+
+        $inits = [];
+
+        if ($initGlobalChat) {
+            $inits[] = 'modAI.mgr.initGlobalButton();';
+        }
+
+        if ($initMediaBrowser) {
+            $inits[] = 'modAI.mgr.initOnMediaBrowser();';
+        }
 
         $baseConfig = $this->modAI->getBaseConfig();
         $this->modx->controller->addHtml('
@@ -30,7 +41,7 @@ class OnManagerPageBeforeRender extends Event
                     Ext.onReady(function() {
                         const modAI = ModAI.init(' . json_encode($baseConfig) . ');
                         
-                        modAI.initGlobalButton();
+                        '. implode(PHP_EOL, $inits) .'
                         
                         window.modAI = modAI;
                     });
@@ -48,7 +59,7 @@ class OnManagerPageBeforeRender extends Event
             Ext.onReady(function() {
                 if (typeof modAI !== "undefined") {
                     Ext.defer(() => {
-                        modAI.initOnResource({
+                        modAI.mgr.initOnResource({
                           tvs:  ' . $this->modx->toJSON($this->modAI->getListOfTVsWithIDs()) . ',
                           resourceFields:  ' . $this->modx->toJSON($this->modAI->getResourceFields()) . ',
                         });

@@ -1,11 +1,10 @@
 import { chatHistory } from './chatHistory';
 import { executor } from './executor';
-import { initGlobalButton } from './globalButton';
 import { globalState } from './globalState';
 import { history } from './history';
 import { lng } from './lng';
+import { mgr } from './mgr';
 import { checkPermissions } from './permissions';
-import { initOnResource } from './resource';
 import { ui } from './ui';
 
 import type { Permissions } from './permissions';
@@ -46,8 +45,7 @@ export const init = (config: Config) => {
     executor,
     ui,
     lng,
-    initOnResource,
+    mgr,
     checkPermissions,
-    initGlobalButton,
   };
 };

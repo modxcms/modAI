@@ -336,7 +336,13 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
               namespace: config.namespace,
               resource: config.resource,
               mediaSource: config.image?.mediaSource,
+              path: config.image?.path,
             });
+
+            msg.content = data.fullUrl;
+            msg.ctx.downloaded = true;
+            msg.ctx.url = data.url;
+            msg.ctx.fullUrl = data.fullUrl;
 
             msg = globalState.modal.history.updateMessage(msg, {
               content: data.fullUrl,
@@ -370,12 +376,18 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
               namespace: config.namespace,
               resource: config.resource,
               mediaSource: config.image?.mediaSource,
+              path: config.image?.path,
             });
 
             msg.content = data.fullUrl;
             msg.ctx.downloaded = true;
             msg.ctx.url = data.url;
             msg.ctx.fullUrl = data.fullUrl;
+
+            msg = globalState.modal.history.updateMessage(msg, {
+              content: data.fullUrl,
+              ctx: { downloaded: true, url: data.url, fullUrl: data.fullUrl },
+            });
 
             insertCb(msg, modal);
           },

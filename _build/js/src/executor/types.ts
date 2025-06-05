@@ -144,6 +144,7 @@ export type DownloadImageParams = {
   namespace?: string;
   resource?: string | number;
   mediaSource?: string | number;
+  path?: string;
 };
 
 export type ChunkStream<D = unknown> = (data: D) => void;

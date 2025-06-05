@@ -37,13 +37,16 @@ type DataContext = {
   }[];
 };
 
-const createWandEl = <R extends HTMLElement>(onClick: () => void | Promise<void>) => {
+const createWandEl = <R extends HTMLElement>(
+  onClick: () => void | Promise<void>,
+  config?: { iconSize?: number },
+) => {
   const { shadow, shadowRoot } = createModAIShadow<R>(true);
 
   const generate = createElement(
     'div',
     'modai--root generate',
-    button(icon(14, sparkle), onClick, 'btn', {
+    button(icon(config?.iconSize || 14, sparkle), onClick, 'btn', {
       type: 'button',
       title: lng('modai.ui.generate_using_ai'),
     }),
@@ -112,6 +115,7 @@ const createHistoryNav = (cache: ReturnType<typeof history.init<DataContext>>) =
 
 type Target = {
   targetEl: HTMLElement;
+  iconSize?: number;
 };
 
 const createLocalChat = (config: LocalChatConfig & Target) => {
@@ -119,9 +123,12 @@ const createLocalChat = (config: LocalChatConfig & Target) => {
     return;
   }
 
-  const { shadow } = createWandEl(() => {
-    ui.localChat.createModal(config);
-  });
+  const { shadow } = createWandEl(
+    () => {
+      ui.localChat.createModal(config);
+    },
+    { iconSize: config.iconSize },
+  );
 
   config.targetEl.appendChild(shadow);
 
@@ -137,6 +144,7 @@ type ForcedTextConfig = {
   Target;
 const createForcedTextPrompt = ({
   targetEl,
+  iconSize,
   input,
   onChange,
   initialValue,
@@ -147,34 +155,37 @@ const createForcedTextPrompt = ({
     return;
   }
 
-  const { shadow, generate } = createWandEl<HistoryElement>(async () => {
-    const done = createLoadingOverlay(input);
+  const { shadow, generate } = createWandEl<HistoryElement>(
+    async () => {
+      const done = createLoadingOverlay(input);
 
-    try {
-      const result = await executor.prompt.text(
-        {
-          field,
-          ...rest,
-        },
-        (data) => {
-          cache.insert(data.content, true);
-        },
-      );
-      cache.insert(result.content);
-      done();
-    } catch (err) {
-      done();
-      confirmDialog({
-        title: 'Failed',
-        content: lng('modai.error.failed_try_again', {
-          msg: err instanceof Error ? err.message : '',
-        }),
-        confirmText: 'Close',
-        showCancel: false,
-        onConfirm: () => {},
-      });
-    }
-  });
+      try {
+        const result = await executor.prompt.text(
+          {
+            field,
+            ...rest,
+          },
+          (data) => {
+            cache.insert(data.content, true);
+          },
+        );
+        cache.insert(result.content);
+        done();
+      } catch (err) {
+        done();
+        confirmDialog({
+          title: 'Failed',
+          content: lng('modai.error.failed_try_again', {
+            msg: err instanceof Error ? err.message : '',
+          }),
+          confirmText: 'Close',
+          showCancel: false,
+          onConfirm: () => {},
+        });
+      }
+    },
+    { iconSize: iconSize },
+  );
 
   const cache = history.init<DataContext>(
     field,
@@ -245,47 +256,50 @@ const createVisionPrompt = (config: VisionConfig & Target) => {
     return;
   }
 
-  const { shadow } = createWandEl(async () => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  const { shadow } = createWandEl(
+    async () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-    canvas.width = config.image.width;
-    canvas.height = config.image.height;
+      canvas.width = config.image.width;
+      canvas.height = config.image.height;
 
-    ctx.drawImage(config.image, 0, 0);
+      ctx.drawImage(config.image, 0, 0);
 
-    const base64Data = canvas.toDataURL('image/png');
+      const base64Data = canvas.toDataURL('image/png');
 
-    const done = createLoadingOverlay(config.input);
+      const done = createLoadingOverlay(config.input);
 
-    try {
-      const result = await executor.prompt.vision(
-        {
-          image: base64Data,
-          field: config.field,
-          namespace: config.namespace,
-        },
-        (data) => {
-          config.onUpdate(data);
-        },
-      );
+      try {
+        const result = await executor.prompt.vision(
+          {
+            image: base64Data,
+            field: config.field,
+            namespace: config.namespace,
+          },
+          (data) => {
+            config.onUpdate(data);
+          },
+        );
 
-      config.onUpdate(result);
-      done();
-    } catch (err) {
-      done();
-      confirmDialog({
-        title: lng('modai.error.failed'),
-        content: lng('modai.error.failed_try_again', {
-          msg: err instanceof Error ? err.message : '',
-        }),
-        confirmText: lng('modai.ui.close'),
-        showCancel: false,
-        onConfirm: () => {},
-      });
-    }
-  });
+        config.onUpdate(result);
+        done();
+      } catch (err) {
+        done();
+        confirmDialog({
+          title: lng('modai.error.failed'),
+          content: lng('modai.error.failed_try_again', {
+            msg: err instanceof Error ? err.message : '',
+          }),
+          confirmText: lng('modai.ui.close'),
+          showCancel: false,
+          onConfirm: () => {},
+        });
+      }
+    },
+    { iconSize: config.iconSize },
+  );
 
   config.targetEl.appendChild(shadow);
 
@@ -293,6 +307,7 @@ const createVisionPrompt = (config: VisionConfig & Target) => {
 };
 
 export const createGenerateButton = {
+  rawButton: createWandEl,
   localChat: createLocalChat,
   forcedText: createForcedTextPrompt,
   vision: createVisionPrompt,

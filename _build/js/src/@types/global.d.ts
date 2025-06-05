@@ -1,12 +1,20 @@
+// eslint-disable @typescript-eslint/no-explicit-any
+
 declare const modAI: {
   apiURL: string;
   resourceFields?: string[];
   tvs?: string[];
 };
 
-declare const MODx: {
-  config: Record<string, string>;
-  request: Record<string, string>;
+declare namespace MODx {
+  const config: Record<string, string>;
+  const request: Record<string, string>;
+
+  namespace tree {
+    class Directory {
+      initComponent(): void;
+    }
+  }
 };
 
 declare namespace Ext {
@@ -14,6 +22,7 @@ declare namespace Ext {
   export function defer(fn: () => void, timeout: number): void;
   export function get(id: string): Ext.Element;
   export function getCmp(id?: string): Ext.form.Field;
+  export function override(target: any, override: any);
 
   class Msg {
     static alert(title: string, description: string): void;
@@ -40,7 +49,6 @@ declare namespace Ext {
 
       label: HTMLElement;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       [key: string]: any;
     }
   }

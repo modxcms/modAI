@@ -68,6 +68,7 @@ export type LocalChatConfig = {
   };
   image?: {
     mediaSource?: number | string;
+    path?: string;
   };
 };
 

@@ -1,12 +1,12 @@
-import { lng } from './lng';
-import { ui } from './ui';
-import { button } from './ui/dom/button';
-import { icon } from './ui/dom/icon';
-import { createModAIShadow } from './ui/dom/modAIShadow';
-import { bot } from './ui/icons';
-import { createElement } from './ui/utils';
+import { lng } from '../lng';
+import { ui } from '../ui';
+import { button } from '../ui/dom/button';
+import { icon } from '../ui/dom/icon';
+import { createModAIShadow } from '../ui/dom/modAIShadow';
+import { bot } from '../ui/icons';
+import { createElement } from '../ui/utils';
 
-import type { LocalChatConfig } from './ui/localChat/types';
+import type { LocalChatConfig } from '../ui/localChat/types';
 
 export const initGlobalButton = () => {
   const config: LocalChatConfig = {

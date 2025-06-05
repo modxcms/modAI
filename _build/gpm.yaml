@@ -31,6 +31,15 @@ systemSettings:
     area: cache
     value: 0
 
+  - key: init.global_chat
+    area: init
+    type: combo-boolean
+    value: 1
+  - key: init.media_browser
+    area: init
+    type: combo-boolean
+    value: 1
+
   - key: api.execute_on_server
     area: api
     type: combo-boolean

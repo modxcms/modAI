@@ -1,4 +1,4 @@
-import { ui } from './ui';
+import { ui } from '../ui';
 
 const attachImagePlus = (imgPlusPanel: Element, fieldName: string) => {
   const imagePlus = Ext.getCmp(imgPlusPanel.firstElementChild?.id);

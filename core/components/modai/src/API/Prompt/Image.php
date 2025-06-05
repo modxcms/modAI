@@ -3,6 +3,7 @@
 namespace modAI\API\Prompt;
 
 use modAI\API\API;
+use modAI\Debug;
 use modAI\Exceptions\APIException;
 use modAI\Exceptions\LexiconException;
 use modAI\Services\AIServiceFactory;
@@ -50,6 +51,7 @@ class Image extends API
                 ->attachments($attachments)
         );
 
-        $this->proxyAIResponse($result);
+        Debug::imageResponse();
+//        $this->proxyAIResponse($result);
     }
 }
