@@ -1,108 +1,138 @@
+import { Annotation, OutputItem } from '../../types/openai';
+
 import type { StreamHandler } from '../../types';
 
-type StreamData = {
-  id: string;
-  choices?: {
-    delta?: {
-      content?: string | null;
-      tool_calls?: {
-        index: number;
-        id: string;
-        type: string;
-        function: {
-          name: string;
-          arguments: string;
+type StreamData =
+  | {
+      type: 'response.created';
+    }
+  | {
+      type: 'response.in_progress';
+    }
+  | {
+      type: 'response.output_item.added';
+    }
+  | {
+      type: 'response.content_part.added';
+    }
+  | {
+      type: 'response.output_text.delta';
+      item_id: string;
+      delta: string;
+    }
+  | {
+      type: 'response.output_text.done';
+    }
+  | {
+      type: 'response.content_part.done';
+    }
+  | {
+      type: 'response.output_item.done';
+    }
+  | {
+      type: 'response.image_generation_call.in_progress';
+    }
+  | {
+      type: 'response.image_generation_call.generating';
+    }
+  | {
+      type: 'response.image_generation_call.partial_image';
+    }
+  | {
+      type: 'response.image_generation_call.completed';
+    }
+  | {
+      type: 'response.output_text.annotation.added';
+      item_id: string;
+      annotation: Annotation;
+    }
+  | {
+      type: 'response.completed';
+      response: {
+        output: OutputItem[];
+        usage: {
+          input_tokens: number;
+          output_tokens: number;
+          total_tokens: number;
         };
-      }[];
+      };
     };
-  }[];
-  usage: null | {
-    prompt_tokens: number;
-    completion_tokens: number;
-  };
-};
 
 export const openai: StreamHandler = (chunk, buffer, currentData) => {
   buffer += chunk;
   let lastNewlineIndex = 0;
   let newlineIndex;
 
-  while ((newlineIndex = buffer.indexOf('\n', lastNewlineIndex)) !== -1) {
+  while ((newlineIndex = buffer.indexOf('\n\n', lastNewlineIndex)) !== -1) {
     const line = buffer.slice(lastNewlineIndex, newlineIndex).trim();
     lastNewlineIndex = newlineIndex + 1;
+    const rawData = line.split('\n');
 
-    if (line.startsWith('data: ')) {
-      const data = line.slice(6);
+    let data = null;
 
-      if (data === '[DONE]') {
+    if (
+      rawData.length >= 2 &&
+      rawData[0].startsWith('event: ') &&
+      rawData[1].startsWith('data: ')
+    ) {
+      try {
+        data = JSON.parse(rawData[1].slice(6)) as StreamData;
+      } catch {
         continue;
       }
+    } else {
+      continue;
+    }
 
-      try {
-        const parsedData = JSON.parse(data) as StreamData;
+    if (
+      !data ||
+      (data.type !== 'response.completed' && data.type !== 'response.output_text.delta')
+    ) {
+      continue;
+    }
 
-        if (parsedData?.usage) {
-          currentData.usage = {
-            completionTokens: parsedData?.usage?.completion_tokens || 0,
-            promptTokens: parsedData?.usage?.prompt_tokens || 0,
-          };
-        }
-
-        if (
-          !parsedData?.choices?.[0]?.delta?.tool_calls &&
-          !parsedData?.choices?.[0]?.delta?.content
-        ) {
-          continue;
-        }
-
-        let content = '';
-        let toolCalls = currentData.toolCalls || undefined;
-
-        if (parsedData?.choices?.[0]?.delta?.tool_calls?.[0]) {
-          if (!toolCalls) {
-            toolCalls = [];
-          }
-
-          const toolCall = parsedData.choices[0].delta.tool_calls[0];
-
-          if (!toolCalls[toolCall.index]) {
-            toolCalls[toolCall.index] = {
-              id: '',
-              name: '',
-              arguments: '',
-            };
-          }
-
-          if (toolCall.id) {
-            toolCalls[toolCall.index].id = toolCall.id;
-          }
-
-          if (toolCall.function.name) {
-            toolCalls[toolCall.index].name = toolCall.function.name;
-          }
-
-          if (toolCall.function.arguments) {
-            toolCalls[toolCall.index].arguments += toolCall.function.arguments;
-          }
-        }
-
-        if (parsedData?.choices?.[0]?.delta?.content) {
-          content = parsedData?.choices?.[0]?.delta?.content;
-        }
-
-        currentData = {
-          __type: 'TextDataMaybeTools',
-          id: parsedData.id,
-          content: (currentData.content ?? '') + content,
-          toolCalls,
-          usage: {
-            completionTokens: currentData.usage.completionTokens ?? 0,
-            promptTokens: currentData.usage.promptTokens ?? 0,
-          },
-        };
-      } catch {
-        /* empty */
+    try {
+      let content = '';
+      if (data.type === 'response.output_text.delta') {
+        content = data.delta;
+        currentData.id = data.item_id;
       }
+
+      if (data.type === 'response.completed') {
+        currentData.usage = {
+          completionTokens: data.response.usage.output_tokens || 0,
+          promptTokens: data.response.usage.input_tokens || 0,
+        };
+
+        let toolCalls = currentData.toolCalls || undefined;
+        data.response.output.forEach((item) => {
+          if (item.type === 'function_call') {
+            if (!toolCalls) {
+              toolCalls = [];
+            }
+
+            toolCalls.push({
+              id: item.call_id,
+              name: item.name,
+              arguments: item.arguments,
+            });
+          }
+        });
+        currentData.toolCalls = toolCalls;
+      }
+
+      currentData = {
+        __type: 'TextDataMaybeTools',
+        id: currentData.id,
+        content: (currentData.content ?? '') + content,
+        toolCalls: currentData.toolCalls,
+        usage: {
+          completionTokens: currentData.usage.completionTokens ?? 0,
+          promptTokens: currentData.usage.promptTokens ?? 0,
+        },
+      };
+    } catch {
+      /* empty */
     }
   }
 

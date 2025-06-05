@@ -1,15 +1,18 @@
 import { lng } from '../../lng';
-import { StreamHandler, ChunkStream, TextData } from '../types';
 import { anthropic } from './handlers/anthropic';
 import { google } from './handlers/google';
+import { legacyOpenai } from './handlers/legacyOpenai';
 import { openai } from './handlers/openai';
 import { openrouter } from './handlers/openrouter';
+
+import type { StreamHandler, ChunkStream, TextData } from '../types';
 
 const streamHandlers: Record<string, StreamHandler> = {
   openai,
   google,
   anthropic,
   openrouter,
+  legacyOpenai,
 };
 
 const handleStream = async (

@@ -17,7 +17,7 @@ class OpenAI implements AIService
 
     private modX $modx;
 
-    const COMPLETIONS_API = 'https://api.openai.com/v1/chat/completions';
+    const RESPONSES_API = 'https://api.openai.com/v1/responses';
     const IMAGES_EDIT_API = 'https://api.openai.com/v1/images/edits';
     const IMAGES_API = 'https://api.openai.com/v1/images/generations';
 
@@ -56,13 +56,12 @@ class OpenAI implements AIService
     {
         foreach ($attachments as $attachment) {
             if ($attachment['__type'] === 'image') {
-                $content = is_string($currentMessage['content']) ? [['type' => 'text', 'text' => $currentMessage['content']]] : $currentMessage['content'];
+                $content = is_string($currentMessage['content']) ? [['type' => 'input_text', 'text' => $currentMessage['content']]] : $currentMessage['content'];
 
                 $content[] = [
-                    'type' => 'image_url',
-                    'image_url' => [
-                        'url' => $attachment['value']
-                    ]
+                    'type' => 'input_image',
+                    'detail' => 'auto',
+                    'image_url' => $attachment['value']
                 ];
 
                 $currentMessage['content'] = $content;
@@ -75,32 +74,23 @@ class OpenAI implements AIService
         if ($msg['role'] === 'tool') {
             foreach ($msg['content'] as $toolResponse) {
                 $messages[] = [
-                    'role' => 'tool',
-                    'tool_call_id' => $toolResponse['id'],
-                    'content' => $toolResponse['content'],
+                    'type' => 'function_call_output',
+                    'call_id' => $toolResponse['id'],
+                    'output' => $toolResponse['content'],
                 ];
             }
             return;
         }
 
         if ($msg['role'] === 'assistant' && $msg['toolCalls']) {
-            $toolCalls = [];
-
             foreach ($msg['toolCalls'] as $toolCall) {
-                $toolCalls[] = [
-                    'id' => $toolCall['id'],
-                    'type' => 'function',
-                    'function' => [
-                        "name" => $toolCall['name'],
-                        "arguments" => $toolCall['arguments']
-                    ]
+                $messages[] = [
+                    'type' => 'function_call',
+                    'call_id' => $toolCall['id'],
+                    "name" => $toolCall['name'],
+                    "arguments" => $toolCall['arguments']
                 ];
             }
-
-            $messages[] = [
-                'role' => 'assistant',
-                'tool_calls' => $toolCalls
-            ];
 
             return;
         }
@@ -158,7 +148,7 @@ class OpenAI implements AIService
             foreach ($options as $key => $value) {
                 switch ($key) {
                     case 'max_tokens':
-                        $gptConfig['max_completion_tokens'] = $value;
+                        $gptConfig['max_output_tokens'] = $value;
                         break;
                     case 'temperature':
                         $value = floatval($value);
@@ -175,17 +165,16 @@ class OpenAI implements AIService
         });
 
         $input['model'] = $config->getModel();
-        $input['messages'] = $messages;
+        $input['input'] = $messages;
 
         $tools = [];
         foreach ($config->getTools() as $tool) {
             $tools[] = [
                 'type' => 'function',
-                'function' => [
-                    'name' => $tool['name'],
-                    'description' => $tool['description'],
-                    'parameters' => (object)$tool['parameters'],
-                ]
+                'name' => $tool['name'],
+                'description' => $tool['description'],
+                'parameters' => (object)$tool['parameters'],
+                'strict' => false
             ];
         }
 
@@ -197,16 +186,12 @@ class OpenAI implements AIService
 
         if ($config->isStream()) {
             $input['stream'] = true;
-
-            $input['stream_options'] = [
-                'include_usage' => true,
-            ];
         }
 
         return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withStream($config->isStream())
             ->withParser('content')
-            ->withUrl(self::COMPLETIONS_API)
+            ->withUrl(self::RESPONSES_API)
             ->withHeaders([
                 'Authorization' => 'Bearer ' . $apiKey
             ])
@@ -246,7 +231,7 @@ class OpenAI implements AIService
         return AIResponse::new(self::getServiceName(), $config->getRawModel())
             ->withStream($config->isStream())
             ->withParser('content')
-            ->withUrl(self::COMPLETIONS_API)
+            ->withUrl(self::RESPONSES_API)
             ->withHeaders([
                 'Authorization' => 'Bearer ' . $apiKey
             ])

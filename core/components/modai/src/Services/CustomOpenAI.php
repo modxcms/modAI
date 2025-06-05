@@ -313,7 +313,7 @@ class CustomOpenAI implements AIService
 
     public static function getServiceName(): string
     {
-        return 'openai';
+        return 'legacyOpenai';
     }
 
     public static function isMyModel(string $model): bool

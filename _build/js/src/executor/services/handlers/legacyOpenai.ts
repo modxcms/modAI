@@ -1,15 +1,25 @@
 import { lng } from '../../../lng';
-import { OutputItem } from '../../types/openai';
 
 import type { ServiceHandler } from '../../types';
 
 type CompletionsData = {
   id: string;
-  output: OutputItem[];
+  choices?: {
+    message?: {
+      content?: string | null;
+      tool_calls?: {
+        id: string;
+        type: string;
+        function: {
+          name: string;
+          arguments: string;
+        };
+      }[];
+    };
+  }[];
   usage: {
-    input_tokens: number;
-    output_tokens: number;
-    total_tokens: number;
+    prompt_tokens: number;
+    completion_tokens: number;
   };
 };
 
@@ -20,10 +30,10 @@ type ImageData = {
   }[];
 };
 
-export const openai: ServiceHandler<CompletionsData, ImageData> = {
+export const legacyOpenai: ServiceHandler<CompletionsData, ImageData> = {
   content: (data) => {
-    const content = data?.output.filter((item) => item.type === 'message');
-    const tools = data?.output.filter((item) => item.type === 'function_call');
+    const content = data?.choices?.[0]?.message?.content;
+    const tools = data?.choices?.[0]?.message?.tool_calls;
 
     if (!content && !tools) {
       throw new Error(lng('modai.error.failed_request'));
@@ -31,30 +41,30 @@ export const openai: ServiceHandler<CompletionsData, ImageData> = {
 
     const id = data.id;
 
-    if (!tools || tools.length === 0) {
+    if (!tools) {
       return {
         __type: 'TextDataNoTools',
         id,
-        content: content[0].content[0].text,
+        content: content as string,
         usage: {
-          completionTokens: data?.usage.output_tokens,
-          promptTokens: data?.usage.input_tokens,
+          completionTokens: data?.usage.completion_tokens,
+          promptTokens: data?.usage.prompt_tokens,
         },
       };
     }
 
-    if (!content || content.length === 0) {
+    if (!content) {
       return {
         __type: 'ToolsData',
         id,
         toolCalls: tools.map((tool) => ({
           id: tool.id,
-          name: tool.name,
-          arguments: tool.arguments,
+          name: tool.function.name,
+          arguments: tool.function.arguments,
         })),
         usage: {
-          completionTokens: data?.usage.output_tokens,
-          promptTokens: data?.usage.input_tokens,
+          completionTokens: data?.usage.completion_tokens,
+          promptTokens: data?.usage.prompt_tokens,
         },
       };
     }
@@ -62,15 +72,15 @@ export const openai: ServiceHandler<CompletionsData, ImageData> = {
     return {
       __type: 'TextDataMaybeTools',
       id,
-      content: content[0].content[0].text,
+      content: content,
       toolCalls: tools.map((tool) => ({
         id: tool.id,
-        name: tool.name,
-        arguments: tool.arguments,
+        name: tool.function.name,
+        arguments: tool.function.arguments,
       })),
       usage: {
-        completionTokens: data?.usage.output_tokens,
-        promptTokens: data?.usage.input_tokens,
+        completionTokens: data?.usage.completion_tokens,
+        promptTokens: data?.usage.prompt_tokens,
       },
     };
   },

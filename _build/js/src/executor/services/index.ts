@@ -1,5 +1,6 @@
 import { anthropic } from './handlers/anthropic';
 import { google } from './handlers/google';
+import { legacyOpenai } from './handlers/legacyOpenai';
 import { openai } from './handlers/openai';
 import { lng } from '../../lng';
 import { openrouter } from './handlers/openrouter';
@@ -11,6 +12,7 @@ const services = {
   google,
   anthropic,
   openrouter,
+  legacyOpenai,
 };
 
 export const getServiceParser = (

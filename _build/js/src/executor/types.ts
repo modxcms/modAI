@@ -13,12 +13,15 @@ export type ToolCalls = {
   arguments: string;
 }[];
 
+export type TextDataAddon = never;
+
 export type TextDataMaybeTools = Metadata &
   UsageData & {
     __type: 'TextDataMaybeTools';
     id: string;
     content: string;
     toolCalls?: ToolCalls;
+    addons?: TextDataAddon[];
   };
 
 export type ToolsData = Metadata &
@@ -27,6 +30,7 @@ export type ToolsData = Metadata &
     id: string;
     content?: undefined;
     toolCalls: ToolCalls;
+    addons?: TextDataAddon[];
   };
 
 export type TextDataNoTools = Metadata &
@@ -35,6 +39,7 @@ export type TextDataNoTools = Metadata &
     id: string;
     content: string;
     toolCalls?: undefined;
+    addons?: TextDataAddon[];
   };
 
 export type Metadata = {
