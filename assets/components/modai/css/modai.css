@@ -96,15 +96,10 @@
 
 .chat-modal {
     padding-bottom: 20px;
-    /* webkit fix for resizer */
-    width: clamp(468px, 800px, 90%);
-    height: clamp(500px, 80vh, 90%);
     min-width: 468px;
     min-height: 500px;
     max-width: 90%;
     max-height: 90%;
-    resize: both;
-    overflow: auto;
     position: fixed;
     z-index: 9900;
     top: 50%;
@@ -115,6 +110,16 @@
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
+
+    .resize-handle {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        cursor: nw-resize;
+        background: transparent;
+    }
 
     .disclaimer {
         font-size: 11px;

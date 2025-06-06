@@ -4,6 +4,7 @@ import { scrollToBottom } from './modalActions';
 import { buildModalChat } from './modalChat';
 import { buildModalHeader } from './modalHeader';
 import { buildModalInput } from './modalInput';
+import { buildResizer } from './resizer';
 import { loadModalState, saveModalState } from './state';
 import { chatHistory } from '../../chatHistory';
 import { globalState } from '../../globalState';
@@ -54,6 +55,8 @@ export const buildModal = (config: LocalChatConfig) => {
 
   const disclaimer = createElement('div', 'disclaimer', lng('modai.ui.disclaimer'));
   chatModal.append(disclaimer);
+
+  chatModal.append(buildResizer());
 
   shadowRoot.appendChild(chatModal);
   document.body.append(shadow);
