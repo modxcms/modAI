@@ -34,15 +34,14 @@ class OnManagerPageBeforeRender extends Event
             $inits[] = 'modAI.mgr.initOnMediaBrowser();';
         }
 
-        $baseConfig = $this->modAI->getBaseConfig();
         $this->modx->controller->addHtml('
                 <script type="text/javascript">
                 if (typeof modAI === "undefined") {
                     Ext.onReady(function() {
-                        const modAI = ModAI.init(' . json_encode($baseConfig) . ');
-                        
+                        ' . $this->modAI->getInitCode() . '
+
                         '. implode(PHP_EOL, $inits) .'
-                        
+
                         window.modAI = modAI;
                     });
                 }

@@ -1,4 +1,3 @@
-import { AvailableAgent } from '../../index';
 import { Select } from '../dom/select';
 
 import type { UserInput } from './modalInput';

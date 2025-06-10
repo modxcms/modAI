@@ -1,5 +1,7 @@
 import { chatHistory } from './chatHistory';
 import { executor } from './executor';
+import { addHandler } from './executor/services';
+import { addStreamHandler } from './executor/streamHandlers';
 import { globalState } from './globalState';
 import { history } from './history';
 import { lng } from './lng';
@@ -48,4 +50,13 @@ export const init = (config: Config) => {
     mgr,
     checkPermissions,
   };
+};
+
+export const registerService = (
+  name: string,
+  handler: Parameters<typeof addHandler>[1],
+  streamHandler: Parameters<typeof addStreamHandler>[1],
+) => {
+  addHandler(name, handler);
+  addStreamHandler(name, streamHandler);
 };

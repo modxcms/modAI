@@ -15,6 +15,14 @@ const streamHandlers: Record<string, StreamHandler> = {
   legacyOpenai,
 };
 
+export const addStreamHandler = (name: string, streamHandler: StreamHandler) => {
+  if (streamHandlers[name]) {
+    return;
+  }
+
+  streamHandlers[name] = streamHandler;
+};
+
 const handleStream = async (
   res: Response,
   service: string,

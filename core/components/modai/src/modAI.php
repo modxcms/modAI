@@ -177,6 +177,40 @@ class modAI
         ];
     }
 
+    /**
+     * @param string|array|null $config
+     * @return string
+     */
+    public function getInitCode($config = null, bool $merge = true)
+    {
+        if (is_string($config)) {
+            if (!$merge) {
+                $cfg = $config;
+            } else {
+                $baseConfig = $this->getBaseConfig();
+                $cfg = '{...' . json_encode($baseConfig) . ', ...' . $config . '}';
+            }
+        } else if (is_array($config)) {
+            if ($merge) {
+                $baseConfig = $this->getBaseConfig();
+                $config = array_merge($baseConfig, $config);
+            }
+
+            $cfg = json_encode($config);
+        } else {
+            $baseConfig = $this->getBaseConfig();
+            $cfg = json_encode($baseConfig);
+        }
+
+        $onInits = $this->modx->invokeEvent('modAIOnInit');
+        $onInits = is_array($onInits) ? implode(PHP_EOL, $onInits) : '';
+
+        return <<< EOT
+            const modAI = ModAI.init($cfg);
+            $onInits
+        EOT;
+    }
+
     public function hasAccess()
     {
         return !empty($this->modx->user) && !empty($this->modx->user->id) && ($this->modx->hasPermission('modai_admin') || $this->modx->hasPermission('modai_client'));

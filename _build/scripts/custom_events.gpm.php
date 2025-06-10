@@ -24,6 +24,8 @@ return new class() {
         $events = [
             'modAIOnContextProviderRegister',
             'modAIOnToolRegister',
+            'modAIOnServiceRegister',
+            'modAIOnInit',
         ];
 
         if ($this->action === \xPDO\Transport\xPDOTransport::ACTION_UNINSTALL) {

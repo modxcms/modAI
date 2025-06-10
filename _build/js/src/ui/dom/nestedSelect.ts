@@ -1,6 +1,6 @@
 import { createElement } from '../utils';
 import { icon } from './icon';
-import { bot, chevronRight } from '../icons';
+import { chevronRight } from '../icons';
 import { Select } from './select';
 
 export type NestedSelectItem =

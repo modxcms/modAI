@@ -15,21 +15,48 @@ class AIServiceFactory
      */
     public static function new($model, modX &$modx): AIService
     {
-        /** @var array<class-string<AIService>> $services */
-        $services = [
-            OpenAI::class,
-            Google::class,
-            Anthropic::class,
-            OpenRouter::class,
-            CustomOpenAI::class
-        ];
+        /** @var array<class-string<AIService>> $allServices */
+        $allServices = [];
 
-        foreach ($services as $service) {
+        $registeredServices = $modx->invokeEvent('modAIOnServiceRegister');
+        foreach ($registeredServices as $registeredService) {
+            $services = $registeredService;
+
+            if (!is_array($services)) {
+                $maybeJSON = json_decode($registeredService, true);
+                if (is_array($maybeJSON)) {
+                    $services = $maybeJSON;
+                } else {
+                    $services = [$registeredService];
+                }
+            }
+
+            if (!is_array($services)) {
+                continue;
+            }
+
+            foreach ($services as $tool) {
+                if (self::validateClassName($tool)) {
+                    $allServices[] = $tool;
+                }
+            }
+        }
+
+        foreach ($allServices as $service) {
             if ($service::isMyModel($model)) {
                 return new $service($modx);
             }
         }
 
         throw new LexiconException('modai.error.invalid_model_name', ['model' => $model]);
+    }
+
+    private static function validateClassName($class): bool
+    {
+        if (!class_implements($class, AIService::class)) {
+            return false;
+        }
+
+        return true;
     }
 }

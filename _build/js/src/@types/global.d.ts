@@ -1,5 +1,3 @@
-// eslint-disable @typescript-eslint/no-explicit-any
-
 declare const modAI: {
   apiURL: string;
   resourceFields?: string[];
@@ -15,13 +13,14 @@ declare namespace MODx {
       initComponent(): void;
     }
   }
-};
+}
 
 declare namespace Ext {
   export function onReady(fn: () => void): void;
   export function defer(fn: () => void, timeout: number): void;
   export function get(id: string): Ext.Element;
   export function getCmp(id?: string): Ext.form.Field;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export function override(target: any, override: any);
 
   class Msg {
@@ -49,6 +48,7 @@ declare namespace Ext {
 
       label: HTMLElement;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       [key: string]: any;
     }
   }

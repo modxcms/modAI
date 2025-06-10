@@ -1,5 +1,5 @@
 name: modAI
-version: 0.13.0-alpha1
+version: 0.13.0-alpha2
 lowCaseName: modai
 namespace: modAI
 author: 'John Peca'
@@ -19,6 +19,7 @@ plugins:
       - OnResourceUndelete
       - modAIOnContextProviderRegister
       - modAIOnToolRegister
+      - modAIOnServiceRegister
       - OnChunkSave
       - OnChunkRemove
       - OnSnippetSave
@@ -149,7 +150,7 @@ systemSettings:
   - key: global.image.custom_options
     area: image
     type: textarea
-    value:
+    value: ''
 
   - key: res.fields
     area: resources

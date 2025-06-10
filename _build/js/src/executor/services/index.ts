@@ -7,12 +7,21 @@ import { openrouter } from './handlers/openrouter';
 
 import type { ServiceHandler } from '../types';
 
-const services = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const services: Record<string, ServiceHandler<any, any>> = {
   openai,
   google,
   anthropic,
   openrouter,
   legacyOpenai,
+};
+
+export const addHandler = <CData, IData>(name: string, handler: ServiceHandler<CData, IData>) => {
+  if (services[name]) {
+    return;
+  }
+
+  services[name] = handler;
 };
 
 export const getServiceParser = (
