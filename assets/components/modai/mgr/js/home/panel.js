@@ -87,6 +87,20 @@ Ext.extend(modAIAdmin.panel.Home, MODx.Panel, {
       });
     }
 
+    if (config.permissions.modai_admin_prompt_library) {
+      output.push({
+        title: _('modai.admin.home.prompt_library'),
+        items: [
+          {
+            xtype: 'modai-panel-prompt_library',
+            preventRender: true,
+            cls: 'main-wrapper',
+            permissions: config.permissions,
+          },
+        ],
+      });
+    }
+
     return output;
   },
 });

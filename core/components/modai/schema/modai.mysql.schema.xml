@@ -172,4 +172,59 @@
         <aggregate alias="Agent" cardinality="one" class="modAI\Model\Agent" foreign="id" local="agent_id" owner="foreign" />
         <aggregate alias="Tool" cardinality="one" class="modAI\Model\Tool" foreign="id" local="tool_id" owner="foreign" />
     </object>
+
+    <object class="PromptLibraryCategory" table="modai_prompt_library_categories">
+        <field key="name" dbtype="varchar" precision="191" phptype="string" null="false" />
+        <field key="type" dbtype="varchar" precision="64" phptype="string" null="false" />
+        <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
+        <field key="rank" dbtype="int" precision="10" phptype="int" null="false" default="0" />
+        <field key="parent_id" dbtype="int" precision="10" phptype="int" null="false" default="0" />
+
+        <index alias="parent_id" name="parent_id" primary="false" unique="false" type="BTREE">
+            <column key="parent_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="enabled" name="enabled" primary="false" unique="false" type="BTREE">
+            <column key="enabled" length="" collation="A" null="false" />
+        </index>
+        <index alias="rank" name="rank" primary="false" unique="false" type="BTREE">
+            <column key="rank" length="" collation="A" null="false" />
+        </index>
+        <index alias="type" name="type" primary="false" unique="false" type="BTREE">
+            <column key="type" length="" collation="A" null="false" />
+        </index>
+        <index alias="type_nabled_rank" name="type_nabled_rank" primary="false" unique="false" type="BTREE">
+            <column key="type" length="" collation="A" null="false" />
+            <column key="enabled" length="" collation="A" null="false" />
+            <column key="rank" length="" collation="A" null="false" />
+        </index>
+
+        <composite alias="Prompts" cardinality="many" class="modAI\Model\PromptLibraryPrompt" foreign="category_id" local="id" owner="local" />
+        <composite alias="Children" cardinality="many" class="modAI\Model\PromptLibraryCategory" foreign="parent_id" local="id" owner="local" />
+        <aggregate alias="Parent" cardinality="one" class="modAI\Model\PromptLibraryCategory" foreign="id" local="category_id" owner="foreign" />
+    </object>
+
+    <object class="PromptLibraryPrompt" table="modai_prompt_library_prompts">
+        <field key="name" dbtype="varchar" precision="191" phptype="string" null="false" />
+        <field key="prompt" dbtype="text" phptype="string" null="false" />
+        <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
+        <field key="rank" dbtype="int" precision="10" phptype="int" null="false" default="0" />
+        <field key="category_id" dbtype="int" precision="10" phptype="int" null="false" />
+
+
+        <index alias="category_id" name="category_id" primary="false" unique="false" type="BTREE">
+            <column key="category_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="enabled" name="enabled" primary="false" unique="false" type="BTREE">
+            <column key="enabled" length="" collation="A" null="false" />
+        </index>
+        <index alias="rank" name="rank" primary="false" unique="false" type="BTREE">
+            <column key="rank" length="" collation="A" null="false" />
+        </index>
+        <index alias="enabled_rank" name="enabled_rank" primary="false" unique="false" type="BTREE">
+            <column key="enabled" length="" collation="A" null="false" />
+            <column key="rank" length="" collation="A" null="false" />
+        </index>
+
+        <aggregate alias="Category" cardinality="one" class="modAI\Model\PromptLibraryCategory" foreign="id" local="category_id" owner="foreign" />
+    </object>
 </model>

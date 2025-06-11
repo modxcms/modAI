@@ -8,6 +8,7 @@ Ext.extend(ModAIAdmin, Ext.Component, {
     grid: {},
     panel: {},
     combo: {},
+    tree: {},
     config: {},
     loadPage: function (action, parameters) {
         if (!parameters) {

@@ -20,6 +20,11 @@ class ModAIHomeManagerController extends ModAIBaseManagerController
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/agents.grid.js');
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/tools.grid.js');
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/context_providers.grid.js');
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/prompt_library/panel.js');
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/prompt_library/category.tree.js');
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/prompt_library/category.window.js');
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/prompt_library/prompts.grid.js');
+        $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/widgets/prompt_library/prompts.window.js');
 
         $this->addJavascript($this->modAI->getOption('mgrJsUrl') . 'home/panel.js');
         $this->addLastJavascript($this->modAI->getOption('mgrJsUrl') . 'home/page.js');

@@ -66,6 +66,11 @@ return new class() {
             'modai_admin_agent_context_provider_delete',
             'modai_admin_related_agent_save',
             'modai_admin_related_agent_delete',
+            'modai_admin_prompt_library',
+            'modai_admin_prompt_library_prompt_save',
+            'modai_admin_prompt_library_prompt_delete',
+            'modai_admin_prompt_library_category_save',
+            'modai_admin_prompt_library_category_delete',
 
             'modai_client',
             'modai_client_text',

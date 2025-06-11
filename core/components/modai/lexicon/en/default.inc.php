@@ -7,6 +7,7 @@ $_lang['modai.admin.home.page_title'] = 'modAI';
 $_lang['modai.admin.home.agents'] = 'Agents';
 $_lang['modai.admin.home.tools'] = 'Tools';
 $_lang['modai.admin.home.context_providers'] = 'Context Providers';
+$_lang['modai.admin.home.prompt_library'] = 'Prompt Library';
 
 $_lang['modai.admin.global.no_records'] = 'No records found.';
 $_lang['modai.admin.global.any'] = 'Any';
@@ -107,6 +108,30 @@ $_lang['modai.admin.context_provider.pinecone.fields_map_desc'] = 'Comma separat
 $_lang['modai.admin.context_provider.pinecone.context_messages'] = 'Context Messages';
 $_lang['modai.admin.context_provider.pinecone.context_messages_desc'] = 'Additional context messages that will be put in front of the data from DB. One message per line. Can contain {id} or any {field} (defined in fields config) placeholder, you can also reference a system setting with using ++ as a prefix, for example {++site_url}.';
 
+$_lang['modai.admin.prompt_library.category'] = 'Category';
+$_lang['modai.admin.prompt_library.category'] = 'Category';
+
+$_lang['modai.admin.prompt_library.prompt.name'] = 'Name';
+$_lang['modai.admin.prompt_library.prompt.enabled'] = 'Enabled';
+$_lang['modai.admin.prompt_library.prompt.rank'] = 'Rank';
+$_lang['modai.admin.prompt_library.prompt.create'] = 'Create Prompt';
+$_lang['modai.admin.prompt_library.prompt.update'] = 'Update Prompt';
+$_lang['modai.admin.prompt_library.prompt.remove'] = 'Remove Prompt';
+$_lang['modai.admin.prompt_library.prompt.remove_confirm'] = 'Are you sure you want to permanently delete "[[+name]]" prompt?';
+$_lang['modai.admin.prompt_library.prompt.search'] = 'Search';
+$_lang['modai.admin.prompt_library.prompt.category'] = 'Category';
+$_lang['modai.admin.prompt_library.prompt.prompt'] = 'Prompt';
+
+$_lang['modai.admin.prompt_library.category.name'] = 'Name';
+$_lang['modai.admin.prompt_library.category.enabled'] = 'Enabled';
+$_lang['modai.admin.prompt_library.category.create'] = 'Create Category';
+$_lang['modai.admin.prompt_library.category.create_child'] = 'Create Child Category';
+$_lang['modai.admin.prompt_library.category.update'] = 'Update Category';
+$_lang['modai.admin.prompt_library.category.remove'] = 'Remove Category';
+$_lang['modai.admin.prompt_library.category.remove_confirm'] = 'Are you sure you want to permanently delete "[[+name]]" category and all children including prompts?';
+$_lang['modai.admin.prompt_library.category.text'] = 'Text';
+$_lang['modai.admin.prompt_library.category.image'] = 'Image';
+$_lang['modai.admin.prompt_library.category.type'] = 'Type';
 
 $_lang['modai.admin.error.required'] = 'Field is required.';
 

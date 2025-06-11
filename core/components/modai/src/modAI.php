@@ -2,6 +2,8 @@
 
 namespace modAI;
 
+use modAI\Model\PromptLibraryCategory;
+use modAI\Model\PromptLibraryPrompt;
 use MODX\Revolution\modTemplateVar;
 use MODX\Revolution\modX;
 
@@ -268,36 +270,86 @@ class modAI
 
     public function getPromptLibrary()
     {
-        $raw = $this->modx->getOption('modai.chat.prompt_library', null, '');
-        try {
-            $data =  json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+        $output = [];
 
-            $addIDs = function(array &$items, string $path = '') use (&$addIDs) {
-                foreach ($items as &$item) {
-                    $currentPath = $path . '/' . $item['name'];
-                    $item['id'] = substr(md5($currentPath), 0, 10);
-                    if (isset($item['children'])) {
-                        $addIDs($item['children'], $currentPath);
-                    }
-                }
-            };
+        $c = $this->modx->newQuery(PromptLibraryCategory::class);
+        $c->where([
+            'enabled' => true
+        ]);
+        $c->sortby('type', 'asc');
+        $c->sortby('parent_id', 'asc');
+        $c->sortby('rank', 'asc');
 
-            if (!empty($data['text'])) {
-                $addIDs($data['text']);
-            } else {
-                $data['text'] = [];
+        $categories = $this->modx->getIterator(PromptLibraryCategory::class, $c);
+
+        $catById = [];
+        $allCategoryIDs = [];
+        foreach ($categories as $category) {
+            if (!isset($output[$category->type])) {
+                $output[$category->type] = [];
             }
 
-            if (!empty($data['image'])) {
-                $addIDs($data['image']);
-            } else {
-                $data['image'] = [];
-            }
+            $catById[$category->id] = [
+                'id' => 'cat_' . $category->id,
+                'name' => $category->name,
+                'children' => []
+            ];
 
-            return $data;
-        } catch (\Exception $e) {
+            $allCategoryIDs[] = $category->id;
+
+            $catItem = &$catById[$category->id];
+
+            if (empty($category->parent_id)) {
+                $output[$category->type][] = &$catItem;
+            } else {
+                $catById[$category->parent_id]['children'][] = &$catItem;
+            }
+        }
+
+        if (empty($allCategoryIDs)) {
             return [];
         }
+
+        $pc = $this->modx->newQuery(PromptLibraryPrompt::class);
+        $pc->where([
+            'enabled' => true,
+            'category_id:IN' => $allCategoryIDs
+        ]);
+        $pc->sortby('category_id', 'asc');
+        $pc->sortby('rank', 'asc');
+
+        $prompts = $this->modx->getIterator(PromptLibraryPrompt::class, $pc);
+
+        foreach ($prompts as $prompt) {
+            $catById[$prompt->category_id]['children'][] = [
+                'id' => 'prompt_' . $prompt->id,
+                'name' => $prompt->name,
+                'value' => $prompt->prompt,
+            ];
+        }
+
+        $removeLeafNodes = function (array &$nodes) use (&$removeLeafNodes) {
+            foreach ($nodes as $key => &$node) {
+                if (!empty($node['children'])) {
+                    // Recursively clean children first
+                    $removeLeafNodes($node['children']);
+                }
+
+                // After recursion, if children are still empty, remove this node
+                if (isset($node['children']) && empty($node['children'])) {
+                    unset($nodes[$key]);
+                }
+            }
+
+            // Reindex array to maintain sequential keys
+            $nodes = array_values($nodes);
+        };
+
+        foreach ($output as &$treeByType) {
+            $removeLeafNodes($treeByType);
+        }
+
+        return $output;
     }
 
     public function getAdminPermissions()
@@ -319,6 +371,11 @@ class modAI
             'modai_admin_agent_context_provider_delete' => (int)$this->modx->hasPermission('modai_admin_agent_context_provider_delete'),
             'modai_admin_related_agent_save' => (int)$this->modx->hasPermission('modai_admin_related_agent_save'),
             'modai_admin_related_agent_delete' => (int)$this->modx->hasPermission('modai_admin_related_agent_delete'),
+            'modai_admin_prompt_library' => (int)$this->modx->hasPermission('modai_admin_prompt_library'),
+            'modai_admin_prompt_library_prompt_save' => (int)$this->modx->hasPermission('modai_admin_prompt_library_prompt_save'),
+            'modai_admin_prompt_library_prompt_delete' => (int)$this->modx->hasPermission('modai_admin_prompt_library_prompt_delete'),
+            'modai_admin_prompt_library_category_save' => (int)$this->modx->hasPermission('modai_admin_prompt_library_category_save'),
+            'modai_admin_prompt_library_category_delete' => (int)$this->modx->hasPermission('modai_admin_prompt_library_category_delete'),
         ];
     }
 

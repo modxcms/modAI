@@ -49,4 +49,18 @@ class Utils
 
         return $value;
     }
+
+    public static function convertToBoolean($value)
+    {
+        if ($value === true) return true;
+
+        if (is_string($value)) {
+            $value = strtolower($value);
+        }
+
+        if ($value === 'true') return true;
+        if ($value === '1') return true;
+
+        return false;
+    }
 }

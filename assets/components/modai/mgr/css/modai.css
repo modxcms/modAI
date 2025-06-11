@@ -23,3 +23,7 @@
     border: none;
     cursor: pointer;
 }
+
+.modai-admin--prompt-library_category_disabled {
+    font-style: italic;
+}

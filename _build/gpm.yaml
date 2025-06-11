@@ -211,11 +211,6 @@ systemSettings:
     type: textarea
     value: ''
 
-  - key: chat.prompt_library
-    area: chat
-    type: textarea
-    value: ''
-
 build:
   readme: core/components/modai/docs/README.md
   changelog: core/components/modai/docs/CHANGELOG.md
@@ -233,3 +228,5 @@ database:
     - "modAI\\Model\\AgentTool"
     - "modAI\\Model\\ContextProvider"
     - "modAI\\Model\\AgentContextProvider"
+    - "modAI\\Model\\PromptLibraryCategory"
+    - "modAI\\Model\\PromptLibraryPrompt"

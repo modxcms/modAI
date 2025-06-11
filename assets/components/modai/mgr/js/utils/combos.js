@@ -434,3 +434,59 @@ modAIAdmin.combo.UserGroups = function (config, getStore) {
 };
 Ext.extend(modAIAdmin.combo.UserGroups, Ext.ux.form.SuperBoxSelect);
 Ext.reg('modai-combo-user_groups', modAIAdmin.combo.UserGroups);
+
+modAIAdmin.combo.PromptLibraryCategory = function (config) {
+    config = config || {};
+    Ext.applyIf(config, {
+        name: 'category_id',
+        hiddenName: 'category_id',
+        displayField: 'name',
+        valueField: 'id',
+        fields: ['id', 'name', 'type'],
+        typeAhead: false,
+        editable: true,
+        forceSelection: true,
+        pageSize: 0,
+        minChars: 0,
+        queryParam: 'search',
+        url: MODx.config.connector_url,
+        baseParams: {
+            action: 'modAI\\Processors\\PromptLibrary\\Categories\\GetList',
+        },
+        tpl: new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item">{name:htmlEncode} ({type})</div></tpl>')
+    });
+    modAIAdmin.combo.PromptLibraryCategory.superclass.constructor.call(this, config);
+};
+Ext.extend(modAIAdmin.combo.PromptLibraryCategory, MODx.combo.ComboBox);
+Ext.reg('modai-combo-prompt_library_category', modAIAdmin.combo.PromptLibraryCategory);
+
+modAIAdmin.combo.PromptLibraryCategoryType = function (config) {
+    const data = [
+        [
+            'text', _('modai.admin.prompt_library.category.text')
+        ],
+        [
+            'image', _('modai.admin.prompt_library.category.image')
+        ],
+    ];
+
+    config = config || {};
+    Ext.applyIf(config, {
+        store: new Ext.data.SimpleStore({
+            fields: ['v', 'd'],
+            data: data
+        }),
+        displayField: 'd',
+        valueField: 'v',
+        mode: 'local',
+        triggerAction: 'all',
+        editable: false,
+        selectOnFocus: false,
+        preventRender: true,
+        forceSelection: true,
+        enableKeyEvents: true,
+    });
+    modAIAdmin.combo.PromptLibraryCategoryType.superclass.constructor.call(this, config);
+};
+Ext.extend(modAIAdmin.combo.PromptLibraryCategoryType, MODx.combo.ComboBox);
+Ext.reg('modai-combo-prompt_library_category_type', modAIAdmin.combo.PromptLibraryCategoryType);
