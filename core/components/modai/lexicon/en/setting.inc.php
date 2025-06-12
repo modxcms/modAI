@@ -92,8 +92,6 @@ $_lang['setting_modai.contexts.templates.name_desc'] = 'Name of the context prov
 
 $_lang['setting_modai.chat.additional_controls'] = 'Additional Chat Controls';
 $_lang['setting_modai.chat.additional_controls_desc'] = 'Define additional options for the chat window. Check docs for more info: https://modxcms.github.io/modAI';
-$_lang['setting_modai.chat.prompt_library'] = 'Prompt Library';
-$_lang['setting_modai.chat.prompt_library_desc'] = 'Define prompt library for the chat window. Check docs for more info: https://modxcms.github.io/modAI';
 
 $_lang['setting_modai.init.global_chat'] = 'Global Chat';
 $_lang['setting_modai.init.global_chat_desc'] = 'If enabled, modAI will display global chat button in the main navigation.';
