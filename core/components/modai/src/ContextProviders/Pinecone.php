@@ -13,6 +13,8 @@ class Pinecone implements ContextProviderInterface
     private Client $client;
     private string $namespace;
     private array $fields;
+    private array $outputFields;
+    private string $idField;
     private array $fieldsMap;
     private array $contextMessages;
 
@@ -25,6 +27,8 @@ class Pinecone implements ContextProviderInterface
         $this->namespace = Utils::getConfigValue($modx,'namespace', $config, '');
         $this->contextMessages = Utils::explodeAndClean(Utils::getConfigValue($modx,'context_messages', $config, ''), "\n");
         $this->fields = Utils::explodeAndClean(Utils::getConfigValue($modx,'fields', $config, ''));
+        $this->outputFields = Utils::explodeAndClean(Utils::getConfigValue($modx,'output_fields', $config, ''));
+        $this->idField = Utils::getConfigValue($modx,'id_field', $config, '');
         $fieldsMap = Utils::explodeAndClean(Utils::getConfigValue($modx,'fields_map', $config, ''));
 
         $this->fieldsMap = [];
@@ -39,7 +43,7 @@ class Pinecone implements ContextProviderInterface
         }
 
 
-        if (empty($endpoint) || empty($apiKey) || empty($this->namespace) || empty($this->fields)) {
+        if (empty($endpoint) || empty($apiKey) || empty($this->namespace)) {
             throw new InvalidContextProviderConfig();
         }
 
@@ -55,6 +59,11 @@ class Pinecone implements ContextProviderInterface
 
     public function index($type, $id, array $data): bool
     {
+        if (empty($this->fields)) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Pinecone invalid configuration: you have to specify at least one field to index.');
+            return false;
+        }
+
         $metadata = [];
 
         $text = [];
@@ -150,24 +159,17 @@ class Pinecone implements ContextProviderInterface
                 $context = [];
 
                 foreach ($this->contextMessages as $contextMessage) {
-                    $context[] = $this->formatMessage($contextMessage, $hit['fields']);
+                    $context[] = $this->formatMessage($contextMessage, $hit);
                 }
 
-                $context[] = 'id: ' . $hit['fields']["{$hit['fields']["type"]}_id"];
-
-                if (!empty($this->link)) {
-                    $context[] = (!empty($this->linkMsg) ? $this->formatMessage($this->linkMsg, $hit['fields']) : '') . $this->formatMessage($this->link, $hit['fields']);
-                }
-
-                foreach ($this->fields as $field) {
-                    $targetField = $field;
-
-                    if (isset($this->fieldsMap[$field])) {
-                        $targetField = $this->fieldsMap[$field];
+                foreach ($this->outputFields as $field) {
+                    if ($field === 'id' || $field === '_id') {
+                        $context[] = $field . ': ' . $hit['_id'];
+                        continue;
                     }
 
-                    if (!empty($hit['fields'][$targetField])) {
-                        $context[] = $targetField . ': ' . $hit['fields'][$targetField];
+                    if (!empty($hit['fields'][$field])) {
+                        $context[] = $field . ': ' . $hit['fields'][$field];
                     }
                 }
 
@@ -176,6 +178,7 @@ class Pinecone implements ContextProviderInterface
 
             return $augmented;
         } catch (\Throwable $e) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Pinecone exception: ' . $e->getMessage());
             return [];
         }
     }
@@ -192,15 +195,15 @@ class Pinecone implements ContextProviderInterface
         }
 
         $search = ['{id}'];
-        $replace = [$data["{$data["type"]}_id"]];
+        $replace = [];
+
+        if (!empty($this->idField)) {
+            $replace[] = $this->parseId($data);
+        } else {
+            $replace[] = $data['_id'];
+        }
 
         foreach ($placeholders as $key) {
-            if ($key === 'id') {
-                $search[] = "\{$key\}";
-                $replace[] = $data["{$data["type"]}_id"];
-                continue;
-            }
-
             if (strpos($key, '++') === 0) {
                 $value = substr($key, 2);
                 $systemSettingValue = $this->modx->getOption($value, null, '');
@@ -211,13 +214,51 @@ class Pinecone implements ContextProviderInterface
                 continue;
             }
 
-            if (isset($data[$key])) {
+            if (isset($data['fields'][$key])) {
                 $search[] = '{' . $key . '}';
-                $replace[] = $data[$key];
+                $replace[] = $data['fields'][$key];
             }
         }
 
         return str_replace($search, $replace, $msg);
+    }
+
+    private function parseId($data): string {
+        $lowerIdField = strtolower($this->idField);
+        if ($lowerIdField === 'id' || $lowerIdField === '_id') {
+            return $data['_id'];
+        }
+
+        $matches = [];
+        preg_match_all('/{([^}]*)}/', $this->idField, $matches);
+
+        $placeholders = $matches[1];
+
+        if (empty($placeholders)) {
+            return $this->idField;
+        }
+
+        $search = [];
+        $replace = [];
+
+        foreach ($placeholders as $key) {
+            if (strpos($key, '++') === 0) {
+                $value = substr($key, 2);
+                $systemSettingValue = $this->modx->getOption($value, null, '');
+
+                $search[] = '{' . $key . '}';
+                $replace[] = $systemSettingValue;
+
+                continue;
+            }
+
+            if (isset($data['fields'][$key])) {
+                $search[] = '{' . $key . '}';
+                $replace[] = $data['fields'][$key];
+            }
+        }
+
+        return $data['fields'][str_replace($search, $replace, $this->idField)];
     }
 
     public static function getConfig(modX $modx): array
@@ -241,15 +282,27 @@ class Pinecone implements ContextProviderInterface
                 'required' => true,
                 'type' => 'textfield'
             ],
+            'id_field' => [
+                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.id_field'),
+                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.id_field_desc'),
+                'required' => false,
+                'type' => 'textfield'
+            ],
             'fields' => [
                 'name' => $modx->lexicon('modai.admin.context_provider.pinecone.fields'),
                 'description' => $modx->lexicon('modai.admin.context_provider.pinecone.fields_desc'),
-                'required' => true,
+                'required' => false,
                 'type' => 'textfield'
             ],
             'fields_map' => [
                 'name' => $modx->lexicon('modai.admin.context_provider.pinecone.fields_map'),
                 'description' => $modx->lexicon('modai.admin.context_provider.pinecone.fields_map_desc'),
+                'required' => false,
+                'type' => 'textfield'
+            ],
+            'output_fields' => [
+                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.output_fields'),
+                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.output_fields_desc'),
                 'required' => false,
                 'type' => 'textfield'
             ],
