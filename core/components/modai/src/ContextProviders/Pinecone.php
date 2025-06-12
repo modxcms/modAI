@@ -3,6 +3,8 @@ namespace modAI\ContextProviders;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use modAI\Config\ConfigBuilder;
+use modAI\Config\FieldBuilder;
 use modAI\Exceptions\InvalidContextProviderConfig;
 use modAI\Utils;
 use MODX\Revolution\modX;
@@ -263,59 +265,31 @@ class Pinecone implements ContextProviderInterface
 
     public static function getConfig(modX $modx): array
     {
-        return [
-            'api_key' => [
-                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.api_key'),
-                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.api_key_desc'),
-                'required' => true,
-                'type' => 'text-password'
-            ],
-            'endpoint' => [
-                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.endpoint'),
-                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.endpoint_desc'),
-                'required' => true,
-                'type' => 'textfield'
-            ],
-            'namespace' => [
-                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.namespace'),
-                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.namespace_desc'),
-                'required' => true,
-                'type' => 'textfield'
-            ],
-            'id_field' => [
-                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.id_field'),
-                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.id_field_desc'),
-                'required' => false,
-                'type' => 'textfield'
-            ],
-            'fields' => [
-                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.fields'),
-                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.fields_desc'),
-                'required' => false,
-                'type' => 'textfield'
-            ],
-            'fields_map' => [
-                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.fields_map'),
-                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.fields_map_desc'),
-                'required' => false,
-                'type' => 'textfield'
-            ],
-            'output_fields' => [
-                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.output_fields'),
-                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.output_fields_desc'),
-                'required' => false,
-                'type' => 'textfield'
-            ],
-            'context_messages' => [
-                'name' => $modx->lexicon('modai.admin.context_provider.pinecone.context_messages'),
-                'description' => $modx->lexicon('modai.admin.context_provider.pinecone.context_messages_desc'),
-                'required' => false,
-                'type' => 'textarea',
-                'extraProperties' => [
-                    'grow' => true,
-                ],
-            ],
-        ];
+        return ConfigBuilder::new($modx, 'modai.admin.context_provider.pinecone.{key}', 'modai.admin.context_provider.pinecone.{key}_desc')
+            ->addField('api_key', function (FieldBuilder $fieldBuilder) use ($modx) {
+                return $fieldBuilder
+                    ->type('text-password')
+                    ->required()
+                ;
+            })
+            ->addField('endpoint', function (FieldBuilder $fieldBuilder) use ($modx) {
+                return $fieldBuilder->required();
+            })
+            ->addField('namespace', function (FieldBuilder $fieldBuilder) use ($modx) {
+                return $fieldBuilder->required();
+            })
+            ->addField('id_field')
+            ->addField('fields')
+            ->addField('fields_map')
+            ->addField('output_fields')
+            ->addField('context_messages', function (FieldBuilder $fieldBuilder) use ($modx) {
+                return $fieldBuilder
+                    ->type('textarea')
+                    ->extra('grow', true)
+                ;
+            })
+            ->build()
+        ;
     }
 
     public static function getDescription(): string
