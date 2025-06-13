@@ -1,14 +1,15 @@
 import { drag, endDrag } from './dragHandlers';
-import { addErrorMessage, renderMessage } from './messageHandlers';
+import { addErrorMessage } from './messageHandlers';
 import { setLoadingState } from './state';
 import { chatHistory } from '../../chatHistory';
+import { chats } from '../../chats';
+import { createOrUpdateChat } from '../../db';
 import { executor } from '../../executor';
+import { hasToolCalls, TextDataWithTools, ToolsData } from '../../executor/types';
 import { globalState } from '../../globalState';
 import { lng } from '../../lng';
 
 import type { LocalChatConfig, ModalType } from './types';
-import type { UpdatableHTMLElement } from '../../chatHistory';
-import type { ToolCalls } from '../../executor/types';
 
 export const closeModal = () => {
   if (globalState.modal.isLoading) {
@@ -22,19 +23,31 @@ export const closeModal = () => {
     globalState.modal.remove();
   }
 
+  chats.clearFilters();
+
   globalState.modalOpen = false;
 };
 
 const callTools = async (
   config: LocalChatConfig,
-  toolCalls: ToolCalls,
+  data: TextDataWithTools | ToolsData,
   agent?: string,
   additionalOptions?: Record<string, unknown>,
   controller?: AbortController,
 ) => {
-  globalState.modal.history.addToolCallsMessage(toolCalls, true);
+  const toolCallMsg = globalState.modal.history.addToolCallsMessage(data, true);
+  if (globalState.modal.chatId) {
+    await executor.chat.storeMessage(
+      globalState.modal.chatId,
+      toolCallMsg,
+      !data.content ? data.usage : undefined, // if content is present, usage is logged with the content message
+    );
+  }
 
-  const res = await executor.tools.run({ toolCalls, agent }, controller);
+  const res = await executor.tools.run(
+    { toolCalls: data.toolCalls, agent, chatId: globalState.modal.chatId },
+    controller,
+  );
 
   globalState.modal.history.addToolResponseMessage(res.id, res.content, true);
 
@@ -44,7 +57,6 @@ const callTools = async (
       additionalOptions,
       agent,
       field: config.field || '',
-      prompt: '',
       messages: globalState.modal.history.getMessagesHistory(),
     },
     (data) => {
@@ -56,25 +68,20 @@ const callTools = async (
   );
 
   if (aiRes.content) {
-    globalState.modal.history.updateAssistantMessage(aiRes);
+    const assistantMsg = globalState.modal.history.updateAssistantMessage(aiRes);
+
+    if (globalState.modal.chatId) {
+      await executor.chat.storeMessage(globalState.modal.chatId, assistantMsg, aiRes.usage);
+    }
   }
 
-  if (aiRes.toolCalls) {
-    await callTools(
-      config,
-      aiRes.toolCalls,
-      agent,
-      additionalOptions,
-      globalState.modal.abortController,
-    );
+  if (hasToolCalls(aiRes)) {
+    await callTools(config, aiRes, agent, additionalOptions, globalState.modal.abortController);
   }
 };
 
-export const sendMessage = async (
-  config: LocalChatConfig,
-  providedMessage?: string,
-  hidePrompt?: boolean,
-) => {
+export const sendMessage = async (providedMessage?: string, hidePrompt?: boolean) => {
+  const config = globalState.modal.config;
   const message = providedMessage
     ? providedMessage.trim()
     : globalState.modal.messageInput.value.trim();
@@ -90,82 +97,97 @@ export const sendMessage = async (
   globalState.modal.abortController = new AbortController();
 
   globalState.modal.welcomeMessage.style.display = 'none';
-
-  const attachments =
-    globalState.modal.attachments.attachments.length > 0
-      ? globalState.modal.attachments.attachments.map((at) => ({
-          __type: at.__type,
-          value: at.value,
-        }))
-      : undefined;
-
-  const contexts =
-    globalState.modal.context.contexts.length > 0
-      ? globalState.modal.context.contexts.map((at) => ({
-          __type: at.__type,
-          name: at.name,
-          renderer: at.renderer,
-          value: at.value,
-        }))
-      : [];
-
-  globalState.modal.attachments.removeAttachments();
-  globalState.modal.context.removeContexts();
-
-  const messages = globalState.modal.history.getMessagesHistory();
-  const userMsg = globalState.modal.history.addUserMessage(
-    { content: message, attachments, contexts },
-    hidePrompt,
-  );
-
-  const selectedAgent = globalState.selectedAgent[`${config.key}/${config.type}`];
-
-  if (
-    selectedAgent &&
-    selectedAgent.contextProviders &&
-    selectedAgent.contextProviders.length > 0
-  ) {
-    const remoteContexts = await executor.context.get({
-      prompt: message,
-      agent: selectedAgent.name,
-    });
-    remoteContexts.contexts.map((ctx) => {
-      contexts.push({
-        __type: 'ContextProvider',
-        name: 'ContextProvider',
-        renderer: undefined,
-        value: ctx,
-      });
-    });
-  }
-
-  globalState.modal.history.updateMessage(userMsg, { contexts });
-
-  const additionalOptions = Object.entries(
-    globalState.additionalControls[`${config.key}/${config.type}`] ?? {},
-  ).reduce(
-    (acc, [key, item]) => {
-      if (!item) {
-        return acc;
-      }
-
-      acc[key] = item['value'];
-
-      return acc;
-    },
-    {} as Record<string, unknown>,
-  );
-
   try {
+    const attachments =
+      globalState.modal.attachments.attachments.length > 0
+        ? globalState.modal.attachments.attachments.map((at) => ({
+            __type: at.__type,
+            value: at.value,
+          }))
+        : undefined;
+
+    const contexts =
+      globalState.modal.context.contexts.length > 0
+        ? globalState.modal.context.contexts.map((at) => ({
+            __type: at.__type,
+            name: at.name,
+            renderer: at.renderer,
+            value: at.value,
+          }))
+        : [];
+
+    globalState.modal.attachments.removeAttachments();
+    globalState.modal.context.removeContexts();
+
+    const lastMessageId = globalState.modal.history.getLastMessageId();
+
+    const messages = globalState.modal.history.getMessagesHistory();
+    const userMsg = globalState.modal.history.addUserMessage(
+      { content: message, attachments, contexts },
+      hidePrompt,
+    );
+
+    const selectedAgent = globalState.selectedAgent[`${config.key}/${config.type}`];
+
+    if (
+      selectedAgent &&
+      selectedAgent.contextProviders &&
+      selectedAgent.contextProviders.length > 0
+    ) {
+      const remoteContexts = await executor.context.get({
+        prompt: message,
+        agent: selectedAgent.name,
+      });
+      remoteContexts.contexts.map((ctx) => {
+        contexts.push({
+          __type: 'ContextProvider',
+          name: 'ContextProvider',
+          renderer: undefined,
+          value: ctx,
+        });
+      });
+    }
+
+    globalState.modal.history.updateMessage(userMsg, { contexts });
+
+    const additionalOptions = Object.entries(
+      globalState.additionalControls[`${config.key}/${config.type}`] ?? {},
+    ).reduce(
+      (acc, [key, item]) => {
+        if (!item) {
+          return acc;
+        }
+
+        acc[key] = item['value'];
+
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    );
+    let titleDataPromise = null;
+
+    if (globalState.config.generateChatTitle && !lastMessageId) {
+      titleDataPromise = executor.prompt
+        .chatTitle({
+          message: userMsg.content,
+        })
+        .then((title) => {
+          globalState.modal.setTitle(title.content);
+          return title;
+        });
+    }
+
     if (config.type === 'text') {
       const data = await executor.prompt.chat(
         {
+          persist: config.persist,
+          chatId: globalState.modal.chatId,
+          chatPublic: globalState.modal.chatPublic,
+          lastMessageId,
+          userMsg: userMsg,
           agent: selectedAgent?.name,
           additionalOptions,
           namespace: config.namespace,
-          contexts: contexts,
-          attachments: attachments,
-          prompt: message,
           field: config.field || '',
           messages,
         },
@@ -177,14 +199,44 @@ export const sendMessage = async (
         globalState.modal.abortController,
       );
 
-      if (data.content) {
-        globalState.modal.history.updateAssistantMessage(data);
+      const returnedChatId = data.chatId;
+
+      const currentChatId = globalState.modal.chatId || returnedChatId;
+      if (titleDataPromise !== null && currentChatId) {
+        titleDataPromise?.then((title) => {
+          if (title.content) {
+            void executor.chat.setChatTitle(currentChatId, title.content);
+            globalState.modal.history.setTitle(title.content);
+          }
+        });
+
+        chats.markAsStale();
       }
 
-      if (data.toolCalls) {
+      if (!globalState.modal.chatId && returnedChatId) {
+        chats.markAsStale();
+        globalState.modal.chatId = returnedChatId;
+
+        void createOrUpdateChat(
+          globalState.modal.history.getKey(),
+          returnedChatId,
+          globalState.config.user.id,
+        );
+
+        globalState.modal.history.migrateTempChat(returnedChatId);
+      }
+
+      if (data.content) {
+        const assistantMsg = globalState.modal.history.updateAssistantMessage(data);
+        if (globalState.modal.chatId) {
+          await executor.chat.storeMessage(globalState.modal.chatId, assistantMsg, data.usage);
+        }
+      }
+
+      if (hasToolCalls(data)) {
         await callTools(
           config,
-          data.toolCalls,
+          data,
           selectedAgent?.name,
           additionalOptions,
           globalState.modal.abortController,
@@ -195,14 +247,48 @@ export const sendMessage = async (
     if (config.type === 'image') {
       const data = await executor.prompt.image(
         {
-          prompt: message,
+          persist: config.persist,
+          chatId: globalState.modal.chatId,
+          chatPublic: globalState.modal.chatPublic,
+          lastMessageId,
+          userMsg: userMsg,
           additionalOptions,
-          attachments: attachments,
         },
         globalState.modal.abortController,
       );
 
-      globalState.modal.history.addAssistantMessage(data);
+      const returnedChatId = data.chatId;
+
+      const currentChatId = globalState.modal.chatId || returnedChatId;
+      if (titleDataPromise !== null && currentChatId) {
+        titleDataPromise?.then((title) => {
+          if (title.content) {
+            void executor.chat.setChatTitle(currentChatId, title.content);
+            globalState.modal.history.setTitle(title.content);
+          }
+        });
+
+        chats.markAsStale();
+      }
+
+      if (!globalState.modal.chatId && returnedChatId) {
+        chats.markAsStale();
+        globalState.modal.chatId = returnedChatId;
+
+        void createOrUpdateChat(
+          globalState.modal.history.getKey(),
+          returnedChatId,
+          globalState.config.user.id,
+        );
+
+        globalState.modal.history.migrateTempChat(returnedChatId);
+      }
+
+      const assistantMsg = globalState.modal.history.addAssistantMessage(data);
+
+      if (globalState.modal.chatId) {
+        await executor.chat.storeMessage(globalState.modal.chatId, assistantMsg);
+      }
     }
 
     globalState.modal.abortController = undefined;
@@ -234,72 +320,15 @@ export const stopGeneration = () => {
   setLoadingState(false);
 };
 
-export const tryAgain = (config: LocalChatConfig) => {
-  if (globalState.modal.history.getMessages().length === 0) {
-    return;
-  }
+export const switchType = (type: ModalType) => {
+  const config = globalState.modal.config;
 
-  if (config.type === 'text') {
-    void sendMessage(config, 'Try again');
-    return;
-  }
-
-  if (config.type === 'image') {
-    const latestUserMsg = globalState.modal.history
-      .getMessages()
-      .reverse()
-      .find((msg) => msg.role === 'user');
-    if (latestUserMsg) {
-      void sendMessage(config, latestUserMsg.content as string);
-    }
-  }
-};
-
-export const switchType = (type: ModalType, config: LocalChatConfig) => {
   config.type = type;
 
   globalState.modal.history = chatHistory.init({
     key: `${config.namespace ?? 'modai'}/${config.key}/${config.type}`,
     persist: config.persist,
-    onAddMessage: (msg) => {
-      return renderMessage(msg, config) as UpdatableHTMLElement | undefined;
-    },
-    onInitDone: () => {
-      const messages = globalState.modal.history.getMessages().filter((m) => !m.hidden);
-      if (messages.length > 0) {
-        globalState.modal.welcomeMessage.style.display = 'none';
-
-        globalState.modal.actionButtons.forEach((btn) => {
-          btn.enable();
-        });
-      }
-    },
   });
-
-  while (globalState.modal.chatMessages.firstChild) {
-    globalState.modal.chatMessages.removeChild(globalState.modal.chatMessages.firstChild);
-  }
-
-  const messages = globalState.modal.history.getMessages().filter((m) => !m.hidden);
-  if (messages.length > 0) {
-    globalState.modal.welcomeMessage.style.display = 'none';
-
-    messages.forEach((msg) => {
-      if (msg.el) {
-        msg.el.classList.remove('new');
-        globalState.modal.chatMessages.appendChild(msg.el);
-      }
-    });
-
-    globalState.modal.actionButtons.forEach((btn) => {
-      btn.enable();
-    });
-  } else {
-    globalState.modal.welcomeMessage.style.display = 'block';
-    globalState.modal.actionButtons.forEach((btn) => {
-      btn.disable();
-    });
-  }
 
   globalState.modal.reloadChatControls();
 
@@ -308,9 +337,22 @@ export const switchType = (type: ModalType, config: LocalChatConfig) => {
 
 export const clearChat = () => {
   globalState.modal.history.clearHistory();
+  globalState.modal.setTitle(undefined);
+  showWelcomeMessage();
+  disableActionButtons();
+};
+
+export const showWelcomeMessage = () => {
   globalState.modal.chatMessages.innerHTML = '';
   globalState.modal.welcomeMessage.style.display = 'block';
+};
 
+export const hideWelcomeMessage = () => {
+  globalState.modal.chatMessages.innerHTML = '';
+  globalState.modal.welcomeMessage.style.display = 'none';
+};
+
+export const disableActionButtons = () => {
   globalState.modal.actionButtons.forEach((btn) => {
     btn.disable();
   });

@@ -52,12 +52,18 @@ export const nlToBr = (content: string) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
+export function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  delay: number,
+): (...args: Parameters<T>) => Promise<ReturnType<T>> {
   let timeoutId: number | undefined;
-  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      func.apply(this, args);
-    }, delay);
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>): Promise<ReturnType<T>> {
+    return new Promise((resolve) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        const result = func.apply(this, args);
+        resolve(result);
+      }, delay);
+    });
   };
 }

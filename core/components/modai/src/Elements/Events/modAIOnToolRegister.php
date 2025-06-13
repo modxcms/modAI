@@ -1,4 +1,5 @@
 <?php
+
 namespace modAI\Elements\Events;
 
 class modAIOnToolRegister extends Event
@@ -22,6 +23,7 @@ class modAIOnToolRegister extends Event
             \modAI\Tools\CreateResource::class,
             \modAI\Tools\GetResources::class,
             \modAI\Tools\GetResourceDetail::class,
+            \modAI\Tools\EditResource::class,
         ]));
     }
 }

@@ -1,4 +1,5 @@
 import { applyStyles, createElement } from '../utils';
+import { emitter } from './emitter';
 import { addErrorMessage } from './messageHandlers';
 import {
   clearChat,
@@ -18,8 +19,13 @@ import { lng } from '../../lng';
 import { buildNestedSelect } from '../dom/nestedSelect';
 import { buildSelect, Select } from '../dom/select';
 
-import type { LocalChatConfig } from './types';
+import type { LocalChatConfig, ModalType } from './types';
 import type { Button } from '../dom/button';
+
+export type ModeButton = Button & {
+  mode: ModalType;
+  activate: () => void;
+};
 
 export type UserInput = HTMLTextAreaElement & {
   setValue: (value: string) => void;
@@ -55,7 +61,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
     { ariaLabel: lng('modai.ui.loading_response') },
   );
 
-  const sendBtn = button(icon(20, arrowUp), () => sendMessage(config), '', {
+  const sendBtn = button(icon(20, arrowUp), () => sendMessage(), '', {
     ariaLabel: lng('modai.ui.send_message'),
   });
   sendBtn.disable();
@@ -94,8 +100,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
 
   inputSection.append(inputAddons, inputWrapper);
 
-  const modeButtons: Button[] = [];
-
+  const modeButtons: ModeButton[] = [];
   if (config.availableTypes?.includes('text')) {
     const textModeBtn = button(
       [icon(24, text), createElement('span', 'tooltip', lng('modai.ui.text_mode'))],
@@ -104,7 +109,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
           return;
         }
 
-        switchType('text', config);
+        switchType('text');
         modeButtons.forEach((btn) => {
           applyStyles(btn, '');
         });
@@ -114,7 +119,14 @@ export const buildModalInput = (config: LocalChatConfig) => {
       {
         ariaLabel: lng('modai.ui.text_mode'),
       },
-    );
+    ) as ModeButton;
+    textModeBtn.activate = () => {
+      modeButtons.forEach((btn) => {
+        applyStyles(btn, '');
+      });
+      applyStyles(textModeBtn, 'active');
+    };
+    textModeBtn.mode = 'text';
 
     if (config.type === 'text') {
       applyStyles(textModeBtn, 'active');
@@ -130,7 +142,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
           return;
         }
 
-        switchType('image', config);
+        switchType('image');
         modeButtons.forEach((btn) => {
           applyStyles(btn, '');
         });
@@ -140,27 +152,21 @@ export const buildModalInput = (config: LocalChatConfig) => {
       {
         ariaLabel: lng('modai.ui.image_mode'),
       },
-    );
+    ) as ModeButton;
+    imageModeBtn.activate = () => {
+      modeButtons.forEach((btn) => {
+        applyStyles(btn, '');
+      });
+      applyStyles(imageModeBtn, 'active');
+    };
+    imageModeBtn.mode = 'image';
+
     if (config.type === 'image') {
       applyStyles(imageModeBtn, 'active');
     }
-
     modeButtons.push(imageModeBtn);
   }
 
-  const clearChatBtn = button(
-    [icon(24, trash), createElement('span', 'tooltip', lng('modai.ui.clear_chat'))],
-    () => {
-      clearChat();
-    },
-    '',
-    {
-      ariaLabel: lng('modai.ui.clear_chat'),
-    },
-  );
-  clearChatBtn.disable();
-
-  // const defaultOptions: Button[] = [...modeButtons, ];
   let additionalOptions: (Button | Select)[] = [];
 
   const options = createElement('div', 'options', [], {
@@ -173,11 +179,28 @@ export const buildModalInput = (config: LocalChatConfig) => {
 
   options.append(optionsLeft, optionsRight);
 
-  optionsRight.append(clearChatBtn);
+  let clearChatBtn: null | Button;
+  if (!config.persist) {
+    clearChatBtn = button(
+      [icon(24, trash), createElement('span', 'tooltip', lng('modai.ui.clear_chat'))],
+      () => {
+        clearChat();
+      },
+      '',
+      {
+        ariaLabel: lng('modai.ui.clear_chat'),
+      },
+    );
+    clearChatBtn.disable();
+    optionsRight.append(clearChatBtn);
 
+    // globalState.modal.actionButtons.push(clearChatBtn);
+  }
+
+  let controlButtons: (Button | Select)[] = [];
   const loadChatControls = () => {
+    controlButtons = [];
     optionsLeft.innerHTML = '';
-    const controlButtons: (Button | Select)[] = [];
 
     additionalOptions = [];
     if (config.type === 'text' && Object.keys(globalState.config.availableAgents).length > 0) {
@@ -281,7 +304,7 @@ export const buildModalInput = (config: LocalChatConfig) => {
       }
 
       e.preventDefault();
-      void sendMessage(config);
+      void sendMessage();
     }
   });
 
@@ -389,13 +412,51 @@ export const buildModalInput = (config: LocalChatConfig) => {
     }
   });
 
-  globalState.modal.loadingIndicator = loading;
+  emitter.on('loading', ({ eventData }) => {
+    sendBtn.disable();
+    textarea.disabled = eventData.isLoading;
+
+    if (eventData.isLoading) {
+      loading.style.display = 'flex';
+
+      if (!eventData.isPreloading) {
+        stopBtn.enable();
+      }
+    } else {
+      loading.style.display = 'none';
+
+      if (!eventData.isPreloading) {
+        stopBtn.disable();
+      }
+    }
+
+    [...modeButtons, ...controlButtons].forEach((btn) =>
+      eventData.isLoading ? btn.disable() : btn.enable(),
+    );
+
+    if (clearChatBtn) {
+      if (eventData.isLoading || !eventData.hasMessages) {
+        clearChatBtn.disable();
+      } else {
+        clearChatBtn.enable();
+      }
+    }
+  });
+
   globalState.modal.messageInput = textarea;
-  globalState.modal.sendBtn = sendBtn;
-  globalState.modal.stopBtn = stopBtn;
   globalState.modal.modeButtons = modeButtons;
-  globalState.modal.actionButtons = [clearChatBtn];
   globalState.modal.reloadChatControls = loadChatControls;
+
+  globalState.modal.enableSending = () => {
+    textarea.disabled = false;
+    textarea.placeholder = lng('modai.ui.prompt_placeholder');
+    globalState.modal.controlButtons.forEach((btn) => btn.enable());
+  };
+  globalState.modal.disableSending = () => {
+    textarea.disabled = true;
+    textarea.placeholder = lng('modai.ui.read_only_chat');
+    globalState.modal.controlButtons.forEach((btn) => btn.disable());
+  };
 
   return container;
 };

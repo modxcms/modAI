@@ -6,6 +6,7 @@ class AIResponse
 {
     private string $service;
     private string $model;
+    private ?int $chatId = null;
     private string $url;
     private string $parser;
     private array $headers = [];
@@ -62,6 +63,12 @@ class AIResponse
         return $this;
     }
 
+    public function withChatId(?int $chatId): self
+    {
+        $this->chatId = $chatId;
+        return $this;
+    }
+
     public function getService(): string
     {
         return $this->service;
@@ -100,6 +107,11 @@ class AIResponse
     public function getBinary(): array
     {
         return $this->binary;
+    }
+
+    public function getChatId(): ?int
+    {
+        return $this->chatId;
     }
 
     public function isStream(): bool

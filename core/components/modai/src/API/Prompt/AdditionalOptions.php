@@ -3,11 +3,12 @@
 namespace modAI\API\Prompt;
 
 use modAI\Settings;
+use modAI\Utils;
 
 trait AdditionalOptions {
     protected function getAdditionalOptions($data, $field, $type): array
     {
-        $additionalOptions = $this->modx->getOption('additionalOptions', $data, null);
+        $additionalOptions = Utils::getOption('additionalOptions', $data, null);
 
         if (empty($additionalOptions) || !is_array($additionalOptions)) {
             return [];

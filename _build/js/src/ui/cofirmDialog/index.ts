@@ -11,10 +11,18 @@ type ConfirmDialogOptions = {
   content: El;
   onConfirm: () => void;
   onCancel?: () => void;
+  onLoad?: () => void;
   confirmText: string;
   cancelText?: string;
   showConfirm?: boolean;
   showCancel?: boolean;
+};
+
+type ConfirmDialog = HTMLDivElement & {
+  api: {
+    cancelDialog: () => void;
+    confirmDialog: () => void;
+  };
 };
 
 export const confirmDialog = (config: ConfirmDialogOptions) => {
@@ -31,6 +39,10 @@ export const confirmDialog = (config: ConfirmDialogOptions) => {
 
     if (!config.showConfirm && config.showCancel) {
       cancelBtn.focus();
+    }
+
+    if (config.onLoad) {
+      config.onLoad();
     }
   });
 
@@ -70,7 +82,7 @@ export const confirmDialog = (config: ConfirmDialogOptions) => {
     ariaModal: 'true',
     role: 'dialog',
     ariaLabel: config.title,
-  });
+  }) as ConfirmDialog;
 
   const destroyDialog = () => {
     document.removeEventListener('keydown', handleDialogKeyDown);
@@ -130,6 +142,16 @@ export const confirmDialog = (config: ConfirmDialogOptions) => {
     e.stopImmediatePropagation();
   });
 
+  overlay.api = {
+    cancelDialog: closeDialog,
+    confirmDialog: () => {
+      destroyDialog();
+      config.onConfirm();
+    },
+  };
+
   shadowRoot.appendChild(overlay);
   document.body.append(shadow);
+
+  return overlay;
 };

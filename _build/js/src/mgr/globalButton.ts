@@ -3,7 +3,7 @@ import { ui } from '../ui';
 import { button } from '../ui/dom/button';
 import { icon } from '../ui/dom/icon';
 import { createModAIShadow } from '../ui/dom/modAIShadow';
-import { bot } from '../ui/icons';
+import { messageBot } from '../ui/icons';
 import { createElement } from '../ui/utils';
 
 import type { LocalChatConfig } from '../ui/localChat/types';
@@ -24,7 +24,7 @@ export const initGlobalButton = () => {
   const { shadow, shadowRoot } = createModAIShadow();
 
   const trigger = button(
-    icon(24, bot),
+    icon(24, messageBot),
     () => {
       ui.localChat.createModal(config);
     },

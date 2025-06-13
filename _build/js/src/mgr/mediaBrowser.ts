@@ -29,7 +29,7 @@ export const initOnMediaBrowser = () => {
                 path: filePath,
               },
               imageActions: {
-                insert: (_, modal) => {
+                download: (_, modal) => {
                   this.fireEvent('afterUpload');
                   modal.api.closeModal();
                 },

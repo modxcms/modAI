@@ -1,38 +1,46 @@
+import { ModeButton, UserInput } from './modalInput';
 import { Select } from '../dom/select';
 
-import type { UserInput } from './modalInput';
 import type { AttachmentsWrapper } from './modalInputAttachments';
 import type { ContextWrapper } from './modalInputContext';
-import type { ChatHistory, Message, UserMessageContext } from '../../chatHistory';
+import type { Sidebar } from './sidebar';
+import type { ChatHistory, Message, UserMessageContext } from '../../chatHistory/types';
 import type { Button } from '../dom/button';
 
 export type ModalType = 'text' | 'image';
 
 export type Modal = HTMLDivElement & {
+  config: LocalChatConfig;
   modal: HTMLDivElement;
   welcomeMessage: HTMLDivElement;
   chatMessages: HTMLDivElement;
   chatContainer: HTMLDivElement;
   scrollWrapper: HTMLDivElement;
-  loadingIndicator: HTMLDivElement;
+  portal: HTMLDivElement;
+  sidebar?: Sidebar;
 
   attachments: AttachmentsWrapper;
   context: ContextWrapper;
   messageInput: UserInput;
 
-  modeButtons: Button[];
+  modeButtons: ModeButton[];
+  modalButtons: (Button | Select)[];
   controlButtons: (Button | Select)[];
   actionButtons: (Button | Select)[];
-  stopBtn: Button;
-  sendBtn: Button;
   closeModalBtn: Button;
 
   reloadChatControls: () => void;
+  setTitle: (title?: string) => void;
+  disableSending: () => void;
+  enableSending: () => void;
 
   isDragging: boolean;
   isLoading: boolean;
   offsetX: number;
   offsetY: number;
+
+  chatId?: number;
+  chatPublic: boolean;
 
   abortController?: AbortController;
   history: ChatHistory;
@@ -64,6 +72,7 @@ export type LocalChatConfig = {
   imageActions?: {
     copy?: boolean | ((message: Message, modal: Modal) => void);
     insert?: (message: Message, modal: Modal) => void;
+    download?: boolean | ((message: Message, modal: Modal) => void);
   };
   image?: {
     mediaSource?: number | string;

@@ -8,7 +8,9 @@ use modAI\Exceptions\LexiconException;
 use modAI\Services\AIServiceFactory;
 use modAI\Services\Config\CompletionsConfig;
 use modAI\Settings;
+use modAI\Utils;
 use Psr\Http\Message\ServerRequestInterface;
+use MODX\Revolution\modResource;
 
 class Text extends API
 {
@@ -24,10 +26,10 @@ class Text extends API
 
         $data = $request->getParsedBody();
 
-        $namespace = $this->modx->getOption('namespace', $data, 'modai');
+        $namespace = Utils::getOption('namespace', $data, 'modai');
 
         $fields = array_flip(self::$validFields);
-        $field = $this->modx->getOption('field', $data, '');
+        $field = Utils::getOption('field', $data, '');
 
         if (substr($field, 0, 3) === 'tv.') {
             $modAi = $this->modx->services->get('modai');
@@ -45,14 +47,15 @@ class Text extends API
             }
         }
 
-        $resourceId = $this->modx->getOption('resourceId', $data);
-        $content = $this->modx->getOption('content', $data);
+        $resourceId = Utils::getOption('resourceId', $data);
+        $content = Utils::getOption('content', $data);
 
         if (empty($resourceId) && empty($content)) {
             throw new LexiconException('modai.error.no_resource_specified');
         }
 
         if (!empty($resourceId)) {
+            /** @var modResource $resource */
             $resource = $this->modx->getObject('modResource', $resourceId);
             if (!$resource) {
                 throw new LexiconException('modai.error.no_resource_found');

@@ -11,8 +11,8 @@ export const buildModalChat = () => {
     createElement(
       'p',
       'greeting',
-      globalState.config.name
-        ? lng('modai.ui.greeting_with_name', { name: globalState.config.name })
+      globalState.config.user.name
+        ? lng('modai.ui.greeting_with_name', { name: globalState.config.user.name })
         : lng('modai.ui.greeting'),
     ),
     createElement('p', 'msg', lng('modai.ui.welcome_msg')),

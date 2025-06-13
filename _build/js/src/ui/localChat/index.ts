@@ -13,6 +13,10 @@ export const createModal = (config: LocalChatConfig) => {
     return;
   }
 
+  if (config.persist !== false) {
+    config.persist = true;
+  }
+
   if (config.context) {
     if (!config.withContexts) {
       config.withContexts = [];
@@ -54,12 +58,14 @@ export const createModal = (config: LocalChatConfig) => {
 
   modal.api = {
     sendMessage: async (providedMessage?: string, hidePrompt?: boolean) => {
-      await sendMessage(config, providedMessage, hidePrompt);
+      await sendMessage(providedMessage, hidePrompt);
     },
     closeModal: () => {
       closeModal();
     },
   };
+
+  globalState.modal.config = config;
 
   if (config.withContexts) {
     globalState.modal.context.addContexts(config.withContexts);

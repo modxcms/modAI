@@ -1,10 +1,11 @@
 import { createElement, debounce } from '../utils';
-import { renderMessage } from './messageHandlers';
 import { scrollToBottom } from './modalActions';
 import { buildModalChat } from './modalChat';
 import { buildModalHeader } from './modalHeader';
 import { buildModalInput } from './modalInput';
+import { portal } from './portal';
 import { buildResizer } from './resizer';
+import { buildSidebar } from './sidebar';
 import { loadModalState, saveModalState } from './state';
 import { chatHistory } from '../../chatHistory';
 import { globalState } from '../../globalState';
@@ -12,7 +13,7 @@ import { lng } from '../../lng';
 import { createModAIShadow } from '../dom/modAIShadow';
 
 import type { Modal, LocalChatConfig } from './types';
-import type { UpdatableHTMLElement } from '../../chatHistory';
+import type { UpdatableHTMLElement } from '../../chatHistory/types';
 
 const debouncedSaveModalState = debounce(saveModalState, 300);
 
@@ -48,8 +49,14 @@ export const buildModal = (config: LocalChatConfig) => {
 
   shadow.modal = chatModal;
   globalState.modal = shadow;
+  globalState.modal.actionButtons = [];
+  globalState.modal.modalButtons = [];
 
-  chatModal.append(buildModalHeader());
+  if (config.persist) {
+    chatModal.append(buildSidebar());
+  }
+
+  chatModal.append(buildModalHeader(config));
   chatModal.append(buildModalChat());
   chatModal.append(buildModalInput(config));
 
@@ -59,6 +66,7 @@ export const buildModal = (config: LocalChatConfig) => {
   chatModal.append(buildResizer());
 
   shadowRoot.appendChild(chatModal);
+  shadowRoot.appendChild(portal);
   document.body.append(shadow);
 
   shadow.isDragging = false;
@@ -69,34 +77,8 @@ export const buildModal = (config: LocalChatConfig) => {
 
   shadow.history = chatHistory.init({
     key: `${config.namespace ?? 'modai'}/${config.key}/${config.type}`,
-    onAddMessage: (msg) => renderMessage(msg, config) as UpdatableHTMLElement | undefined,
     persist: config.persist,
-    onInitDone: () => {
-      const messages = shadow.history.getMessages().filter((m) => !m.hidden);
-      if (messages.length > 0) {
-        shadow.welcomeMessage.style.display = 'none';
-
-        shadow.actionButtons.forEach((btn) => {
-          btn.enable();
-        });
-      }
-    },
   });
-
-  const messages = shadow.history.getMessages().filter((m) => !m.hidden);
-  if (messages.length > 0) {
-    shadow.welcomeMessage.style.display = 'none';
-    shadow.actionButtons.forEach((btn) => {
-      btn.enable();
-    });
-
-    messages.forEach((msg) => {
-      if (msg.el) {
-        msg.el.classList.remove('new');
-        shadow.chatMessages.appendChild(msg.el);
-      }
-    });
-  }
 
   return shadow;
 };

@@ -1,46 +1,14 @@
-import type {
-  AssistantMessageContentType,
-  Message,
-  UserAttachment,
-  UserMessageContext,
-  BaseMessage,
-} from './chatHistory';
-import type { Metadata, ToolCalls, ToolResponseContent } from './executor/types';
-
 const DB_NAME = 'modAI';
-const OBJECT_STORE_NAME = 'messages';
+const OBJECT_STORE_NAME = 'chats';
+const DB_VERSION = 2;
 
 let db: IDBDatabase | null = null;
 
-type BaseDBMessage = BaseMessage & {
-  timestamp: number;
-  category: string;
+type ChatRecord = {
+  key: string;
+  chat_id: number;
+  user_id: number;
 };
-
-type ToolResponseMessage = BaseDBMessage & {
-  __type: 'ToolResponseMessage';
-  role: 'tool';
-  content: ToolResponseContent;
-};
-
-type AssistantMessage = Metadata &
-  Omit<BaseDBMessage, 'toolCalls'> & {
-    __type: 'AssistantMessage';
-    role: 'assistant';
-    content: string | undefined;
-    contentType: AssistantMessageContentType;
-    toolCalls?: ToolCalls;
-  };
-
-type UserMessage = Omit<BaseDBMessage, 'contexts' | 'attachments'> & {
-  __type: 'UserMessage';
-  role: 'user';
-  content: string;
-  contexts?: UserMessageContext[];
-  attachments?: UserAttachment[];
-};
-
-type DBMessage = UserMessage | AssistantMessage | ToolResponseMessage;
 
 const initializeDatabase = async (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
@@ -49,16 +17,26 @@ const initializeDatabase = async (): Promise<IDBDatabase> => {
       return;
     }
 
-    const request = indexedDB.open(DB_NAME, 1);
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
-      if (!db.objectStoreNames.contains(OBJECT_STORE_NAME)) {
-        const objectStore = db.createObjectStore(OBJECT_STORE_NAME, { keyPath: 'id' });
 
-        objectStore.createIndex('timestamp', 'timestamp', { unique: false });
-        objectStore.createIndex('category', 'category', { unique: false });
+      if (db.objectStoreNames.contains('messages')) {
+        db.deleteObjectStore('messages');
       }
+
+      if (db.objectStoreNames.contains(OBJECT_STORE_NAME)) {
+        db.deleteObjectStore(OBJECT_STORE_NAME);
+      }
+
+      const objectStore = db.createObjectStore(OBJECT_STORE_NAME, {
+        keyPath: ['key', 'user_id'], // Composite key for key/user_id unique constraint
+      });
+
+      objectStore.createIndex('chat_id', 'chat_id', { unique: false });
+      objectStore.createIndex('key', 'key', { unique: false });
+      objectStore.createIndex('user_id', 'user_id', { unique: false });
     };
 
     request.onsuccess = (event) => {
@@ -72,257 +50,108 @@ const initializeDatabase = async (): Promise<IDBDatabase> => {
   });
 };
 
-export const getMessages = async (category: string): Promise<DBMessage[]> => {
+export const getChatId = async (key: string, user_id: number): Promise<number | null> => {
   const db = await initializeDatabase();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(OBJECT_STORE_NAME, 'readonly');
     const objectStore = transaction.objectStore(OBJECT_STORE_NAME);
-    const index = objectStore.index('category');
-    const request = index.getAll(category);
+    const request = objectStore.get([key, user_id]);
 
     request.onsuccess = (event) => {
-      const messages = (event.target as IDBRequest<DBMessage[]>).result || [];
-      messages.sort((a, b) => a.timestamp - b.timestamp);
-      resolve(messages);
+      const result = (event.target as IDBRequest<ChatRecord>).result;
+      resolve(result ? result.chat_id : null);
     };
 
     request.onerror = (event) => {
-      reject((event.target as IDBRequest<DBMessage[]>).error);
+      reject((event.target as IDBRequest<ChatRecord>).error);
     };
   });
 };
 
-export const deleteMessagesAfter = async (
-  category: string,
-  editedMessageId: string,
+export const createOrUpdateChat = async (
+  key: string,
+  chat_id: number,
+  user_id: number,
 ): Promise<void> => {
   const db = await initializeDatabase();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(OBJECT_STORE_NAME, 'readwrite');
     const objectStore = transaction.objectStore(OBJECT_STORE_NAME);
-    const index = objectStore.index('category');
-    const getAllRequest = index.getAll(category);
 
-    getAllRequest.onsuccess = async (event) => {
-      const allMessages = (event.target as IDBRequest<DBMessage[]>).result || [];
-      allMessages.sort((a, b) => a.timestamp - b.timestamp);
-      const editedMessageIndex = allMessages.findIndex((msg) => msg.id === editedMessageId);
-
-      if (editedMessageIndex !== -1) {
-        for (let i = editedMessageIndex; i < allMessages.length; i++) {
-          const deleteRequest = objectStore.delete(allMessages[i].id);
-          deleteRequest.onerror = (deleteEvent) => {
-            reject((deleteEvent.target as IDBRequest).error);
-            return;
-          };
-        }
-      }
-
-      transaction.oncomplete = () => {
-        resolve();
-      };
-
-      transaction.onerror = (transactionEvent) => {
-        reject((transactionEvent.target as IDBTransaction).error);
-      };
-    };
-
-    getAllRequest.onerror = (event) => {
-      reject((event.target as IDBRequest).error);
-    };
-  });
-};
-
-export const deleteAllMessages = async (category: string): Promise<void> => {
-  const db = await initializeDatabase();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(OBJECT_STORE_NAME, 'readwrite');
-    const objectStore = transaction.objectStore(OBJECT_STORE_NAME);
-    const index = objectStore.index('category');
-    const getAllRequest = index.getAll(category);
-
-    getAllRequest.onsuccess = async (event) => {
-      const allMessages = (event.target as IDBRequest<DBMessage[]>).result || [];
-      allMessages.sort((a, b) => a.timestamp - b.timestamp);
-      for (let i = 0; i < allMessages.length; i++) {
-        const deleteRequest = objectStore.delete(allMessages[i].id);
-        deleteRequest.onerror = (deleteEvent) => {
-          reject((deleteEvent.target as IDBRequest).error);
-          return;
-        };
-      }
-
-      transaction.oncomplete = () => {
-        resolve();
-      };
-
-      transaction.onerror = (transactionEvent) => {
-        reject((transactionEvent.target as IDBTransaction).error);
-      };
-    };
-
-    getAllRequest.onerror = (event) => {
-      reject((event.target as IDBRequest).error);
-    };
-  });
-};
-
-export const saveMessage = async (category: string, newMessage: Message): Promise<void> => {
-  const db = await initializeDatabase();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(OBJECT_STORE_NAME, 'readwrite');
-    const objectStore = transaction.objectStore(OBJECT_STORE_NAME);
-
-    let request;
-
-    if (newMessage.__type === 'UserMessage') {
-      const msg: DBMessage = {
-        __type: 'UserMessage',
-        timestamp: Date.now(),
-        category,
-        id: newMessage.id,
-        content: newMessage.content,
-        role: newMessage.role,
-        toolCalls: newMessage.toolCalls,
-        contexts: newMessage.contexts,
-        attachments: newMessage.attachments,
-        hidden: newMessage.hidden,
-        ctx: newMessage.ctx,
-      };
-
-      request = objectStore.put(msg);
-    }
-
-    if (newMessage.__type === 'AssistantMessage') {
-      const msg: DBMessage = {
-        __type: 'AssistantMessage',
-        timestamp: Date.now(),
-        category,
-        id: newMessage.id,
-        content: newMessage.content,
-        role: newMessage.role,
-        toolCalls: newMessage.toolCalls,
-        contexts: newMessage.contexts,
-        attachments: newMessage.attachments,
-        hidden: newMessage.hidden,
-        ctx: newMessage.ctx,
-        contentType: newMessage.contentType,
-        metadata: newMessage.metadata,
-      };
-
-      request = objectStore.put(msg);
-    }
-
-    if (newMessage.__type === 'ToolResponseMessage') {
-      const msg: DBMessage = {
-        __type: 'ToolResponseMessage',
-        timestamp: Date.now(),
-        category,
-        id: newMessage.id,
-        content: newMessage.content,
-        role: newMessage.role,
-        toolCalls: newMessage.toolCalls,
-        contexts: newMessage.contexts,
-        attachments: newMessage.attachments,
-        hidden: newMessage.hidden,
-        ctx: newMessage.ctx,
-      };
-
-      request = objectStore.put(msg);
-    }
-
-    if (!request) {
-      return;
-    }
+    const chatRecord: ChatRecord = { key, chat_id, user_id };
+    const request = objectStore.put(chatRecord);
 
     request.onsuccess = () => {
       resolve();
     };
 
     request.onerror = (event) => {
+      const error = (event.target as IDBRequest).error;
+      // Check if it's a constraint violation on chat_id
+      if (error?.name === 'ConstraintError') {
+        reject(new Error(`Chat ID "${chat_id}" already exists`));
+      } else {
+        reject(error);
+      }
+    };
+  });
+};
+
+export const deleteChatByKeyAndUserId = async (key: string, user_id: number): Promise<boolean> => {
+  const db = await initializeDatabase();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(OBJECT_STORE_NAME, 'readwrite');
+    const objectStore = transaction.objectStore(OBJECT_STORE_NAME);
+    const request = objectStore.delete([key, user_id]);
+
+    request.onsuccess = () => {
+      resolve(true);
+    };
+
+    request.onerror = (event) => {
       reject((event.target as IDBRequest).error);
     };
   });
 };
 
-export const updateMessage = async (message: Message): Promise<void> => {
+export const deleteChatByChatId = async (chat_id: number): Promise<boolean> => {
   const db = await initializeDatabase();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(OBJECT_STORE_NAME, 'readwrite');
     const objectStore = transaction.objectStore(OBJECT_STORE_NAME);
+    const index = objectStore.index('chat_id');
 
-    const getRequest = objectStore.get(message.id);
+    let deletedCount = 0;
+    let hasError = false;
 
-    getRequest.onsuccess = (event) => {
-      const existingMessage = (event.target as IDBRequest<Message>).result;
+    // Use openCursor to iterate through all records with matching chat_id
+    const cursorRequest = index.openCursor(IDBKeyRange.only(chat_id));
 
-      if (existingMessage) {
-        let putRequest;
+    cursorRequest.onsuccess = (event) => {
+      const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
 
-        if (message.__type === 'UserMessage') {
-          const msg = {
-            ...existingMessage,
-            content: message.content,
-            role: message.role,
-            toolCalls: message.toolCalls,
-            contexts: message.contexts,
-            attachments: message.attachments,
-            hidden: message.hidden,
-            ctx: message.ctx,
-          };
+      if (cursor) {
+        // Delete the current record
+        const deleteRequest = objectStore.delete(cursor.primaryKey);
 
-          putRequest = objectStore.put(msg);
-        }
-
-        if (message.__type === 'AssistantMessage') {
-          const msg = {
-            ...existingMessage,
-            content: message.content,
-            role: message.role,
-            toolCalls: message.toolCalls,
-            contexts: message.contexts,
-            attachments: message.attachments,
-            hidden: message.hidden,
-            ctx: message.ctx,
-            contentType: message.contentType,
-            metadata: message.metadata,
-          };
-
-          putRequest = objectStore.put(msg);
-        }
-
-        if (message.__type === 'ToolResponseMessage') {
-          const msg = {
-            ...existingMessage,
-            content: message.content,
-            role: message.role,
-            toolCalls: message.toolCalls,
-            contexts: message.contexts,
-            attachments: message.attachments,
-            hidden: message.hidden,
-            ctx: message.ctx,
-          };
-
-          putRequest = objectStore.put(msg);
-        }
-
-        if (!putRequest) {
-          return;
-        }
-
-        putRequest.onsuccess = () => {
-          resolve();
+        deleteRequest.onsuccess = () => {
+          deletedCount++;
+          cursor.continue(); // Move to next matching record
         };
 
-        putRequest.onerror = (putEvent) => {
-          reject((putEvent.target as IDBRequest).error);
+        deleteRequest.onerror = (deleteEvent) => {
+          hasError = true;
+          reject((deleteEvent.target as IDBRequest).error);
         };
       } else {
-        reject(new Error(`Message with ID "${message.id}" not found in the database.`));
+        // No more records to process
+        if (!hasError) {
+          resolve(deletedCount > 0); // Return true if at least one record was deleted
+        }
       }
     };
 
-    getRequest.onerror = (event) => {
+    cursorRequest.onerror = (event) => {
       reject((event.target as IDBRequest).error);
     };
   });

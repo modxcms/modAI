@@ -72,6 +72,7 @@ class GetResourceDetail implements ToolInterface
         $resources = $this->modx->getIterator(modResource::class, $where);
         foreach ($resources as $resource) {
             $content = $resource->get('content');
+            $rawContent = $content;
 
             try {
                 $parser = $this->modx->getParser();
@@ -84,6 +85,7 @@ class GetResourceDetail implements ToolInterface
             $arr = $resource->toArray();
 
             $arr['content'] = $content;
+            $arr['raw_content'] = $rawContent;
             $arr['edit_url'] = $this->modx->config['manager_url'] . '?a=resource/update&id=' . $resource->get('id');
             $arr['uri'] = $this->modx->makeUrl($resource->get('id'), '', '', 'full');
 

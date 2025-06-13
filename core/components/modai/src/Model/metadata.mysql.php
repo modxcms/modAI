@@ -7,16 +7,18 @@ $xpdo_meta_map = array (
     array (
         'xPDO\\Om\\xPDOSimpleObject' => 
         array (
-            0 => 'modAI\\Model\\Tool',
-            1 => 'modAI\\Model\\ContextProvider',
-            2 => 'modAI\\Model\\Agent',
-            3 => 'modAI\\Model\\PromptLibraryCategory',
-            4 => 'modAI\\Model\\PromptLibraryPrompt',
+            0 => 'modAI\\Model\\Chat',
+            1 => 'modAI\\Model\\Tool',
+            2 => 'modAI\\Model\\ContextProvider',
+            3 => 'modAI\\Model\\Agent',
+            4 => 'modAI\\Model\\PromptLibraryCategory',
+            5 => 'modAI\\Model\\PromptLibraryPrompt',
         ),
         'xPDO\\Om\\xPDOObject' => 
         array (
-            0 => 'modAI\\Model\\AgentContextProvider',
-            1 => 'modAI\\Model\\AgentTool',
+            0 => 'modAI\\Model\\Message',
+            1 => 'modAI\\Model\\AgentContextProvider',
+            2 => 'modAI\\Model\\AgentTool',
         ),
     ),
 );

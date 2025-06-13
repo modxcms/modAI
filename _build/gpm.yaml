@@ -1,5 +1,5 @@
 name: modAI
-version: 0.13.1-pl
+version: 0.14.0-alpha9
 lowCaseName: modai
 namespace: modAI
 author: 'John Peca'
@@ -98,7 +98,7 @@ systemSettings:
   - key: global.text.custom_options
     area: text
     type: textarea
-    value:
+    value: ''
   - key: global.text.stream
     area: text
     type: combo-boolean
@@ -114,7 +114,7 @@ systemSettings:
   - key: global.vision.custom_options
     area: vision
     type: textarea
-    value:
+    value: ''
   - key: global.vision.stream
     area: vision
     type: combo-boolean
@@ -128,19 +128,19 @@ systemSettings:
     value: openai/gpt-image-1
   - key: global.image.style
     area: image
-    value:
+    value: ''
   - key: global.image.response_format
     area: image
-    value:
+    value: ''
   - key: global.image.size
     area: image
-    value: "1024x1024"
+    value: '1024x1024'
   - key: global.image.quality
     area: image
     value: auto
   - key: global.image.path
     area: image
-    value: "assets/ai/{resourceId}/{hash}.png"
+    value: 'assets/ai/{resourceId}/{hash}.png'
   - key: global.image.media_source
     area: image
     type: modx-combo-source
@@ -210,7 +210,25 @@ systemSettings:
     area: chat
     type: textarea
     value: ''
-
+  - key: chat.title.generate
+    area: chat
+    type: combo-boolean
+    value: 1
+  - key: chat.title.model
+    area: chat
+    value: openai/gpt-4o-mini
+  - key: chat.title.prompt
+    area: chat
+    type: textarea
+    value: |-
+      - You are a helpful assistant that generates short, catchy, and relevant titles for user prompts.
+      - Each title must be 32 characters or fewer.
+      - Avoid punctuation unless it’s necessary.
+      - Be concise, clear, and avoid generic phrases.
+  - key: chat.title.model_options
+    area: chat
+    type: textarea
+    value: '{"max_tokens": 16, "temperature": 0.7}'
 build:
   readme: core/components/modai/docs/README.md
   changelog: core/components/modai/docs/CHANGELOG.md
@@ -230,3 +248,5 @@ database:
     - "modAI\\Model\\AgentContextProvider"
     - "modAI\\Model\\PromptLibraryCategory"
     - "modAI\\Model\\PromptLibraryPrompt"
+    - "modAI\\Model\\Chat"
+    - "modAI\\Model\\Message"

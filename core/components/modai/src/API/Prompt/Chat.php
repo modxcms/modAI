@@ -6,10 +6,12 @@ use modAI\API\API;
 use modAI\Exceptions\APIException;
 use modAI\Exceptions\LexiconException;
 use modAI\Model\Agent;
+use modAI\Model\Message;
 use modAI\Model\Tool;
 use modAI\Services\AIServiceFactory;
 use modAI\Services\Config\CompletionsConfig;
 use modAI\Settings;
+use modAI\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Chat extends API
@@ -26,14 +28,29 @@ class Chat extends API
 
         $data = $request->getParsedBody();
 
-        $prompt = $this->modx->getOption('prompt', $data);
-        $field = $this->modx->getOption('field', $data, '');
-        $contexts = $this->modx->getOption('contexts', $data, null);
-        $attachments = $this->modx->getOption('attachments', $data, null);
-        $namespace = $this->modx->getOption('namespace', $data, 'modai');
-        $messages = $this->modx->getOption('messages', $data);
-        $agent = $this->modx->getOption('agent', $data, null);
-        $model = $this->modx->getOption('model', $data, '');
+        $userMsg = Utils::getOption('userMsg', $data, null);
+
+        $prompt = Utils::getOption('content', $userMsg);
+        $contexts = Utils::getOption('contexts', $userMsg, null);
+        $attachments = Utils::getOption('attachments', $userMsg, null);
+
+        $field = Utils::getOption('field', $data, '');
+        $namespace = Utils::getOption('namespace', $data, 'modai');
+        $messages = Utils::getOption('messages', $data);
+        $agent = Utils::getOption('agent', $data, null);
+        $model = Utils::getOption('model', $data, '');
+
+        $lastMessageId = Utils::getOption('lastMessageId', $data, null);
+        $persist = Utils::getOption('persist', $data, false);
+        $chatPublic = Utils::getOption('chatPublic', $data, null);
+        if ($chatPublic === null || !is_bool($chatPublic)) {
+            $chatPublic = true;
+        }
+
+        $chatId = Utils::getOption('chatId', $data, null);
+        if ($chatId !== null && !is_int($chatId)) {
+            $chatId = null;
+        }
 
         if (empty($prompt) && empty($messages)) {
             throw new LexiconException('modai.error.prompt_required');
@@ -161,6 +178,21 @@ class Chat extends API
             }
         }
 
+        $usedChatId = null;
+        if (!empty($userMsg) && $persist) {
+            $chat = \modAI\Model\Chat::getOrCreateChat($this->modx, $chatId, \modAI\Model\Chat::TYPE_TEXT, $chatPublic);
+            if ($chat === null) {
+                throw new LexiconException('modai.error.invalid_chat');
+            }
+
+            if ($chat->get('last_message_id') !== $lastMessageId) {
+                throw new LexiconException('modai.error.chat_out_of_sync');
+            }
+
+            $usedChatId = $chat->get('id');
+            Message::addUserMessage($this->modx, $usedChatId, $userMsg['id'], $prompt, $userMsg['hidden'], $contexts, $attachments, $userMsg['ctx']);
+        }
+
         $tools = Tool::getAvailableTools($this->modx, $agent ? $agent->id : null);
 
         $aiService = AIServiceFactory::new($model, $this->modx);
@@ -172,7 +204,7 @@ class Chat extends API
                 ->options(['max_tokens' => $maxTokens, 'temperature' => $temperature], $customOptions, $agentOptions, $additionalOptions)
                 ->systemInstructions($systemInstructions)
                 ->stream($stream)
-        );
+        )->withChatId($usedChatId);
 
         $this->proxyAIResponse($result);
     }

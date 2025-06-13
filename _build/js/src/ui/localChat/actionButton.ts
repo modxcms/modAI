@@ -5,7 +5,7 @@ import { check } from '../icons';
 import { createElement } from '../utils';
 
 import type { Modal } from './types';
-import type { Message } from '../../chatHistory';
+import type { Message } from '../../chatHistory/types';
 
 type ActionButtonConfig<M extends Message = Message> = {
   label: string;

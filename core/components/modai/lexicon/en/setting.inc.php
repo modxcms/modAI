@@ -92,6 +92,15 @@ $_lang['setting_modai.contexts.templates.name_desc'] = 'Name of the context prov
 
 $_lang['setting_modai.chat.additional_controls'] = 'Additional Chat Controls';
 $_lang['setting_modai.chat.additional_controls_desc'] = 'Define additional options for the chat window. Check docs for more info: https://modxcms.github.io/modAI';
+$_lang['setting_modai.chat.title.generate'] = 'Automatically Generate Chat TItle';
+$_lang['setting_modai.chat.title.generate_desc'] = 'If enabled, chat.title.model will be used to generate a title for a chat.';
+$_lang['setting_modai.chat.title.model'] = 'Chat Title Model';
+$_lang['setting_modai.chat.title.model_desc'] = 'Model used to generate a title for a chat.';
+$_lang['setting_modai.chat.title.prompt'] = 'Chat Title Prompt';
+$_lang['setting_modai.chat.title.prompt_desc'] = 'A system instructions on how to generate a title for a chat.';
+$_lang['setting_modai.chat.title.model_options'] = 'Chat Title Model Options';
+$_lang['setting_modai.chat.title.model_options_desc'] = 'Options that will be passed to the LLM model when generating chat title.';
+
 
 $_lang['setting_modai.init.global_chat'] = 'Global Chat';
 $_lang['setting_modai.init.global_chat_desc'] = 'If enabled, modAI will display global chat button in the main navigation.';

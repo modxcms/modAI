@@ -8,6 +8,7 @@ use modAI\Exceptions\LexiconException;
 use modAI\Services\AIServiceFactory;
 use modAI\Services\Config\VisionConfig;
 use modAI\Settings;
+use modAI\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Vision extends API
@@ -22,10 +23,10 @@ class Vision extends API
 
         $data = $request->getParsedBody();
 
-        $field = $this->modx->getOption('field', $data);
-        $namespace = $this->modx->getOption('namespace', $data, 'modai');
-        $image = $this->modx->getOption('image', $data);
-        $prompt = $this->modx->getOption('prompt', $data);
+        $field = Utils::getOption('field', $data);
+        $namespace = Utils::getOption('namespace', $data, 'modai');
+        $image = Utils::getOption('image', $data);
+        $prompt = Utils::getOption('prompt', $data);
 
         if (empty($image)) {
             throw new LexiconException('modai.error.image_requried');

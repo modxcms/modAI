@@ -74,7 +74,7 @@ const shadowStyles = `
     }
 `;
 
-export const createShadowElement = (content: string, customCSS: string[] = []) => {
+export const createShadowElement = (content: string | HTMLElement, customCSS: string[] = []) => {
   const shadow = createElement('div') as ShadowElement;
   shadow.updateContent = (content) => {
     textDiv.innerHTML = nlToBr(content);
@@ -82,7 +82,11 @@ export const createShadowElement = (content: string, customCSS: string[] = []) =
   };
 
   const textDiv = createElement('div');
-  textDiv.innerHTML = nlToBr(content);
+  if (typeof content === 'string') {
+    textDiv.innerHTML = nlToBr(content);
+  } else {
+    textDiv.append(content);
+  }
 
   const shadowRoot = shadow.attachShadow({ mode: 'open' });
 

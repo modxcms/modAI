@@ -13,10 +13,23 @@ export const buildResizer = () => {
     mouseX: number;
     mouseY: number;
   } = null;
+  let activeHandle: HTMLElement | null = null;
+  let fromLeft = false;
+  let fromTop = false;
 
-  const resizeHandle = createElement('div', 'resize-handle');
+  const resizeHandleWrapper = createElement('div');
+  const resizeHandles = [
+    createElement('div', 'resize-handle bottom-right'),
+    createElement('div', 'resize-handle bottom-left'),
+    createElement('div', 'resize-handle top-right'),
+    createElement('div', 'resize-handle top-left'),
+  ];
 
-  resizeHandle.addEventListener('pointerdown', startResize);
+  resizeHandleWrapper.append(...resizeHandles);
+
+  resizeHandles.forEach((resizeHandle) => {
+    resizeHandle.addEventListener('pointerdown', startResize);
+  });
 
   function startResize(e: PointerEvent) {
     if (isResizing || e.button !== 0) {
@@ -24,6 +37,7 @@ export const buildResizer = () => {
     }
 
     isResizing = true;
+    activeHandle = e.currentTarget as HTMLElement;
 
     const rect = globalState.modal.modal.getBoundingClientRect();
     initialState = {
@@ -35,17 +49,28 @@ export const buildResizer = () => {
       mouseY: e.clientY,
     };
 
-    document.body.style.cursor = 'nw-resize';
+    // Determine which edges are being resized based on the handle classes
+    const cls = (activeHandle?.className || '').toString();
+    fromLeft = cls.includes('left');
+    fromTop = cls.includes('top');
+
+    // Set appropriate diagonal cursor
+    let cursor: string;
+    if (fromLeft === fromTop) {
+      cursor = 'nwse-resize';
+    } else {
+      cursor = 'nesw-resize';
+    }
+    document.body.style.cursor = cursor;
 
     try {
-      resizeHandle.setPointerCapture(e.pointerId);
+      activeHandle.setPointerCapture(e.pointerId);
     } catch {
-      isResizing = false;
-      document.body.style.cursor = '';
-      return;
+      // If pointer capture fails, still proceed with document listeners
     }
-    resizeHandle.addEventListener('pointermove', handleResize, { passive: false });
-    resizeHandle.addEventListener('pointerup', stopResize);
+
+    document.addEventListener('pointermove', handleResize, { passive: false });
+    document.addEventListener('pointerup', stopResize);
 
     e.preventDefault();
     e.stopPropagation();
@@ -77,20 +102,46 @@ export const buildResizer = () => {
     const deltaX = pendingResize.clientX - initialState.mouseX;
     const deltaY = pendingResize.clientY - initialState.mouseY;
 
-    let newWidth = initialState.width + deltaX;
-    let newHeight = initialState.height + deltaY;
-
     // also set in modai.css
     const minWidth = 468;
     const minHeight = 500;
-    const maxWidth = window.innerWidth - initialState.x;
-    const maxHeight = window.innerHeight - initialState.y;
 
-    newWidth = Math.max(minWidth, Math.min(maxWidth, newWidth));
-    newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
+    const right = initialState.x + initialState.width;
+    const bottom = initialState.y + initialState.height;
 
-    globalState.modal.modal.style.width = newWidth + 'px';
-    globalState.modal.modal.style.height = newHeight + 'px';
+    // Helper clamp
+    const clamp = (val: number, min: number, max: number) => Math.max(min, Math.min(max, val));
+
+    let newLeft = initialState.x;
+    let newTop = initialState.y;
+    let newWidth: number;
+    let newHeight: number;
+
+    if (fromLeft) {
+      // Move left edge; right edge stays fixed
+      newLeft = clamp(initialState.x + deltaX, 0, right - minWidth);
+      newWidth = right - newLeft;
+    } else {
+      // Move right edge; left edge stays fixed
+      const maxWidth = window.innerWidth - initialState.x;
+      newWidth = clamp(initialState.width + deltaX, minWidth, maxWidth);
+    }
+
+    if (fromTop) {
+      // Move top edge; bottom edge stays fixed
+      newTop = clamp(initialState.y + deltaY, 0, bottom - minHeight);
+      newHeight = bottom - newTop;
+    } else {
+      // Move bottom edge; top edge stays fixed
+      const maxHeight = window.innerHeight - initialState.y;
+      newHeight = clamp(initialState.height + deltaY, minHeight, maxHeight);
+    }
+
+    const modal = globalState.modal.modal;
+    if (fromLeft) modal.style.left = newLeft + 'px';
+    if (fromTop) modal.style.top = newTop + 'px';
+    modal.style.width = newWidth + 'px';
+    modal.style.height = newHeight + 'px';
 
     rafId = null;
     pendingResize = null;
@@ -118,16 +169,17 @@ export const buildResizer = () => {
     }
 
     initialState = null;
-
     try {
-      resizeHandle.releasePointerCapture(e.pointerId);
+      activeHandle?.releasePointerCapture(e.pointerId);
     } catch {
       // not needed
     }
-
-    resizeHandle.removeEventListener('pointermove', handleResize);
-    resizeHandle.removeEventListener('pointerup', stopResize);
+    document.removeEventListener('pointermove', handleResize);
+    document.removeEventListener('pointerup', stopResize);
+    activeHandle = null;
+    fromLeft = false;
+    fromTop = false;
   }
 
-  return resizeHandle;
+  return resizeHandleWrapper;
 };

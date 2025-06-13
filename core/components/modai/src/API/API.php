@@ -153,6 +153,7 @@ abstract class API
         header("x-modai-service: {$aiResponse->getService()}");
         header("x-modai-model: {$aiResponse->getModel()}");
         header("x-modai-parser: {$aiResponse->getParser()}");
+        header("x-modai-chat-id: {$aiResponse->getChatId()}");
         header("x-modai-stream: $headerStream");
 
         $onServer = intval(Settings::getApiSetting($this->modx, $aiResponse->getService(), 'execute_on_server')) === 1;
@@ -200,7 +201,7 @@ abstract class API
             foreach ($binary as $name => $files) {
                 foreach ($files as $i => $file) {
                     $body .= '--' . $boundary . "\r\n";
-                    $body .= 'Content-Disposition: form-data; name="'.$name.'[]"; filename="source_image_' . $i . '.png"' . "\r\n";
+                    $body .= 'Content-Disposition: form-data; name="' . $name . '[]"; filename="source_image_' . $i . '.png"' . "\r\n";
                     $body .= 'Content-Type: ' . $file['mimeType'] . "\r\n";
                     $body .= "\r\n";
                     $body .= base64_decode($file['base64']) . "\r\n";

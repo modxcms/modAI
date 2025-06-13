@@ -21,7 +21,7 @@ class modAI
 
     function __construct(modX &$modx, array $config = [])
     {
-        $this->modx =& $modx;
+        $this->modx = &$modx;
 
         if (!$this->hasAccess()) {
             throw new \Exception('Unauthorized');
@@ -168,7 +168,6 @@ class modAI
         $firstName = explode(' ', $this->modx->user->Profile->fullname)[0];
 
         return [
-            'name' => $firstName,
             'assetsURL' => $this->getOption('assetsUrl'),
             'apiURL' => $this->getAPIUrl(),
             'cssURL' => $this->getCSSFile(),
@@ -176,6 +175,11 @@ class modAI
             'promptLibrary' => $this->getPromptLibrary(),
             'permissions' => $this->getClientPermissions(),
             'chatAdditionalControls' => $this->getChatAdditionalControls(),
+            'generateChatTitle' => intval($this->modx->getOption('modai.chat.title.generate', null, '1')) === 1,
+            'user' => [
+                'id' => $this->modx->user->id,
+                'name' => $firstName,
+            ]
         ];
     }
 

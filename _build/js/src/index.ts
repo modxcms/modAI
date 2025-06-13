@@ -1,9 +1,7 @@
-import { chatHistory } from './chatHistory';
 import { executor } from './executor';
 import { addHandler } from './executor/services';
 import { addStreamHandler } from './executor/streamHandlers';
 import { globalState } from './globalState';
-import { history } from './history';
 import { lng } from './lng';
 import { mgr } from './mgr';
 import { checkPermissions } from './permissions';
@@ -19,7 +17,10 @@ export type AvailableAgent = {
 };
 
 export type Config = {
-  name?: string;
+  user: {
+    id: number;
+    name?: string;
+  };
   assetsURL: string;
   apiURL: string;
   cssURL: string;
@@ -27,6 +28,7 @@ export type Config = {
   availableAgents: Record<string, AvailableAgent>;
   promptLibrary: { text?: NestedSelectData; image?: NestedSelectData };
   permissions: Record<Permissions, 1 | 0>;
+  generateChatTitle: boolean;
   chatAdditionalControls: Record<
     string,
     {
@@ -42,8 +44,6 @@ export const init = (config: Config) => {
   globalState.config = config;
 
   return {
-    chatHistory,
-    history,
     executor,
     ui,
     lng,

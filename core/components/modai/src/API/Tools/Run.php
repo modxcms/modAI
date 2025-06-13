@@ -7,7 +7,10 @@ use modAI\API\API;
 use modAI\Exceptions\APIException;
 use modAI\Exceptions\LexiconException;
 use modAI\Model\Agent;
+use modAI\Model\Chat;
+use modAI\Model\Message;
 use modAI\Model\Tool;
+use modAI\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Run extends API
@@ -19,8 +22,9 @@ class Run extends API
         }
 
         $data = $request->getParsedBody();
-        $toolCalls = $this->modx->getOption('toolCalls', $data);
-        $agent = $this->modx->getOption('agent', $data, null);
+        $toolCalls = Utils::getOption('toolCalls', $data);
+        $chatId = Utils::getOption('chatId', $data);
+        $agent = Utils::getOption('agent', $data, null);
 
         if (!is_array($toolCalls)) {
             throw new \Exception('Invalid args');
@@ -53,7 +57,7 @@ class Run extends API
 
                 try {
                     $arguments = (array) json_decode($toolCall['arguments'], true, 512, JSON_THROW_ON_ERROR);
-                } catch (JsonException) {
+                } catch (\JsonException $e) {
                     $arguments = [];
                 }
 
@@ -65,8 +69,19 @@ class Run extends API
             }
         }
 
+        $responseId = 'tools_run_' . time() . '_' . substr(base64_encode(random_bytes(8)), 0, -2);
+
+        if (!empty($chatId)) {
+            $chat = Chat::getChat($this->modx, $chatId);
+            if ($chat === null) {
+                throw new LexiconException('modai.error.invalid_chat');
+            }
+
+            Message::addToolResponseMessage($this->modx, $chatId, $responseId, $content);
+        }
+
         $this->success([
-            'id' => 'tools_run_' . time() . '_' . substr(base64_encode(random_bytes(8)), 0, -2),
+            'id' => $responseId,
             'content' => $content,
         ]);
     }

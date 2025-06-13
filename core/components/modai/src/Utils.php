@@ -63,4 +63,36 @@ class Utils
 
         return false;
     }
+
+    public static function getOption($key, $options = null, $default = null, $skipEmpty = false) {
+        $option = null;
+        if (is_string($key) && !empty($key)) {
+            $found = false;
+            if (isset($options[$key])) {
+                $found = true;
+                $option = $options[$key];
+            }
+
+            if (!$found || ($skipEmpty && $option === '')) {
+                $option = $default;
+            }
+
+            return $option;
+        }
+
+        if (is_array($key)) {
+            if (!is_array($option)) {
+                $default = $option;
+                $option = [];
+            }
+
+            foreach($key as $k) {
+                $option[$k] = self::getOption($k, $options, $default);
+            }
+
+            return $option;
+        }
+
+        return $default;
+    }
 }

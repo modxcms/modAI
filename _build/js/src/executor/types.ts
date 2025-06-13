@@ -1,4 +1,4 @@
-import type { UserAttachment, UserMessageContext } from '../chatHistory';
+import type { UserAttachment, UserMessage, UserMessageContext } from '../chatHistory/types';
 
 export type UsageData = {
   usage: {
@@ -24,6 +24,15 @@ export type TextDataMaybeTools = Metadata &
     addons?: TextDataAddon[];
   };
 
+export type TextDataWithTools = Metadata &
+  UsageData & {
+    __type: 'TextDataMaybeTools';
+    id: string;
+    content: string;
+    toolCalls: ToolCalls;
+    addons?: TextDataAddon[];
+  };
+
 export type ToolsData = Metadata &
   UsageData & {
     __type: 'ToolsData';
@@ -43,12 +52,13 @@ export type TextDataNoTools = Metadata &
   };
 
 export type Metadata = {
+  chatId?: number;
   metadata?: {
     model: string;
   };
 };
 
-export type TextData = TextDataNoTools | TextDataMaybeTools | ToolsData;
+export type TextData = TextDataNoTools | TextDataMaybeTools | ToolsData | TextDataWithTools;
 
 export type ImageData = Metadata & {
   __type: 'ImageData';
@@ -94,12 +104,14 @@ export type ToolResponseContent = {
 }[];
 
 export type ChatParams = {
-  prompt: string;
+  persist?: boolean;
+  chatId?: number;
+  chatPublic?: boolean;
+  userMsg?: UserMessage;
+  lastMessageId?: string | null;
   field?: string;
   agent?: string;
   additionalOptions?: Record<string, unknown>;
-  contexts?: UserMessageContext[];
-  attachments?: UserAttachment[];
   namespace?: string;
   messages: {
     role: 'user' | 'assistant' | 'tool';
@@ -131,20 +143,32 @@ export type VisionParams = {
 };
 
 export type ImageParams = {
-  prompt: string;
+  persist?: boolean;
+  chatId?: number;
+  chatPublic?: boolean;
+  userMsg?: UserMessage;
+  lastMessageId?: string | null;
   additionalOptions?: Record<string, unknown>;
-  attachments?: UserAttachment[];
   field?: string;
   namespace?: string;
 };
 
 export type DownloadImageParams = {
-  url: string;
   field?: string;
   namespace?: string;
   resource?: string | number;
   mediaSource?: string | number;
   path?: string;
-};
+  forceDownload?: boolean;
+} & (
+  | { url: string }
+  | {
+      messageId: string;
+    }
+);
 
 export type ChunkStream<D = unknown> = (data: D) => void;
+
+export const hasToolCalls = (data: TextData): data is TextDataWithTools | ToolsData => {
+  return data.toolCalls !== undefined;
+};

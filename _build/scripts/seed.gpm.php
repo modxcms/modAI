@@ -12,13 +12,13 @@ return new class() {
     private $action;
 
     /**
-    * @param \MODX\Revolution\modX $modx
-    * @param int $action
-    * @return bool
-    */
+     * @param \MODX\Revolution\modX $modx
+     * @param int $action
+     * @return bool
+     */
     public function __invoke(&$modx, $action)
     {
-        $this->modx =& $modx;
+        $this->modx = &$modx;
         $this->action = $action;
 
         if ($this->action === \xPDO\Transport\xPDOTransport::ACTION_UNINSTALL) {
@@ -51,6 +51,7 @@ return new class() {
             \modAI\Tools\CreateResource::class,
             \modAI\Tools\GetResources::class,
             \modAI\Tools\GetResourceDetail::class,
+            \modAI\Tools\EditResource::class,
         ];
 
         foreach ($tools as $tool) {

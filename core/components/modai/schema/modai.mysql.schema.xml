@@ -1,68 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model package="modAI\Model\" baseClass="xPDO\Om\xPDOSimpleObject" platform="mysql" defaultEngine="InnoDB" version="3.0">
-<!--    <object class="Conversation" table="modai_conversation">-->
-<!--        <field key="title" dbtype="varchar" precision="190" phptype="string" null="false" default="New message" />-->
-<!--        <field key="started_by" dbtype="int" precision="10" phptype="int" null="false" default="0" attributes="unsigned" />-->
-<!--        <field key="started_on" dbtype="int" precision="20" phptype="int" null="false" default="0" attributes="unsigned" />-->
-<!--        <field key="last_message_on" dbtype="int" precision="20" phptype="int" null="false" default="0" attributes="unsigned" />-->
-<!--        <field key="visible_history" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />-->
+    <object class="Chat" table="modai_chats">
+        <field key="title" dbtype="varchar" precision="190" phptype="string" null="false" default="New message" />
+        <field key="type" dbtype="varchar" precision="190" phptype="string" null="false" />
+        <field key="created_by" dbtype="int" precision="10" phptype="int" null="false" default="0" attributes="unsigned" />
+        <field key="created_on" dbtype="datetime" phptype="datetime" null="false" default="CURRENT_TIMESTAMP" />
+        <field key="last_message_on" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="last_message_id" dbtype="varchar" precision="190" phptype="string" null="true" />
 
-<!--        <field key="prompt_token_count" dbtype="int" precision="20" phptype="int" null="false" default="0" attributes="unsigned" />-->
-<!--        <field key="response_token_count" dbtype="int" precision="20" phptype="int" null="false" default="0" attributes="unsigned" />-->
+        <field key="pinned" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
+        <field key="public" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
 
-<!--        <composite alias="Messages" cardinality="many" class="modAI\Model\Message" foreign="conversation" local="id" owner="local" />-->
-<!--        <aggregate alias="StartedBy" cardinality="one" class="modUser" foreign="id" local="started_by" owner="foreign" />-->
+        <field key="prompt_tokens" dbtype="int" precision="20" phptype="int" null="false" default="0" attributes="unsigned" />
+        <field key="completion_tokens" dbtype="int" precision="20" phptype="int" null="false" default="0" attributes="unsigned" />
 
-<!--        <index alias="started_by" name="started_by" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="started_by" length="" collation="A" null="false" />-->
-<!--        </index>-->
-<!--        <index alias="started_on" name="started_on" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="started_on" length="" collation="A" null="false" />-->
-<!--        </index>-->
-<!--        <index alias="last_message_on" name="last_message_on" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="last_message_on" length="" collation="A" null="false" />-->
-<!--        </index>-->
-<!--        <index alias="prompt_token_count" name="prompt_token_count" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="prompt_token_count" length="" collation="A" null="false" />-->
-<!--        </index>-->
-<!--        <index alias="response_token_count" name="response_token_count" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="response_token_count" length="" collation="A" null="false" />-->
-<!--        </index>-->
-<!--        <index alias="visible_history" name="visible_history" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="visible_history" length="" collation="A" null="false" />-->
-<!--        </index>-->
-<!--    </object>-->
+        <composite alias="Messages" cardinality="many" class="modAI\Model\Message" foreign="chat" local="id" owner="local" />
+        <aggregate alias="StartedBy" cardinality="one" class="MODX\Revolution\modUser" foreign="id" local="started_by" owner="foreign" />
 
-<!--    <object class="Message" table="modai_message">-->
-<!--        <field key="conversation" dbtype="int" precision="10" phptype="int" null="false" default="0" attributes="unsigned" />-->
-<!--        <field key="llm_id" dbtype="varchar" precision="190" phptype="string" null="false" default="" />-->
-<!--        <field key="tool_call_id" dbtype="varchar" precision="190" phptype="string" null="false" default="" />-->
+        <index alias="created_by" name="created_by" primary="false" unique="false" type="BTREE">
+            <column key="created_by" length="" collation="A" null="false" />
+        </index>
 
-<!--        <field key="user_role" dbtype="varchar" precision="190" phptype="string" null="false" default="system" />-->
-<!--        <field key="user" dbtype="int" precision="10" phptype="int" null="false" default="0" attributes="unsigned" />-->
-<!--        <field key="content" dbtype="text" phptype="string" null="false" default="" />-->
-<!--        <field key="tool_calls" dbtype="text" phptype="array" null="true" default="" />-->
-<!--        <field key="created_on" dbtype="int" precision="20" phptype="int" null="false" default="0" attributes="unsigned" />-->
+        <index alias="created_on" name="created_on" primary="false" unique="false" type="BTREE">
+            <column key="created_on" length="" collation="A" null="false" />
+        </index>
 
-<!--        <field key="prompt_token_count" dbtype="int" precision="20" phptype="int" null="false" default="0" attributes="unsigned" />-->
-<!--        <field key="response_token_count" dbtype="int" precision="20" phptype="int" null="false" default="0" attributes="unsigned" />-->
+        <index alias="last_message_on" name="last_message_on" primary="false" unique="false" type="BTREE">
+            <column key="last_message_on" length="" collation="A" null="false" />
+        </index>
 
-<!--        <aggregate alias="Conversation" cardinality="one" class="modAI\Model\Conversation" foreign="id" local="conversation" owner="foreign" />-->
-<!--        <aggregate alias="User" cardinality="one" class="modUser" foreign="id" local="user" owner="foreign" />-->
+        <index alias="recent_chats" name="recent_chats" primary="false" unique="false" type="BTREE">
+            <column key="created_by" length="" collation="A" null="false" />
+            <column key="public" length="" collation="A" null="false" />
+            <column key="pinned" length="" collation="A" null="false" />
+            <column key="last_message_on" length="" collation="A" null="false" />
+        </index>
+    </object>
 
-<!--        <index alias="conversation" name="conversation" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="conversation" length="" collation="A" null="false" />-->
-<!--        </index>-->
-<!--        <index alias="user" name="user" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="user" length="" collation="A" null="false" />-->
-<!--        </index>-->
-<!--        <index alias="prompt_token_count" name="prompt_token_count" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="prompt_token_count" length="" collation="A" null="false" />-->
-<!--        </index>-->
-<!--        <index alias="response_token_count" name="response_token_count" primary="false" unique="false" type="BTREE">-->
-<!--            <column key="response_token_count" length="" collation="A" null="false" />-->
-<!--        </index>-->
-<!--    </object>-->
+    <object class="Message" table="modai_messages" extends="xPDO\Om\xPDOObject">
+        <field key="internalId" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" index="pk" generated="native" extra="auto_increment" />
+        <field key="chat" dbtype="int" precision="10" phptype="int" null="false" attributes="unsigned" />
+
+        <field key="type" dbtype="varchar" precision="190" phptype="string" null="false" />
+        <field key="id" dbtype="varchar" precision="190" phptype="string" null="false" />
+        <field key="role" dbtype="varchar" precision="190" phptype="string" null="false" />
+        <field key="content" dbtype="longtext" phptype="string" null="true" />
+        <field key="content_type" dbtype="varchar" precision="190" phptype="string" null="true" />
+        <field key="tool_calls" dbtype="longtext" phptype="json" null="true" />
+        <field key="contexts" dbtype="longtext" phptype="json" null="true" />
+        <field key="attachments" dbtype="longtext" phptype="json" null="true" />
+        <field key="metadata" dbtype="longtext" phptype="json" null="true" />
+        <field key="ctx" dbtype="longtext" phptype="json" null="true" />
+        <field key="hidden" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
+
+        <field key="prompt_tokens" dbtype="int" precision="20" phptype="int" null="false" default="0" attributes="unsigned" />
+        <field key="completion_tokens" dbtype="int" precision="20" phptype="int" null="false" default="0" attributes="unsigned" />
+
+        <field key="created_on" dbtype="datetime" phptype="datetime" null="false" default="CURRENT_TIMESTAMP" />
+        <field key="created_by" dbtype="int" precision="11" phptype="int" null="false" default="0" attributes="unsigned" />
+
+        <aggregate alias="Chat" cardinality="one" class="modAI\Model\Chat" foreign="id" local="chat" owner="foreign" />
+        <aggregate alias="User" cardinality="one" class="MODX\Revolution\modUser" foreign="id" local="created_by" owner="foreign" />
+
+        <index alias="PRIMARY" name="PRIMARY" primary="true" unique="true" type="BTREE">
+            <column key="internalId" length="" collation="A" null="false" />
+        </index>
+
+        <index alias="chat_id" name="chat_id" primary="false" unique="true" type="BTREE">
+            <column key="chat" length="" collation="A" null="false" />
+            <column key="id" length="" collation="A" null="false" />
+        </index>
+
+        <index alias="chat" name="chat" primary="false" unique="false" type="BTREE">
+            <column key="chat" length="" collation="A" null="false" />
+        </index>
+
+        <index alias="chat_on" name="chat_on" primary="false" unique="false" type="BTREE">
+            <column key="chat" length="" collation="A" null="false" />
+            <column key="created_on" length="" collation="A" null="false" />
+        </index>
+
+        <index alias="created_by" name="created_by" primary="false" unique="false" type="BTREE">
+            <column key="created_by" length="" collation="A" null="false" />
+        </index>
+
+        <index alias="created_on" name="created_on" primary="false" unique="false" type="BTREE">
+            <column key="created_on" length="" collation="A" null="false" />
+        </index>
+    </object>
 
     <object class="Tool" table="modai_tools">
         <field key="class" dbtype="varchar" precision="200" phptype="string" null="false" />

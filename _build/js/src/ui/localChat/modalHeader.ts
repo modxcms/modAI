@@ -2,11 +2,15 @@ import { closeModal } from './modalActions';
 import { button } from '../dom/button';
 import { createElement } from '../utils';
 import { drag, endDrag, initDrag } from './dragHandlers';
+import { emitter } from './emitter';
+import { buildSidebarControls } from './sidebar';
 import { globalState } from '../../globalState';
 import { lng } from '../../lng';
 import { icon } from '../dom/icon';
 import { expand, minimize, x } from '../icons';
 import { saveModalState } from './state';
+
+import type { LocalChatConfig } from './types';
 
 const centerModal = (element: HTMLElement) => {
   const modalWidth = element.offsetWidth;
@@ -22,7 +26,7 @@ const centerModal = (element: HTMLElement) => {
   element.style.top = `${newTop}px`;
 };
 
-export const buildModalHeader = () => {
+export const buildModalHeader = (config: LocalChatConfig) => {
   const closeModalBtn = button(
     icon(24, x),
     () => {
@@ -75,8 +79,18 @@ export const buildModalHeader = () => {
     closeModalBtn,
   ]);
 
-  const header = createElement('header', 'header', [
-    createElement('h1', '', lng('modai.ui.modai_assistant')),
+  const leftButtonsWrapper = createElement('div', 'buttonsWrapper');
+
+  if (config.persist) {
+    leftButtonsWrapper.append(...buildSidebarControls());
+  }
+
+  const title = createElement('h1');
+  title.textContent = lng('modai.ui.modai_assistant');
+
+  const header = createElement('header', 'header cursor-move', [
+    leftButtonsWrapper,
+    title,
     buttonsWrapper,
   ]);
 
@@ -94,6 +108,11 @@ export const buildModalHeader = () => {
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       e.preventDefault();
+      if (globalState.modal.sidebar?.classList.contains('open')) {
+        globalState.modal.sidebar.classList.remove('open');
+        return;
+      }
+
       closeModal();
       document.removeEventListener('keydown', onKeyDown);
     }
@@ -101,7 +120,18 @@ export const buildModalHeader = () => {
 
   document.addEventListener('keydown', onKeyDown);
 
+  emitter.on('loading', ({ eventData }) => {
+    if (eventData.isLoading) {
+      closeModalBtn.disable();
+    } else {
+      closeModalBtn.enable();
+    }
+  });
+
   globalState.modal.closeModalBtn = closeModalBtn;
+  globalState.modal.setTitle = (newTitle) => {
+    title.textContent = newTitle || lng('modai.ui.modai_assistant');
+  };
 
   return header;
 };

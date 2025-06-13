@@ -8,11 +8,10 @@ import { globalState } from '../../globalState';
 import { lng } from '../../lng';
 import { confirmDialog } from '../cofirmDialog';
 import { icon } from '../dom/icon';
-import { copy, edit, plus, refresh, textSelect, triangleError } from '../icons';
+import { copy, download, edit, plus, refresh, textSelect, triangleError } from '../icons';
 import { createElement, nlToBr } from '../utils';
 import { scrollToBottom, sendMessage } from './modalActions';
 
-import type { LocalChatConfig } from './types';
 import type {
   AssistantMessage,
   Message,
@@ -20,7 +19,7 @@ import type {
   UserAttachment,
   UserMessage,
   UserMessageContext,
-} from '../../chatHistory';
+} from '../../chatHistory/types';
 
 const contextRenderers: Record<string, undefined | ((context: UserMessageContext) => HTMLElement)> =
   {
@@ -55,7 +54,7 @@ const attachmentRenderers: Record<
   },
 };
 
-export const addUserMessage = (msg: UserMessage, config: LocalChatConfig) => {
+export const addUserMessage = (msg: UserMessage) => {
   const messageWrapper: UpdatableHTMLElement<UserMessage> = createElement(
     'div',
     `message-wrapper user ${msg.init ? '' : 'new'}`,
@@ -113,7 +112,7 @@ export const addUserMessage = (msg: UserMessage, config: LocalChatConfig) => {
           title: lng('modai.ui.confirm_retry_message'),
           content: lng('modai.ui.confirm_edit_retry_message'),
           confirmText: lng('modai.ui.retry_message'),
-          onConfirm: () => {
+          onConfirm: async () => {
             globalState.modal.messageInput.setValue(msg.content);
 
             if (msg.contexts) {
@@ -130,12 +129,12 @@ export const addUserMessage = (msg: UserMessage, config: LocalChatConfig) => {
               });
             }
 
-            globalState.modal.history.clearHistoryFrom(msg.id);
+            await globalState.modal.history.clearHistoryFrom(msg.id);
             if (globalState.modal.history.getMessages().length === 0) {
               globalState.modal.welcomeMessage.style.display = 'block';
             }
 
-            void sendMessage(config);
+            void sendMessage();
           },
         });
       },
@@ -240,7 +239,9 @@ export const addErrorMessage = (content: string) => {
   return messageWrapper;
 };
 
-export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConfig) => {
+export const addAssistantMessage = (msg: AssistantMessage) => {
+  const config = globalState.modal.config;
+
   const messageWrapper: UpdatableHTMLElement<AssistantMessage> = createElement(
     'div',
     `message-wrapper ai ${msg.init ? '' : 'new'}`,
@@ -267,9 +268,45 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
     },
   });
 
-  let textContent = msg.content || '';
+  let textContent: string | HTMLElement = msg.content || '';
   if (msg.contentType === 'image') {
-    textContent = `<img src="${textContent}" />`;
+    const img = createElement('img', '', '', {
+      src: textContent || `${globalState.config.assetsURL}images/no-image.png`,
+    });
+
+    const urls = Array.isArray(msg.ctx.allUrls) ? msg.ctx.allUrls : [];
+    let needSync = false;
+
+    img.onerror = () => {
+      needSync = true;
+      if (urls.length > 0) {
+        const nextUrl = urls.pop();
+        msg.content = nextUrl;
+        img.src = nextUrl;
+      } else {
+        msg.content = '';
+        img.src = `${globalState.config.assetsURL}images/no-image.png`;
+        actionsContainer.innerHTML = '';
+      }
+    };
+
+    img.onload = () => {
+      if (!needSync) {
+        return;
+      }
+
+      msg.ctx.allUrls = urls;
+      msg = globalState.modal.history.updateMessage(msg, {
+        content: msg.content,
+        ctx: msg.ctx,
+      });
+
+      if (config.persist && globalState.modal.chatId) {
+        void executor.chat.storeMessage(globalState.modal.chatId, msg);
+      }
+    };
+
+    textContent = img;
   } else {
     textContent = md.render(textContent);
   }
@@ -310,7 +347,7 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
     }
   }
 
-  if (config.type === 'image') {
+  if (config.type === 'image' && msg.content) {
     if (config.imageActions?.copy !== false) {
       actionsContainer.append(
         createActionButton({
@@ -326,12 +363,12 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
                 ? config.textActions.copy
                 : copyToClipboard;
 
-            if (msg.ctx.downloaded === true) {
-              handler(msg, modal);
+            if (!msg.content) {
               return;
             }
+
             const data = await executor.download.image({
-              url: msg.content as string,
+              messageId: msg.id,
               field: config.field,
               namespace: config.namespace,
               resource: config.resource,
@@ -339,17 +376,90 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
               path: config.image?.path,
             });
 
+            if (!msg.ctx.allUrls) {
+              msg.ctx.allUrls = [];
+            }
+
+            const allUrls = Array.isArray(msg.ctx.allUrls) ? msg.ctx.allUrls : [];
+            if (data.fullUrl !== msg.content && allUrls.indexOf(msg.content) === -1) {
+              allUrls.push(msg.content);
+            }
+
             msg.content = data.fullUrl;
             msg.ctx.downloaded = true;
             msg.ctx.url = data.url;
             msg.ctx.fullUrl = data.fullUrl;
+            msg.ctx.allUrls = allUrls;
 
             msg = globalState.modal.history.updateMessage(msg, {
               content: data.fullUrl,
-              ctx: { downloaded: true, url: data.url, fullUrl: data.fullUrl },
+              ctx: { downloaded: true, url: data.url, fullUrl: data.fullUrl, allUrls },
             });
 
+            if (config.persist && globalState.modal.chatId) {
+              void executor.chat.storeMessage(globalState.modal.chatId, msg);
+            }
+
             handler(msg, modal);
+          },
+        }),
+      );
+    }
+
+    if (config.imageActions?.download) {
+      actionsContainer.append(
+        createActionButton({
+          message: msg,
+          disabled: globalState.modal.isLoading,
+          icon: download,
+          label: lng('modai.ui.download'),
+          loadingText: lng('modai.ui.downloading'),
+          completedText: lng('modai.ui.downloaded'),
+          onClick: async (msg, modal) => {
+            if (!msg.content) {
+              return;
+            }
+
+            const handler =
+              typeof config.imageActions?.download === 'function'
+                ? config.imageActions.download
+                : null;
+
+            const data = await executor.download.image({
+              messageId: msg.id,
+              forceDownload: true,
+              field: config.field,
+              namespace: config.namespace,
+              resource: config.resource,
+              mediaSource: config.image?.mediaSource,
+              path: config.image?.path,
+            });
+
+            if (!msg.ctx.allUrls) {
+              msg.ctx.allUrls = [];
+            }
+
+            const allUrls = Array.isArray(msg.ctx.allUrls) ? msg.ctx.allUrls : [];
+            if (data.fullUrl !== msg.content && allUrls.indexOf(msg.content) === -1) {
+              allUrls.push(msg.content);
+            }
+
+            msg.content = data.fullUrl;
+            msg.ctx.downloaded = true;
+            msg.ctx.url = data.url;
+            msg.ctx.fullUrl = data.fullUrl;
+            msg.ctx.allUrls = allUrls;
+
+            msg = globalState.modal.history.updateMessage(msg, {
+              content: data.fullUrl,
+              ctx: { downloaded: true, url: data.url, fullUrl: data.fullUrl, allUrls },
+            });
+
+            if (config.persist && globalState.modal.chatId) {
+              void executor.chat.storeMessage(globalState.modal.chatId, msg);
+            }
+
+            handler?.(msg, modal);
           },
         }),
       );
@@ -366,12 +476,12 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
           completedText: lng('modai.ui.inserted'),
           loadingText: lng('modai.ui.downloading'),
           onClick: async (msg, modal) => {
-            if (msg.ctx.downloaded === true) {
-              insertCb(msg, modal);
+            if (!msg.content) {
               return;
             }
+
             const data = await executor.download.image({
-              url: msg.content as string,
+              messageId: msg.id,
               field: config.field,
               namespace: config.namespace,
               resource: config.resource,
@@ -379,15 +489,29 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
               path: config.image?.path,
             });
 
+            if (!msg.ctx.allUrls) {
+              msg.ctx.allUrls = [];
+            }
+
+            const allUrls = Array.isArray(msg.ctx.allUrls) ? msg.ctx.allUrls : [];
+            if (data.fullUrl !== msg.content && allUrls.indexOf(msg.content) === -1) {
+              allUrls.push(msg.content);
+            }
+
             msg.content = data.fullUrl;
             msg.ctx.downloaded = true;
             msg.ctx.url = data.url;
             msg.ctx.fullUrl = data.fullUrl;
+            msg.ctx.allUrls = allUrls;
 
             msg = globalState.modal.history.updateMessage(msg, {
               content: data.fullUrl,
-              ctx: { downloaded: true, url: data.url, fullUrl: data.fullUrl },
+              ctx: { downloaded: true, url: data.url, fullUrl: data.fullUrl, allUrls },
             });
+
+            if (config.persist && globalState.modal.chatId) {
+              void executor.chat.storeMessage(globalState.modal.chatId, msg);
+            }
 
             insertCb(msg, modal);
           },
@@ -444,13 +568,13 @@ export const addAssistantMessage = (msg: AssistantMessage, config: LocalChatConf
   return messageWrapper;
 };
 
-export const renderMessage = (msg: Message, config: LocalChatConfig) => {
+export const renderMessage = (msg: Message) => {
   if (msg.hidden) {
     return;
   }
 
   if (msg.__type === 'UserMessage') {
-    const el = addUserMessage(msg, config);
+    const el = addUserMessage(msg);
     if (!msg.init) {
       scrollToBottom('smooth');
     }
@@ -459,7 +583,7 @@ export const renderMessage = (msg: Message, config: LocalChatConfig) => {
   }
 
   if (msg.__type === 'AssistantMessage') {
-    const el = addAssistantMessage(msg, config);
+    const el = addAssistantMessage(msg);
     if (!msg.init && !el.previousElementSibling?.classList.contains('user')) {
       scrollToBottom('smooth');
     }

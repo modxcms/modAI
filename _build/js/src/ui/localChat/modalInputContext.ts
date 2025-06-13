@@ -4,7 +4,7 @@ import { icon } from '../dom/icon';
 import { textSelect } from '../icons';
 import { applyStyles, createElement } from '../utils';
 
-import type { UserMessageContext } from '../../chatHistory';
+import type { UserMessageContext } from '../../chatHistory/types';
 
 export type ContextWrapper = HTMLDivElement & {
   visible: boolean;
