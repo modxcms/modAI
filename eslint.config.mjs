@@ -10,6 +10,7 @@ export default [
       'vendor/**',
       'node_modules/**',
       'assets/components/modai/js/**',
+      '_packages/**',
     ],
   },
   ...tseslint.config({
