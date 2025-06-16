@@ -120,7 +120,7 @@ const attachTVs = (config: Config) => {
       }
     }
 
-    if (field.xtype === 'modx-panel-tv-image') {
+    if (field.xtype === 'modx-panel-tv-image' || field.xtype === 'imagecropper-combo-browser') {
       const label = wrapper.dom.querySelector('label');
       if (!label) return;
 
@@ -136,11 +136,17 @@ const attachTVs = (config: Config) => {
         imageActions: {
           insert: (msg, modal) => {
             const eventData = {
+              fullRelativeUrl: msg.ctx.fullUrl,
               relativeUrl: msg.ctx.url,
               url: msg.ctx.url,
             };
 
-            field.items.items[1].fireEvent('select', eventData);
+            if (field.xtype === 'imagecropper-combo-browser') {
+              field.onSelectImage(eventData.fullRelativeUrl, field.onTrigger1Click, `tv${tvId}`);
+            } else {
+              field.items.items[1].fireEvent('select', eventData);
+            }
+
             field.fireEvent('select', eventData);
             modal.api.closeModal();
           },
