@@ -47,7 +47,7 @@ export const google: ServiceHandler<CompletionsData, ImageData> = {
         }
 
         tools.push({
-          id: crypto.randomUUID(),
+          id: window.crypto.randomUUID(),
           name: part.functionCall.name,
           arguments: JSON.stringify(part.functionCall.args),
         });
@@ -61,7 +61,7 @@ export const google: ServiceHandler<CompletionsData, ImageData> = {
     if (!tools) {
       return {
         __type: 'TextDataNoTools',
-        id: crypto.randomUUID(),
+        id: window.crypto.randomUUID(),
         content: content as string,
         usage: {
           completionTokens: data?.usageMetadata.candidatesTokenCount,
@@ -73,7 +73,7 @@ export const google: ServiceHandler<CompletionsData, ImageData> = {
     if (!content) {
       return {
         __type: 'ToolsData',
-        id: crypto.randomUUID(),
+        id: window.crypto.randomUUID(),
         toolCalls: tools,
         usage: {
           completionTokens: data?.usageMetadata.candidatesTokenCount,
@@ -84,7 +84,7 @@ export const google: ServiceHandler<CompletionsData, ImageData> = {
 
     return {
       __type: 'TextDataMaybeTools',
-      id: crypto.randomUUID(),
+      id: window.crypto.randomUUID(),
       content: content,
       toolCalls: tools,
       usage: {
@@ -102,7 +102,7 @@ export const google: ServiceHandler<CompletionsData, ImageData> = {
 
     return {
       __type: 'ImageData',
-      id: crypto.randomUUID(),
+      id: window.crypto.randomUUID(),
       url: `data:image/png;base64,${base64}`,
     };
   },

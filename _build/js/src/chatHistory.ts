@@ -396,7 +396,7 @@ export const chatHistory = {
           config.key,
           {
             __type: 'ToolsData',
-            id: crypto.randomUUID(),
+            id: window.crypto.randomUUID(),
             content: undefined,
             toolCalls,
             usage: {

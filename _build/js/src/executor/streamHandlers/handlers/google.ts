@@ -45,7 +45,7 @@ export const google: StreamHandler = (chunk, buffer, currentData) => {
             }
 
             toolCalls.push({
-              id: crypto.randomUUID(),
+              id: window.crypto.randomUUID(),
               name: part.functionCall.name,
               arguments: JSON.stringify(part.functionCall.args),
             });

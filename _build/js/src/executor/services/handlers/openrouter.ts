@@ -99,7 +99,7 @@ export const openrouter: ServiceHandler<CompletionsData, ImageData> = {
 
     return {
       __type: 'ImageData',
-      id: crypto.randomUUID(),
+      id: window.crypto.randomUUID(),
       url,
     };
   },
