@@ -26,6 +26,7 @@ class Pinecone implements ContextProviderInterface
 
         $endpoint = Utils::getConfigValue($modx, 'endpoint', $config, '');
         $apiKey = Utils::getConfigValue($modx,'api_key', $config, '');
+        $apiVersion = Utils::getConfigValue($modx,'api_version', $config, '2025-04');
         $this->namespace = Utils::getConfigValue($modx,'namespace', $config, '');
         $this->contextMessages = Utils::explodeAndClean(Utils::getConfigValue($modx,'context_messages', $config, ''), "\n");
         $this->fields = Utils::explodeAndClean(Utils::getConfigValue($modx,'fields', $config, ''));
@@ -54,7 +55,7 @@ class Pinecone implements ContextProviderInterface
             'headers' => [
                 'Api-Key' => $apiKey,
                 'Content-Type' => 'application/json',
-                'X-Pinecone-API-Version' => '2025-01',
+                'X-Pinecone-API-Version' => $apiVersion,
             ],
         ]);
     }
@@ -275,6 +276,7 @@ class Pinecone implements ContextProviderInterface
             ->addField('endpoint', function (FieldBuilder $fieldBuilder) use ($modx) {
                 return $fieldBuilder->required();
             })
+            ->addField('api_version')
             ->addField('namespace', function (FieldBuilder $fieldBuilder) use ($modx) {
                 return $fieldBuilder->required();
             })

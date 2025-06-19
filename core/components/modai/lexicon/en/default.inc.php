@@ -111,6 +111,8 @@ $_lang['modai.admin.context_provider.pinecone.output_fields'] = 'Output fields';
 $_lang['modai.admin.context_provider.pinecone.output_fields_desc'] = 'Comma separated list of fields (available from the pinecone) that will be included in the context. To better control the output, you can leave this empty and leverage Context Messages.';
 $_lang['modai.admin.context_provider.pinecone.context_messages'] = 'Context Messages';
 $_lang['modai.admin.context_provider.pinecone.context_messages_desc'] = 'Additional context messages that will be put in front of the data from DB. One message per line. Can contain {id} or any {field} (available from the pinecone) placeholder, you can also reference a system setting with using ++ as a prefix, for example {++site_url}.';
+$_lang['modai.admin.context_provider.pinecone.api_version'] = 'API Version';
+$_lang['modai.admin.context_provider.pinecone.api_version_desc'] = 'API version to use. Default: 2025-04';
 
 $_lang['modai.admin.prompt_library.category'] = 'Category';
 $_lang['modai.admin.prompt_library.category'] = 'Category';

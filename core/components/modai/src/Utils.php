@@ -42,7 +42,7 @@ class Utils
 
     public static function getConfigValue(modX $modx, $name, $config, $default)
     {
-        $value = $modx->getOption($name, $config, '');
+        $value = $modx->getOption($name, $config, $default);
         if (strncmp($value, 'ss:', 3) === 0) {
             $value = $modx->getOption(substr($value, 3), null, $default);
         }
