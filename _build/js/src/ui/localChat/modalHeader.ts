@@ -91,12 +91,15 @@ export const buildModalHeader = () => {
     });
   });
 
-  document.addEventListener('keydown', (e) => {
+  const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       e.preventDefault();
       closeModal();
+      document.removeEventListener('keydown', onKeyDown);
     }
-  });
+  };
+
+  document.addEventListener('keydown', onKeyDown);
 
   globalState.modal.closeModalBtn = closeModalBtn;
 
