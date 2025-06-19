@@ -23,7 +23,7 @@ class Create extends CreateProcessor
             return false;
         }
 
-        $category = (int)$this->getProperty('category_id');
+        $category = $this->getProperty('category_id');
         if (empty($category)) {
             $this->addFieldError('category_id', $this->modx->lexicon('modai.admin.error.required'));
             return false;
@@ -52,9 +52,15 @@ class Create extends CreateProcessor
             }
 
             $this->setProperty('rank', $rank);
+            $this->setProperty('created_by', $this->modx->user->id);
         }
 
         $this->setProperty('enabled', Utils::convertToBoolean($this->getProperty('enabled')));
+
+        $this->setProperty('public', Utils::convertToBoolean($this->getProperty('public')));
+        if (!$this->modx->hasPermission($this->permission . '_public')) {
+            $this->setProperty('public', false);
+        }
 
         return parent::beforeSet();
     }

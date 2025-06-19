@@ -35,37 +35,31 @@ class GetNodes extends ModelProcessor
 
     public function getRootNodes()
     {
-        $nodes = [];
+        $list = [];
 
+        $c = $this->modx->newQuery($this->classKey);
+        $c->where(['parent_id' => 0]);
+        $c->sortby('rank', 'ASC');
+        $categories = $this->modx->getIterator($this->classKey, $c);
 
-        $nodes[] = [
-            'text' => $this->modx->lexicon('modai.admin.prompt_library.category.text'),
-            'id' => 'n_type_text',
-            'leaf' => false,
-            'cls' => 'tree-pseudoroot-node',
-            'iconCls' => 'icon icon-file-alt',
-            'page' => '',
-            'classKey' => 'root',
-            'type' => 'text',
-            'draggable' => false,
-            'pseudoroot' => true,
-        ];
+        /** @var PromptLibraryCategory[] $categories */
+        foreach ($categories as $category) {
+            $setArray = [
+                'text' => $this->modx->lexicon('modai.admin.prompt_library.category.' . $category->get('type')),
+                'id' => 'cat_' . $category->get('id'),
+                'leaf' => false,
+                'cls' => 'tree-pseudoroot-node',
+                'iconCls' => 'icon ' . ($category->get('type') === 'text' ? 'icon-file-alt' : 'icon-image'),
+                'href' => '',
+                'type' => $category->get('type'),
+                'data' => $category->toArray(),
+                'draggable' => false,
+                'pseudoroot' => true,
+            ];
+            $list[] = $setArray;
+        }
 
-        $nodes[] = [
-            'text' => $this->modx->lexicon('modai.admin.prompt_library.category.image'),
-            'id' => 'n_type_image',
-            'leaf' => false,
-            'cls' => 'tree-pseudoroot-node',
-            'iconCls' => 'icon icon-image',
-            'page' => '',
-            'classKey' => 'root',
-            'type' => 'image',
-            'draggable' => false,
-            'pseudoroot' => true,
-        ];
-
-
-        return $nodes;
+        return $list;
     }
 
     public function getCategoryNode($parentId)
@@ -74,6 +68,10 @@ class GetNodes extends ModelProcessor
 
         $c = $this->modx->newQuery($this->classKey);
         $c->where(['parent_id' => $parentId]);
+        $c->where([
+            'public' => true,
+            'OR:created_by:=' => $this->modx->user->id,
+        ]);
         $c->sortby('rank', 'ASC');
         $categories = $this->modx->getIterator($this->classKey, $c);
 
@@ -109,13 +107,14 @@ class GetNodes extends ModelProcessor
             }
 
             $enabled = $category->get('enabled');
+            $public = $category->get('public');
 
             $setArray = [
                 'text' => $category->get('name'),
                 'id' => 'cat_' . $category->get('id'),
                 'leaf' => false,
                 'cls' => !$enabled ? 'modai-admin--prompt-library_category_disabled' : '',
-                'iconCls' => $enabled ? 'icon icon-folder' : 'icon icon-eye-slash',
+                'iconCls' => 'icon ' . ($enabled ? ($public ? 'icon-globe' : 'icon-user') : 'icon-eye-slash'),
                 'href' => '',
                 'data' => $category->toArray(),
                 'menu' => ['items' => $menu],
@@ -126,63 +125,6 @@ class GetNodes extends ModelProcessor
         return $list;
     }
 
-    public function getCategoriesForType($type)
-    {
-        $list = [];
-
-        $c = $this->modx->newQuery($this->classKey);
-        $c->where(['parent_id' => 0, 'type' => $type]);
-        $c->sortby('rank', 'ASC');
-        $categories = $this->modx->getIterator($this->classKey, $c);
-
-        /** @var PromptLibraryCategory[] $categories */
-        foreach ($categories as $category) {
-            $menu = [];
-            if ($this->has['save']) {
-                $menu[] = [
-                    'text' => $this->modx->lexicon($this->objectType . '.create_child'),
-                    'cat_id' => $category->get('id'),
-                    'handler' => 'function(itm,e) {
-                        this.createCategory(itm,e);
-                    }',
-                ];
-                $menu[] = '-';
-                $menu[] = [
-                    'text' => $this->modx->lexicon($this->objectType . '.update'),
-                    'cat_id' => $category->get('id'),
-                    'handler' => 'function(itm,e) {
-                        this.updateCategory(itm,e);
-                    }',
-                ];
-            }
-            if ($this->has['remove']) {
-                $menu[] = '-';
-                $menu[] = [
-                    'text' => $this->modx->lexicon($this->objectType . '.remove'),
-                    'cat_id' => $category->get('id'),
-                    'handler' => 'function(itm,e) {
-                        this.removeCategory(itm,e);
-                    }',
-                ];
-            }
-
-            $enabled = $category->get('enabled');
-
-            $setArray = [
-                'text' => $category->get('name'),
-                'id' => 'cat_' . $category->get('id'),
-                'leaf' => false,
-                'cls' => !$enabled ? 'modai-admin--prompt-library_category_disabled' : '',
-                'iconCls' => $enabled ? 'icon icon-folder' : 'icon icon-eye-slash',
-                'href' => '',
-                'data' => $category->toArray(),
-                'menu' => ['items' => $menu],
-            ];
-            $list[] = $setArray;
-        }
-
-        return $list;
-    }
 
     public function getMap()
     {
@@ -198,10 +140,6 @@ class GetNodes extends ModelProcessor
         switch ($map[0]) {
             case 'root':
                 $list = $this->getRootNodes();
-//                $list = $this->getCategoryNode(0);
-                break;
-            case 'type':
-                $list = $this->getCategoriesForType($map[1]);
                 break;
             case 'cat':
                 $list = isset($this->node[1]) ? $this->getCategoryNode($this->node[1]) : [];

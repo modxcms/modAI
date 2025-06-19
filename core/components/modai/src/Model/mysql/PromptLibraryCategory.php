@@ -19,8 +19,10 @@ class PromptLibraryCategory extends \modAI\Model\PromptLibraryCategory
             'name' => NULL,
             'type' => NULL,
             'enabled' => 0,
+            'public' => 0,
             'rank' => 0,
             'parent_id' => 0,
+            'created_by' => 0,
         ),
         'fieldMeta' => 
         array (
@@ -46,6 +48,14 @@ class PromptLibraryCategory extends \modAI\Model\PromptLibraryCategory
                 'null' => false,
                 'default' => 0,
             ),
+            'public' => 
+            array (
+                'dbtype' => 'tinyint',
+                'precision' => '1',
+                'phptype' => 'boolean',
+                'null' => false,
+                'default' => 0,
+            ),
             'rank' => 
             array (
                 'dbtype' => 'int',
@@ -58,6 +68,14 @@ class PromptLibraryCategory extends \modAI\Model\PromptLibraryCategory
             array (
                 'dbtype' => 'int',
                 'precision' => '10',
+                'phptype' => 'int',
+                'null' => false,
+                'default' => 0,
+            ),
+            'created_by' => 
+            array (
+                'dbtype' => 'int',
+                'precision' => '11',
                 'phptype' => 'int',
                 'null' => false,
                 'default' => 0,

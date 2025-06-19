@@ -12,11 +12,7 @@ modAIAdmin.tree.PromptLibraryCategories = function(config) {
     root_name: _('modai.admin.prompt_library.category'),
     rootVisible: false,
     enableDD: true,
-    tbar: [{
-      text: _('modai.admin.prompt_library.category.create'),
-      handler: this.createCategory,
-      scope: this
-    }],
+    tbar: [],
     useDefaultToolbar: true
   });
   modAIAdmin.tree.PromptLibraryCategories.superclass.constructor.call(this,config);
@@ -24,10 +20,6 @@ modAIAdmin.tree.PromptLibraryCategories = function(config) {
 };
 Ext.extend(modAIAdmin.tree.PromptLibraryCategories,MODx.tree.Tree,{
   loadGrid: function(n,e) {
-    if (n.attributes.pseudoroot) {
-      return;
-    }
-
     this.grid.filterByCategory(n.attributes.data.id);
   },
 
@@ -83,18 +75,23 @@ Ext.extend(modAIAdmin.tree.PromptLibraryCategories,MODx.tree.Tree,{
   },
 
   createCategory: function(btn,e) {
-    const record = {
-      parent_id: btn.cat_id || 0,
-      enabled: false,
-    };
-
-    if (btn.cat_id !== undefined) {
-      record.type = this.cm.activeNode.attributes.data.type;
+    if (!btn.cat_id) {
+      return;
     }
+
+    const canCreatePublic = !!this.config.permissions['modai_admin_prompt_library_category_save_public'];
+
+    const record = {
+      parent_id: btn.cat_id,
+      enabled: false,
+      type: this.cm.activeNode.attributes.data.type,
+      public: canCreatePublic,
+    };
 
     const win = MODx.load({
       xtype: 'modai-window-prompt_library_categories',
       record: record,
+      canCreatePublic,
       listeners: {
         success: {
           fn: function () {
@@ -113,11 +110,13 @@ Ext.extend(modAIAdmin.tree.PromptLibraryCategories,MODx.tree.Tree,{
 
   updateCategory: function(btn,e) {
     const record = this.cm.activeNode.attributes.data;
+    const canCreatePublic = !!this.config.permissions['modai_admin_prompt_library_category_save_public'];
 
     const win = MODx.load({
       xtype: 'modai-window-prompt_library_categories',
       record: record,
       isUpdate: true,
+      canCreatePublic,
       listeners: {
         success: {
           fn: function () {
@@ -158,15 +157,19 @@ Ext.extend(modAIAdmin.tree.PromptLibraryCategories,MODx.tree.Tree,{
   handleCreateClick: function(node) {
     this.cm.activeNode = node;
 
+    const canCreatePublic = !!this.config.permissions['modai_admin_prompt_library_category_save_public'];
+
     const record = {
-      parent_id:  0,
+      parent_id:  node.attributes.data.id,
       enabled: false,
-      type: node.attributes.type
+      type: node.attributes.data.type,
+      public: canCreatePublic,
     };
 
     const win = MODx.load({
       xtype: 'modai-window-prompt_library_categories',
       record: record,
+      canCreatePublic,
       listeners: {
         success: {
           fn: function () {

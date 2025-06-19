@@ -1,6 +1,7 @@
 modAIAdmin.window.PromptLibraryPrompts = function (config) {
   config = config || {};
   config.isUpdate = config.isUpdate || false;
+  config.canCreatePublic = config.canCreatePublic || false;
 
   Ext.applyIf(config, {
     title: config.isUpdate ? _('modai.admin.prompt_library.prompt.update') : _('modai.admin.prompt_library.prompt.create'),
@@ -54,7 +55,7 @@ Ext.extend(modAIAdmin.window.PromptLibraryPrompts, MODx.Window, {
         },
         items: [
           {
-            columnWidth: 0.5,
+            columnWidth: 0.33,
             border: false,
             defaults: {
               msgTarget: 'under',
@@ -71,7 +72,25 @@ Ext.extend(modAIAdmin.window.PromptLibraryPrompts, MODx.Window, {
             ],
           },
           {
-            columnWidth: 0.5,
+            columnWidth: 0.33,
+            border: false,
+            defaults: {
+              msgTarget: 'under',
+              anchor: '100%',
+            },
+            items: [
+              {
+                xtype: 'modx-combo-boolean',
+                fieldLabel: _('modai.admin.prompt_library.prompt.public'),
+                name: 'public',
+                hiddenName: 'public',
+                anchor: '100%',
+                disabled: !config.canCreatePublic
+              },
+            ],
+          },
+          {
+            columnWidth: 0.33,
             border: false,
             items: [
               {

@@ -127,6 +127,7 @@ $_lang['modai.admin.prompt_library.prompt.remove_confirm'] = 'Are you sure you w
 $_lang['modai.admin.prompt_library.prompt.search'] = 'Search';
 $_lang['modai.admin.prompt_library.prompt.category'] = 'Category';
 $_lang['modai.admin.prompt_library.prompt.prompt'] = 'Prompt';
+$_lang['modai.admin.prompt_library.prompt.public'] = 'Public';
 
 $_lang['modai.admin.prompt_library.category.name'] = 'Name';
 $_lang['modai.admin.prompt_library.category.enabled'] = 'Enabled';
@@ -138,6 +139,7 @@ $_lang['modai.admin.prompt_library.category.remove_confirm'] = 'Are you sure you
 $_lang['modai.admin.prompt_library.category.text'] = 'Text';
 $_lang['modai.admin.prompt_library.category.image'] = 'Image';
 $_lang['modai.admin.prompt_library.category.type'] = 'Type';
+$_lang['modai.admin.prompt_library.category.public'] = 'Public';
 
 $_lang['modai.admin.error.required'] = 'Field is required.';
 
@@ -157,3 +159,4 @@ $_lang['modai.admin.error.agent_context_provider_not_found'] = "Agent's Context 
 $_lang['modai.admin.error.agent_id_required'] = 'Agent id is required.';
 $_lang['modai.admin.error.related_agent_tool_context_provider_required'] = 'Tool id or Context provider id is required.';
 $_lang['modai.admin.error.related_agent_not_found'] = 'Related agent not found.';
+$_lang['modai.admin.error.prompt_library_delete_root'] = 'Can\'t delete root category.';

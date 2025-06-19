@@ -27,11 +27,36 @@ class GetList extends GetListProcessor
             $c->where(['category_id' => $category]);
         }
 
+        $type = $this->getProperty('type', '');
+        if (!empty($type)) {
+            $c->where(['type' => $type]);
+        }
+
         $enabled = $this->getProperty('enabled', '');
         if ($enabled !== '') {
             $c->where([
                 'enabled' => $enabled,
             ]);
+        }
+
+        $public = $this->getProperty('public', '');
+        if ($public === '') {
+            $c->where([
+                'public' => true,
+                'OR:created_by:=' => $this->modx->user->id,
+            ]);
+        } else {
+            $public = (int)$public;
+            if ($public === 0) {
+                $c->where([
+                    'public' => false,
+                    'created_by' => $this->modx->user->id,
+                ]);
+            } else {
+                $c->where([
+                    'public' => true
+                ]);
+            }
         }
 
         $search = $this->getProperty('search', '');

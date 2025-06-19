@@ -1,6 +1,7 @@
 modAIAdmin.window.PromptLibraryCategories = function (config) {
   config = config || {};
   config.isUpdate = config.isUpdate || false;
+  config.canCreatePublic = config.canCreatePublic || false;
 
   Ext.applyIf(config, {
     title: config.isUpdate ? _('modai.admin.prompt_library.category.update') : _('modai.admin.prompt_library.category.create'),
@@ -37,6 +38,14 @@ Ext.extend(modAIAdmin.window.PromptLibraryCategories, MODx.Window, {
         name: 'enabled',
         hiddenName: 'enabled',
         anchor: '100%',
+      },
+      {
+        xtype: 'modx-combo-boolean',
+        fieldLabel: _('modai.admin.prompt_library.category.public'),
+        name: 'public',
+        hiddenName: 'public',
+        anchor: '100%',
+        disabled: !config.canCreatePublic
       },
       {
         xtype: 'modai-combo-prompt_library_category_type',

@@ -1,7 +1,9 @@
 modAIAdmin.grid.PromptLibraryPrompts = function (config) {
   config = config || {};
   config.permissions = config.permissions || {};
-  config.permission_item = 'prompt_library_category';
+  config.permission_item = 'prompt_library_prompt';
+
+  const canCreatePublic = !!config.permissions['modai_admin_prompt_library_prompt_save_public'];
 
   Ext.applyIf(config, {
     url: MODx.config.connector_url,
@@ -11,7 +13,7 @@ modAIAdmin.grid.PromptLibraryPrompts = function (config) {
     save_action: 'modAI\\Processors\\PromptLibrary\\Prompts\\UpdateFromGrid',
     autosave: true,
     preventSaveRefresh: false,
-    fields: ['id', 'name', 'prompt', 'category_id', 'enabled', 'rank'],
+    fields: ['id', 'name', 'prompt', 'category_id', 'enabled', 'public', 'rank'],
     paging: true,
     remoteSort: true,
     emptyText: _('modai.admin.global.no_records'),
@@ -42,6 +44,18 @@ modAIAdmin.grid.PromptLibraryPrompts = function (config) {
         editor: {
           xtype: 'modx-combo-boolean',
           renderer: this.rendYesNo,
+        },
+      },
+      {
+        header: _('modai.admin.prompt_library.prompt.public'),
+        dataIndex: 'public',
+        width: 0.1,
+        hidden: false,
+        renderer: this.rendYesNo,
+        editor: {
+          xtype: 'modx-combo-boolean',
+          renderer: this.rendYesNo,
+          disabled: !canCreatePublic
         },
       },
       {
@@ -121,6 +135,17 @@ Ext.extend(modAIAdmin.grid.PromptLibraryPrompts, modAIAdmin.grid.ACLGrid, {
           scope: this,
         },
       },
+      {
+        xtype: 'modai-combo-extended_boolean',
+        dataLabel: _('modai.admin.prompt_library.prompt.public'),
+        emptyText: _('modai.admin.prompt_library.prompt.public'),
+        filterName: 'public',
+        useInt: true,
+        listeners: {
+          select: this.filterCombo,
+          scope: this,
+        },
+      },
     ]);
 
     return tbar;
@@ -129,14 +154,18 @@ Ext.extend(modAIAdmin.grid.PromptLibraryPrompts, modAIAdmin.grid.ACLGrid, {
   createPrompt: function (btn, e) {
     const store = this.getStore();
 
+    const canCreatePublic = !!this.config.permissions['modai_admin_prompt_library_prompt_save_public'];
+
     const record = {
       category_id: store.baseParams.category || 0,
-      enabled: false
+      enabled: false,
+      public: canCreatePublic
     };
 
     const win = MODx.load({
       xtype: 'modai-window-prompt_library_prompts',
       record: record,
+      canCreatePublic,
       listeners: {
         success: {
           fn: function () {
@@ -154,11 +183,13 @@ Ext.extend(modAIAdmin.grid.PromptLibraryPrompts, modAIAdmin.grid.ACLGrid, {
   },
 
   updatePrompt: function (btn, e) {
+    const canCreatePublic = !!this.config.permissions['modai_admin_prompt_library_prompt_save_public'];
 
     const win = MODx.load({
       xtype: 'modai-window-prompt_library_prompts',
       record: this.menu.record,
       isUpdate: true,
+      canCreatePublic,
       listeners: {
         success: {
           fn: function () {

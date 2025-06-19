@@ -274,7 +274,15 @@ class modAI
 
         $c = $this->modx->newQuery(PromptLibraryCategory::class);
         $c->where([
-            'enabled' => true
+            'enabled' => true,
+            [
+                'public' => true,
+                'OR:created_by:=' => $this->modx->user->id,
+                [
+                    'OR:parent_id:=' => 0,
+                    'created_by' => 0,
+                ]
+            ]
         ]);
         $c->sortby('type', 'asc');
         $c->sortby('parent_id', 'asc');
@@ -313,7 +321,11 @@ class modAI
         $pc = $this->modx->newQuery(PromptLibraryPrompt::class);
         $pc->where([
             'enabled' => true,
-            'category_id:IN' => $allCategoryIDs
+            'category_id:IN' => $allCategoryIDs,
+            [
+                'public' => true,
+                'OR:created_by:=' => $this->modx->user->id,
+            ]
         ]);
         $pc->sortby('category_id', 'asc');
         $pc->sortby('rank', 'asc');
@@ -349,6 +361,14 @@ class modAI
             $removeLeafNodes($treeByType);
         }
 
+        if (isset($output['text']) && count($output['text']) > 0) {
+            $output['text'] = $output['text'][0]['children'];
+        }
+
+        if (isset($output['image']) && count($output['image']) > 0) {
+            $output['image'] = $output['image'][0]['children'];
+        }
+
         return $output;
     }
 
@@ -373,8 +393,10 @@ class modAI
             'modai_admin_related_agent_delete' => (int)$this->modx->hasPermission('modai_admin_related_agent_delete'),
             'modai_admin_prompt_library' => (int)$this->modx->hasPermission('modai_admin_prompt_library'),
             'modai_admin_prompt_library_prompt_save' => (int)$this->modx->hasPermission('modai_admin_prompt_library_prompt_save'),
+            'modai_admin_prompt_library_prompt_save_public' => (int)$this->modx->hasPermission('modai_admin_prompt_library_prompt_save_public'),
             'modai_admin_prompt_library_prompt_delete' => (int)$this->modx->hasPermission('modai_admin_prompt_library_prompt_delete'),
             'modai_admin_prompt_library_category_save' => (int)$this->modx->hasPermission('modai_admin_prompt_library_category_save'),
+            'modai_admin_prompt_library_category_save_public' => (int)$this->modx->hasPermission('modai_admin_prompt_library_category_save_public'),
             'modai_admin_prompt_library_category_delete' => (int)$this->modx->hasPermission('modai_admin_prompt_library_category_delete'),
         ];
     }

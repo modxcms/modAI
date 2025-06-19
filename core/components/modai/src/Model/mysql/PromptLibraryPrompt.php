@@ -19,8 +19,10 @@ class PromptLibraryPrompt extends \modAI\Model\PromptLibraryPrompt
             'name' => NULL,
             'prompt' => NULL,
             'enabled' => 0,
+            'public' => 0,
             'rank' => 0,
             'category_id' => NULL,
+            'created_by' => 0,
         ),
         'fieldMeta' => 
         array (
@@ -45,6 +47,14 @@ class PromptLibraryPrompt extends \modAI\Model\PromptLibraryPrompt
                 'null' => false,
                 'default' => 0,
             ),
+            'public' => 
+            array (
+                'dbtype' => 'tinyint',
+                'precision' => '1',
+                'phptype' => 'boolean',
+                'null' => false,
+                'default' => 0,
+            ),
             'rank' => 
             array (
                 'dbtype' => 'int',
@@ -59,6 +69,14 @@ class PromptLibraryPrompt extends \modAI\Model\PromptLibraryPrompt
                 'precision' => '10',
                 'phptype' => 'int',
                 'null' => false,
+            ),
+            'created_by' => 
+            array (
+                'dbtype' => 'int',
+                'precision' => '11',
+                'phptype' => 'int',
+                'null' => false,
+                'default' => 0,
             ),
         ),
         'indexes' => 

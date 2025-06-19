@@ -35,6 +35,11 @@ class Update extends UpdateProcessor
 
         $this->setProperty('enabled', Utils::convertToBoolean($this->getProperty('enabled')));
 
+        $this->setProperty('public', Utils::convertToBoolean($this->getProperty('public')));
+        if (!$this->modx->hasPermission($this->permission . '_public')) {
+            $this->setProperty('public', false);
+        }
+
         return parent::beforeSet();
     }
 }

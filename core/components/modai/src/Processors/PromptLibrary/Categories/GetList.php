@@ -51,6 +51,15 @@ class GetList extends GetListProcessor
             $c->where(['name:LIKE' => "%{$search}%"]);
         }
 
+        $c->where([
+            'public' => true,
+            'OR:created_by:=' => $this->modx->user->id,
+            [
+                'OR:parent_id:=' => 0,
+                'created_by' => 0,
+            ]
+        ]);
+
         return parent::prepareQueryBeforeCount($c);
     }
 }

@@ -177,8 +177,10 @@
         <field key="name" dbtype="varchar" precision="191" phptype="string" null="false" />
         <field key="type" dbtype="varchar" precision="64" phptype="string" null="false" />
         <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
+        <field key="public" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
         <field key="rank" dbtype="int" precision="10" phptype="int" null="false" default="0" />
         <field key="parent_id" dbtype="int" precision="10" phptype="int" null="false" default="0" />
+        <field key="created_by" dbtype="int" precision="11" phptype="int" null="false" default="0" />
 
         <index alias="parent_id" name="parent_id" primary="false" unique="false" type="BTREE">
             <column key="parent_id" length="" collation="A" null="false" />
@@ -207,9 +209,10 @@
         <field key="name" dbtype="varchar" precision="191" phptype="string" null="false" />
         <field key="prompt" dbtype="text" phptype="string" null="false" />
         <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
+        <field key="public" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
         <field key="rank" dbtype="int" precision="10" phptype="int" null="false" default="0" />
         <field key="category_id" dbtype="int" precision="10" phptype="int" null="false" />
-
+        <field key="created_by" dbtype="int" precision="11" phptype="int" null="false" default="0" />
 
         <index alias="category_id" name="category_id" primary="false" unique="false" type="BTREE">
             <column key="category_id" length="" collation="A" null="false" />

@@ -29,6 +29,10 @@ class Create extends CreateProcessor
         }
 
         $parent = (int)$this->getProperty('parent_id');
+        if (empty($parent)) {
+            $this->addFieldError('parent_id', $this->modx->lexicon('modai.admin.error.required'));
+            return false;
+        }
 
         $c = $this->modx->newQuery($this->classKey);
         $c->where([
@@ -47,6 +51,12 @@ class Create extends CreateProcessor
         $this->setProperty('rank', $rank);
 
         $this->setProperty('enabled', Utils::convertToBoolean($this->getProperty('enabled')));
+        $this->setProperty('created_by', $this->modx->user->id);
+
+        $this->setProperty('public', Utils::convertToBoolean($this->getProperty('public')));
+        if (!$this->modx->hasPermission($this->permission . '_public')) {
+            $this->setProperty('public', false);
+        }
 
         return parent::beforeSet();
     }

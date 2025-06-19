@@ -13,7 +13,7 @@ class UpdateFromGrid extends UpdateProcessor
     public $objectType = 'modai.admin.prompt_library.prompt';
     public $permission = 'modai_admin_prompt_library_prompt_save';
 
-    private static $allowedKeys = ['id', 'name', 'enabled', 'rank'];
+    private static $allowedKeys = ['id', 'name', 'enabled', 'public', 'rank'];
 
     public function initialize()
     {
@@ -46,6 +46,11 @@ class UpdateFromGrid extends UpdateProcessor
         }
 
         $this->setProperty('enabled', Utils::convertToBoolean($this->getProperty('enabled')));
+
+        $this->setProperty('public', Utils::convertToBoolean($this->getProperty('public')));
+        if (!$this->modx->hasPermission($this->permission . '_public')) {
+            $this->setProperty('public', false);
+        }
 
         return parent::beforeSet();
     }
