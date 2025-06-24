@@ -44,6 +44,17 @@ class GetNodes extends ModelProcessor
 
         /** @var PromptLibraryCategory[] $categories */
         foreach ($categories as $category) {
+            $menu = [];
+            if ($this->has['save']) {
+                $menu[] = [
+                    'text' => $this->modx->lexicon($this->objectType . '.create'),
+                    'cat_id' => $category->get('id'),
+                    'handler' => 'function(itm,e) {
+                        this.createCategory(itm,e);
+                    }',
+                ];
+            }
+
             $setArray = [
                 'text' => $this->modx->lexicon('modai.admin.prompt_library.category.' . $category->get('type')),
                 'id' => 'cat_' . $category->get('id'),
@@ -55,6 +66,7 @@ class GetNodes extends ModelProcessor
                 'data' => $category->toArray(),
                 'draggable' => false,
                 'pseudoroot' => true,
+                'menu' => ['items' => $menu],
             ];
             $list[] = $setArray;
         }

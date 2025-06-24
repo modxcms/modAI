@@ -18,7 +18,7 @@ class PromptLibraryPrompt extends \modAI\Model\PromptLibraryPrompt
         array (
             'name' => NULL,
             'prompt' => NULL,
-            'enabled' => 0,
+            'enabled' => 1,
             'public' => 0,
             'rank' => 0,
             'category_id' => NULL,
@@ -45,7 +45,7 @@ class PromptLibraryPrompt extends \modAI\Model\PromptLibraryPrompt
                 'precision' => '1',
                 'phptype' => 'boolean',
                 'null' => false,
-                'default' => 0,
+                'default' => 1,
             ),
             'public' => 
             array (

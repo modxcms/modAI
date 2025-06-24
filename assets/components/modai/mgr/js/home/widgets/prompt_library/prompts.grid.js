@@ -28,7 +28,7 @@ modAIAdmin.grid.PromptLibraryPrompts = function (config) {
       {
         header: _('modai.admin.prompt_library.prompt.name'),
         dataIndex: 'name',
-        width: 0.7,
+        width: 0.6,
         sortable: true,
         hidden: false,
         editor: {
@@ -38,7 +38,7 @@ modAIAdmin.grid.PromptLibraryPrompts = function (config) {
       {
         header: _('modai.admin.prompt_library.prompt.enabled'),
         dataIndex: 'enabled',
-        width: 0.1,
+        width: 0.2,
         hidden: false,
         renderer: this.rendYesNo,
         editor: {
@@ -49,7 +49,7 @@ modAIAdmin.grid.PromptLibraryPrompts = function (config) {
       {
         header: _('modai.admin.prompt_library.prompt.public'),
         dataIndex: 'public',
-        width: 0.1,
+        width: 0.2,
         hidden: false,
         renderer: this.rendYesNo,
         editor: {
@@ -61,7 +61,7 @@ modAIAdmin.grid.PromptLibraryPrompts = function (config) {
       {
         header: _('modai.admin.prompt_library.prompt.rank'),
         dataIndex: 'rank',
-        width: 0.1,
+        width: 0.2,
         hidden: false,
         editor: {
           xtype: 'numberfield',
@@ -158,7 +158,7 @@ Ext.extend(modAIAdmin.grid.PromptLibraryPrompts, modAIAdmin.grid.ACLGrid, {
 
     const record = {
       category_id: store.baseParams.category || 0,
-      enabled: false,
+      enabled: true,
       public: canCreatePublic
     };
 

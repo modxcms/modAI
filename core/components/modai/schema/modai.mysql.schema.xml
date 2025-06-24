@@ -176,7 +176,7 @@
     <object class="PromptLibraryCategory" table="modai_prompt_library_categories">
         <field key="name" dbtype="varchar" precision="191" phptype="string" null="false" />
         <field key="type" dbtype="varchar" precision="64" phptype="string" null="false" />
-        <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
+        <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="1" />
         <field key="public" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
         <field key="rank" dbtype="int" precision="10" phptype="int" null="false" default="0" />
         <field key="parent_id" dbtype="int" precision="10" phptype="int" null="false" default="0" />
@@ -208,7 +208,7 @@
     <object class="PromptLibraryPrompt" table="modai_prompt_library_prompts">
         <field key="name" dbtype="varchar" precision="191" phptype="string" null="false" />
         <field key="prompt" dbtype="text" phptype="string" null="false" />
-        <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
+        <field key="enabled" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="1" />
         <field key="public" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
         <field key="rank" dbtype="int" precision="10" phptype="int" null="false" default="0" />
         <field key="category_id" dbtype="int" precision="10" phptype="int" null="false" />

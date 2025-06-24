@@ -83,7 +83,7 @@ Ext.extend(modAIAdmin.tree.PromptLibraryCategories,MODx.tree.Tree,{
 
     const record = {
       parent_id: btn.cat_id,
-      enabled: false,
+      enabled: true,
       type: this.cm.activeNode.attributes.data.type,
       public: canCreatePublic,
     };
@@ -161,7 +161,7 @@ Ext.extend(modAIAdmin.tree.PromptLibraryCategories,MODx.tree.Tree,{
 
     const record = {
       parent_id:  node.attributes.data.id,
-      enabled: false,
+      enabled: true,
       type: node.attributes.data.type,
       public: canCreatePublic,
     };
