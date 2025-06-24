@@ -2,7 +2,7 @@ export const applyStyles = (element: HTMLElement, styleObj: string) => {
   element.className = styleObj;
 };
 
-type El = string | HTMLElement | Element | false | undefined;
+export type El = string | HTMLElement | Element | false | undefined;
 
 export const createElement = <K extends keyof HTMLElementTagNameMap>(
   type: K,

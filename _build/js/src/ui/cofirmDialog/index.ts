@@ -4,10 +4,11 @@ import { createModAIShadow } from '../dom/modAIShadow';
 import { createElement } from '../utils';
 
 import type { Button } from '../dom/button';
+import type { El } from '../utils';
 
 type ConfirmDialogOptions = {
   title: string;
-  content: string;
+  content: El;
   onConfirm: () => void;
   onCancel?: () => void;
   confirmText: string;
@@ -51,30 +52,25 @@ export const confirmDialog = (config: ConfirmDialogOptions) => {
     { tabIndex: -1 },
   );
 
-  const overlay = createElement(
+  const dialog = createElement(
     'div',
-    'modai--root overlay',
+    'dialog',
     [
-      createElement(
-        'div',
-        'dialog',
-        [
-          createElement('h3', 'title', config.title),
-          createElement('p', 'message', config.content),
-          createElement('div', 'buttons', [
-            config.showCancel && cancelBtn,
-            config.showConfirm && confirmBtn,
-          ]),
-        ],
-        { tabIndex: -1 },
-      ),
+      createElement('h3', 'title', config.title),
+      createElement('p', 'message', config.content),
+      createElement('div', 'buttons', [
+        config.showCancel && cancelBtn,
+        config.showConfirm && confirmBtn,
+      ]),
     ],
-    {
-      ariaModal: 'true',
-      role: 'dialog',
-      ariaLabel: config.title,
-    },
+    { tabIndex: -1 },
   );
+
+  const overlay = createElement('div', 'modai--root overlay', [dialog], {
+    ariaModal: 'true',
+    role: 'dialog',
+    ariaLabel: config.title,
+  });
 
   const destroyDialog = () => {
     document.removeEventListener('keydown', handleDialogKeyDown);
@@ -123,6 +119,16 @@ export const confirmDialog = (config: ConfirmDialogOptions) => {
   };
 
   overlay.addEventListener('keydown', handleDialogKeyDown);
+
+  overlay.addEventListener('click', () => {
+    closeDialog();
+  });
+
+  dialog.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+  });
 
   shadowRoot.appendChild(overlay);
   document.body.append(shadow);
