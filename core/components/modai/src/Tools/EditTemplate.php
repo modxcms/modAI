@@ -14,12 +14,12 @@ class EditTemplate implements ToolInterface
         return 'edit_template';
     }
 
-    public static function getPrompt(): string
+    public static function getPrompt(modX $modx): string
     {
         return "Edits an existing template, which is used to render a resource on the front-end of the website. Use when explicitly asked to edit a template. In most cases, you should also check other templates to see the preferred coding style and structure of the website. Get the current content of the template with the get_templates tool. ALWAYS ask for explicit user confirmation with the template name and a summary of the changes you are making BEFORE calling this function.";
     }
 
-    public static function getParameters(): array
+    public static function getParameters(modX $modx): array
     {
         return [
             'type' => 'object',

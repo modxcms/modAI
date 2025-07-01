@@ -2,18 +2,22 @@
 
 namespace modAI\Services\Config;
 
+use MODX\Revolution\modX;
+
 trait Model
 {
     private string $model;
+    private modX $modx;
 
-    private function __construct(string $model)
+    private function __construct(string $model, modX $modx)
     {
         $this->model = $model;
+        $this->modx = $modx;
     }
 
-    public static function new(string $model): self
+    public static function new(string $model, modX $modx): self
     {
-        return new self($model);
+        return new self($model, $modx);
     }
 
     public function getModel(): string

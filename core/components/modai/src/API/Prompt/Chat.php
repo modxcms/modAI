@@ -96,7 +96,6 @@ class Chat extends API
 
                         Settings::setSetting($this->modx, "$customOptionsKey.agent_options", json_encode($customOptionsValue));
                     }
-
                 }
             }
         }
@@ -167,7 +166,7 @@ class Chat extends API
         $aiService = AIServiceFactory::new($model, $this->modx);
         $result = $aiService->getCompletions(
             $userMessages,
-            CompletionsConfig::new($model)
+            CompletionsConfig::new($model, $this->modx)
                 ->tools($tools)
                 ->messages($messages)
                 ->options(['max_tokens' => $maxTokens, 'temperature' => $temperature], $customOptions, $agentOptions, $additionalOptions)

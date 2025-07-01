@@ -14,12 +14,12 @@ class CreateCategory implements ToolInterface
         return 'create_category';
     }
 
-    public static function getPrompt(): string
+    public static function getPrompt(modX $modx): string
     {
         return "Creates a new Category that any element (chunks or templates) can be grouped by. Use the get categories tool first to check if a category already exists. When successful, this tool returns the category ID to use when creating chunks or templates.";
     }
 
-    public static function getParameters(): array
+    public static function getParameters(modX $modx): array
     {
         return [
             'type' => 'object',

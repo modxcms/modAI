@@ -14,12 +14,12 @@ class GetChunks implements ToolInterface
         return 'get_chunks';
     }
 
-    public static function getPrompt(): string
+    public static function getPrompt(modX $modx): string
     {
         return "Find existing chunks in the website. Chunks are reusable pieces of HTML or other content. The tool can search for Get or search chunks (modChunk) from current MODX Revolution database. You can provide optional parameters to return only specific chunks - query: search chunks by name, broad match; name: return chunk with a given name; id: return chunk with a given ID. You'll receive an array of chunks with a properties of id, name, description, category (ID of a category) and optionally content.";
     }
 
-    public static function getParameters(): array
+    public static function getParameters(modX $modx): array
     {
         return [
             'type' => 'object',

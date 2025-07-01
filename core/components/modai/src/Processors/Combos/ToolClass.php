@@ -40,13 +40,13 @@ class ToolClass extends Processor
             }
         }
 
-        return $this->outputArray(array_map(function($class) {
+        return $this->outputArray(array_map(function ($class) {
             return [
                 'class' => $class,
                 'config' => $class::getConfig($this->modx),
                 'suggestedName' => $class::getSuggestedName(),
                 'description' => $class::getDescription(),
-                'defaultPrompt' => $class::getPrompt(),
+                'defaultPrompt' => $class::getPrompt($this->modx),
             ];
         }, $classes), count($classes));
     }

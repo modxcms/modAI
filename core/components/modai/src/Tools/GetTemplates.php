@@ -15,12 +15,12 @@ class GetTemplates implements ToolInterface
         return 'get_templates';
     }
 
-    public static function getPrompt(): string
+    public static function getPrompt(modX $modx): string
     {
         return "Find templates available in the website. Templates are assigned to resources and determine how a page is rendered to visitors. You can provide optional parameters to return only specific templates. You'll receive an array of templates with a properties of id, name, description, category (ID of a category) and optionally content.";
     }
 
-    public static function getParameters(): array
+    public static function getParameters(modX $modx): array
     {
         return [
             'type' => 'object',

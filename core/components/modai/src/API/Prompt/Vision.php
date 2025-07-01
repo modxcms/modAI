@@ -43,7 +43,7 @@ class Vision extends API
         $result = $aiService->getVision(
             $prompt,
             $image,
-            VisionConfig::new($model)
+            VisionConfig::new($model, $this->modx)
                 ->options(['max_tokens' => $maxTokens], $customOptions)
                 ->stream($stream)
         );

@@ -14,12 +14,12 @@ class CreateResource implements ToolInterface
         return 'create_resource';
     }
 
-    public static function getPrompt(): string
+    public static function getPrompt(modX $modx): string
     {
         return "Creates a new resource, or page, on the website. ALWAYS ask for explicit user confirmation in a separate message before calling this function, even if user asks directly to create a resource, ask the user to confirm the resource before calling the tool with the information you intend to use. ";
     }
 
-    public static function getParameters(): array
+    public static function getParameters(modX $modx): array
     {
         return [
             'type' => 'object',

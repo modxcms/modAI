@@ -15,12 +15,12 @@ class GetResources implements ToolInterface
         return 'get_resources';
     }
 
-    public static function getPrompt(): string
+    public static function getPrompt(modX $modx): string
     {
         return "Search for resources, also called pages or documents, on the website. You can provide optional parameters to return only specific resources. Returns matching resources with their id, pagetitle, parent resource ID, template ID, edit url, and public URL.";
     }
 
-    public static function getParameters(): array
+    public static function getParameters(modX $modx): array
     {
         return [
             'type' => 'object',

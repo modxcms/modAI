@@ -39,9 +39,10 @@ interface ToolInterface
      * You can use the provided user config to customise or let the site's admin determine part
      * of your prompt.
      *
+     * @param modX $modx
      * @return string
      */
-    public static function getPrompt(): string;
+    public static function getPrompt(modX $modx): string;
 
     /**
      * Checks if user has permissions to run this tool.
@@ -54,9 +55,10 @@ interface ToolInterface
     /**
      * Set the parameters that the LLM should or must provide when calling your function. Has to return valid JSON-schema.
      *
+     * @param modX $modx
      * @return array Returns the parameters as an array.
      */
-    public static function getParameters(): array;
+    public static function getParameters(modX $modx): array;
 
     /**
      * An array of tool parameters that should be exposed to the site's admin to configure your tool.

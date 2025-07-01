@@ -15,12 +15,12 @@ class GetResourceDetail implements ToolInterface
         return 'get_resource_detail';
     }
 
-    public static function getPrompt(): string
+    public static function getPrompt(modX $modx): string
     {
         return "Get more information about a resource, page, concept, or service you are unfamiliar with from of an array of integer resource IDs. Use the appropriate tool first to identify relevant resources on a topic. The tool will retrieve metadata, like title, description, published state, and last edit dates, as well as full HTML-formatted content. Provide at least one, or multiple resource IDs.";
     }
 
-    public static function getParameters(): array
+    public static function getParameters(modX $modx): array
     {
         return [
             'type' => 'object',
@@ -78,7 +78,8 @@ class GetResourceDetail implements ToolInterface
                 $maxIterations = (int)$this->modx->getOption('parser_max_iterations', null, 10);
                 $parser->processElementTags('', $content, false, false, '[[', ']]', [], $maxIterations);
                 $parser->processElementTags('', $content, true, true, '[[', ']]', [], $maxIterations);
-            } catch (\Throwable $e) { }
+            } catch (\Throwable $e) {
+            }
 
             $arr = $resource->toArray();
 

@@ -46,7 +46,7 @@ class Image extends API
         $aiService = AIServiceFactory::new($model, $this->modx);
         $result = $aiService->generateImage(
             $prompt,
-            ImageConfig::new($model)
+            ImageConfig::new($model, $this->modx)
                 ->options(['quality' => $quality, 'style' => $style, 'size' => $size, 'response_format' => $responseFormat], $customOptions, $additionalOptions)
                 ->attachments($attachments)
         );

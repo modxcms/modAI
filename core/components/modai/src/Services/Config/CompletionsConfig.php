@@ -76,8 +76,8 @@ class CompletionsConfig
             $prompt = $tool->get('prompt');
             $tools[] = [
                 'name' => $toolName,
-                'description' => !empty($prompt) ? $prompt : $toolClass::getPrompt(),
-                'parameters' => $toolClass::getParameters(),
+                'description' => !empty($prompt) ? $prompt : $toolClass::getPrompt($this->modx),
+                'parameters' => $toolClass::getParameters($this->modx),
             ];
         }
 

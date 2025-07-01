@@ -91,7 +91,7 @@ class Text extends API
         $aiService = AIServiceFactory::new($model, $this->modx);
         $result = $aiService->getCompletions(
             [['content' => $content]],
-            CompletionsConfig::new($model)
+            CompletionsConfig::new($model, $this->modx)
                 ->options(['max_tokens' => $maxTokens, 'temperature' => $temperature], $customOptions)
                 ->systemInstructions($systemInstructions)
                 ->stream($stream)

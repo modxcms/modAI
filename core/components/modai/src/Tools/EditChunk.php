@@ -14,12 +14,12 @@ class EditChunk implements ToolInterface
         return 'edit_chunk';
     }
 
-    public static function getPrompt(): string
+    public static function getPrompt(modX $modx): string
     {
         return "Edits an existing Chunk, which is a reusable piece of HTML or other code that can be inserted into pages, templates, or other elements. Use when explicitly asked to edit a chunk or when creating templates to break up reusable pieces. Get the current content to edit using the get_chunks tool. Chunks can be used by adding [[\$name_of_chunk]] in a template or elsewhere. ALWAYS ask for explicit user confirmation with the chunk name, description, and category name in a separate message BEFORE calling this function.";
     }
 
-    public static function getParameters(): array
+    public static function getParameters(modX $modx): array
     {
         return [
             'type' => 'object',

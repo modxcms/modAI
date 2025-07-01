@@ -14,12 +14,12 @@ class GetCategories implements ToolInterface
         return 'get_categories';
     }
 
-    public static function getPrompt(): string
+    public static function getPrompt(modX $modx): string
     {
         return "Lists all categories used to group templates and chunks. Each category can have a parent to create a tree like structure. If parent is 0, the category is at root level.";
     }
 
-    public static function getParameters(): array
+    public static function getParameters(modX $modx): array
     {
         return [];
     }
@@ -52,7 +52,6 @@ class GetCategories implements ToolInterface
                 'name' => $category->get('category'),
                 'parent' => $category->get('parent'),
             ];
-
         }
 
         return json_encode($output);

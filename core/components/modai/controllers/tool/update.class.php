@@ -22,7 +22,7 @@ class ModAIToolUpdateManagerController extends ModAIBaseManagerController
 
         $this->toolData = $tool->toArray();
         $this->toolData['classConfig'] = $this->toolData['class']::getConfig($this->modx);
-        $this->toolData['defaultPrompt'] = $this->toolData['class']::getPrompt();
+        $this->toolData['defaultPrompt'] = $this->toolData['class']::getPrompt($this->modx);
     }
 
     public function getPageTitle()
@@ -44,7 +44,7 @@ class ModAIToolUpdateManagerController extends ModAIBaseManagerController
         $this->addHtml('
         <script type="text/javascript">
             Ext.onReady(function() {
-                MODx.load({ 
+                MODx.load({
                     xtype: "modai-page-tool",
                     record: ' . $this->modx->toJSON($this->toolData) . ',
                     permissions: ' . json_encode($this->permissions) . '
