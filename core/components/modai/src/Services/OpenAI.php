@@ -202,19 +202,41 @@ class OpenAI implements AIService
     {
         $apiKey = $this->getApiKey();
 
-        $input = $config->getOptions();
+        $input = $config->getOptions(function ($options) {
+            $gptConfig = [];
+
+            foreach ($options as $key => $value) {
+                switch ($key) {
+                    case 'max_tokens':
+                        $gptConfig['max_output_tokens'] = $value;
+                        break;
+                    case 'temperature':
+                        $value = floatval($value);
+                        if ($value >= 0) {
+                            $gptConfig['temperature'] = $value;
+                        }
+                        break;
+                    default:
+                        $gptConfig[$key] = $value;
+                }
+            }
+
+            return $gptConfig;
+        });
+
         $input['model'] = $config->getModel();
-        $input['messages'] = [
+        $input['input'] = [
             [
                 'role' => 'user',
                 'content' => [
                     [
-                        "type" => "text",
+                        "type" => "input_text",
                         "text" => $prompt,
                     ],
                     [
-                        "type" => "image_url",
-                        "image_url" => ["url" => $image],
+                        'type' => 'input_image',
+                        'detail' => 'auto',
+                        'image_url' => $image,
                     ],
                 ]
             ]
@@ -222,10 +244,6 @@ class OpenAI implements AIService
 
         if ($config->isStream()) {
             $input['stream'] = true;
-
-            $input['stream_options'] = [
-                'include_usage' => true,
-            ];
         }
 
         return AIResponse::new(self::getServiceName(), $config->getRawModel())
