@@ -1,5 +1,5 @@
 name: modAI
-version: 0.13.0-pl
+version: 0.13.1-pl
 lowCaseName: modai
 namespace: modAI
 author: 'John Peca'
@@ -73,7 +73,7 @@ systemSettings:
   - key: global.text.base_output
     area: text
     type: textarea
-    value: |- 
+    value: |-
       - This content will be used inside a web content management system.
       - The output should be usable without editing or modification.
       - This is not a conversation; do not include justification or explanation.
