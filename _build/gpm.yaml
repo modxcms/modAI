@@ -91,7 +91,7 @@ systemSettings:
     value: 2048
   - key: global.text.model
     area: text
-    value: openai/gpt-4o-mini
+    value: openai/gpt-5-mini
   - key: global.text.temperature
     area: text
     value: 0.7
@@ -106,7 +106,7 @@ systemSettings:
 
   - key: global.vision.model
     area: vision
-    value: openai/gpt-4o-mini
+    value: openai/gpt-5-mini
   - key: global.vision.prompt
     area: vision
     value: |-
@@ -216,7 +216,7 @@ systemSettings:
     value: 1
   - key: chat.title.model
     area: chat
-    value: openai/gpt-4o-mini
+    value: openai/gpt-5-nano
   - key: chat.title.prompt
     area: chat
     type: textarea
