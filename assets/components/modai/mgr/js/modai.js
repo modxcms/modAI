@@ -67,6 +67,12 @@ Ext.extend(ModAIAdmin, Ext.Component, {
     },
 
     formatConfigItem: function (key, cfg, value = undefined) {
+        if (cfg.type === 'combo-boolean' || cfg.type === 'modx-combo-boolean') {
+            cfg.type = 'modai-combo-boolean';
+            cfg.extraProperties = cfg.extraProperties || {};
+            cfg.extraProperties.useInt = true;
+        }
+
         return [
             {
                 fieldLabel: cfg.name,

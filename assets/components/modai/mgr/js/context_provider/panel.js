@@ -6,9 +6,9 @@ modAIAdmin.panel.ContextProvider = function (config) {
 
   const configItems = [];
 
-  if (config.record.classConfig && config.record.config) {
+  if (config.record.classConfig) {
     Object.entries(config.record.classConfig).map(([key, cfg]) => {
-      configItems.push(...modAIAdmin.formatConfigItem(key, cfg, config.record.config[key]));
+      configItems.push(...modAIAdmin.formatConfigItem(key, cfg, config.record.config?.[key]));
     });
   }
 

@@ -51,6 +51,9 @@ $_lang['modai.admin.tool.agents'] = 'Agents';
 $_lang['modai.admin.tool.prompt'] = 'Prompt';
 $_lang['modai.admin.tool.prompt_desc'] = 'Description of the tool to the AI. By default it uses the default from the tool\'s class, but you can override it and customize.';
 
+$_lang['modai.admin.tool.config.clear_cache'] = 'Clear Cache';
+$_lang['modai.admin.tool.config.clear_cache_desc'] = 'If enabled, cache will automatically clear after using this tool.';
+
 $_lang['modai.admin.agent.name'] = 'Name';
 $_lang['modai.admin.agent.description'] = 'Description';
 $_lang['modai.admin.agent.enabled'] = 'Enabled';

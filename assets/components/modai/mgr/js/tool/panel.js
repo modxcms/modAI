@@ -5,9 +5,9 @@ modAIAdmin.panel.Tool = function (config) {
   config.id = config.id || 'modai-panel-tool';
 
   const configItems = [];
-  if (config.record.classConfig && config.record.config) {
+  if (config.record.classConfig) {
     Object.entries(config.record.classConfig).map(([key, cfg]) => {
-      configItems.push(...modAIAdmin.formatConfigItem(key, cfg, config.record.config[key]));
+      configItems.push(...modAIAdmin.formatConfigItem(key, cfg, config.record.config?.[key]));
     });
   }
 

@@ -58,6 +58,13 @@ class FieldBuilder
         return $this;
     }
 
+    public function default($default): self
+    {
+        $this->field['defaultValue'] = $default;
+
+        return $this;
+    }
+
     public function build(): array
     {
         return $this->field;

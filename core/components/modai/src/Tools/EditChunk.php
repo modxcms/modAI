@@ -2,12 +2,16 @@
 
 namespace modAI\Tools;
 
+use modAI\Config\ConfigBuilder;
+use modAI\Config\FieldBuilder;
+use modAI\Utils;
 use MODX\Revolution\modChunk;
 use MODX\Revolution\modX;
 
 class EditChunk implements ToolInterface
 {
     private $modx;
+    private bool $clearCache;
 
     public static function getSuggestedName(): string
     {
@@ -50,12 +54,23 @@ class EditChunk implements ToolInterface
 
     public static function getConfig(modX $modx): array
     {
-        return [];
+        return ConfigBuilder::new($modx)
+            ->addField('clear_cache', function (FieldBuilder $field) use ($modx) {
+                return $field
+                    ->name($modx->lexicon('modai.admin.tool.config.clear_cache'))
+                    ->description($modx->lexicon('modai.admin.tool.config.clear_cache_desc'))
+                    ->type('combo-boolean')
+                    ->default(1)
+                    ->build();
+            })
+            ->build();
     }
 
-    public function __construct(modX $modx, array $config)
+    public function __construct(modX $modx, array $config = [])
     {
         $this->modx = $modx;
+
+        $this->clearCache = intval(Utils::getConfigValue($modx, 'clear_cache', $config, '1')) === 1;
     }
 
     /**
@@ -80,6 +95,10 @@ class EditChunk implements ToolInterface
         $chunk->set('snippet', (string)$arguments['chunk']['content']);
         if ($chunk->save()) {
             return json_encode(['success' => true, 'message' => 'Chunk updated. Use with: [[$' . $chunk->get('name') . ']]']);
+        }
+
+        if ($this->clearCache) {
+            $this->modx->cacheManager->refresh();
         }
 
         return json_encode(['success' => false, 'message' => 'Could not save chunk.']);

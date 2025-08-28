@@ -2,12 +2,16 @@
 
 namespace modAI\Tools;
 
+use modAI\Config\ConfigBuilder;
+use modAI\Config\FieldBuilder;
+use modAI\Utils;
 use MODX\Revolution\modResource;
 use MODX\Revolution\modX;
 
 class EditResource implements ToolInterface
 {
     private $modx;
+    private bool $clearCache;
 
     public static function getSuggestedName(): string
     {
@@ -39,12 +43,23 @@ class EditResource implements ToolInterface
 
     public static function getConfig(modX $modx): array
     {
-        return [];
+        return ConfigBuilder::new($modx)
+            ->addField('clear_cache', function (FieldBuilder $field) use ($modx) {
+                return $field
+                    ->name($modx->lexicon('modai.admin.tool.config.clear_cache'))
+                    ->description($modx->lexicon('modai.admin.tool.config.clear_cache_desc'))
+                    ->type('combo-boolean')
+                    ->default(1)
+                    ->build();
+            })
+            ->build();
     }
 
-    public function __construct(modX $modx, array $config)
+    public function __construct(modX $modx, array $config = [])
     {
         $this->modx = $modx;
+
+        $this->clearCache = intval(Utils::getConfigValue($modx, 'clear_cache', $config, '1')) === 1;
     }
 
     /**
@@ -66,11 +81,21 @@ class EditResource implements ToolInterface
             return json_encode(['success' => false, 'message' => 'Invalid resource ID provided.']);
         }
         $resource->set('content', (string)$arguments['raw_content']);
-        if ($resource->save()) {
-            return json_encode(['success' => true, 'message' => 'Resource updated.']);
+        if (!$resource->save()) {
+            return json_encode(['success' => false, 'message' => 'Could not save resource.']);
         }
 
-        return json_encode(['success' => false, 'message' => 'Could not save resource.']);
+        if ($this->clearCache) {
+            $contexts = [$resource->get('context_key')];
+            $this->modx->cacheManager->refresh([
+                'db' => [],
+                'auto_publish' => ['contexts' => $contexts],
+                'context_settings' => ['contexts' => $contexts],
+                'resource' => ['contexts' => $contexts],
+            ]);
+        }
+
+        return json_encode(['success' => true, 'message' => 'Resource updated.']);
     }
 
     public static function checkPermissions(modX $modx): bool

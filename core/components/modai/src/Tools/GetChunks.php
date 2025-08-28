@@ -57,7 +57,7 @@ class GetChunks implements ToolInterface
         return [];
     }
 
-    public function __construct(modX $modx, array $config)
+    public function __construct(modX $modx, array $config = [])
     {
         $this->modx = $modx;
     }

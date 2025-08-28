@@ -14,7 +14,7 @@ interface ToolInterface
      * @param modX $modx
      * @param array $config
      */
-    public function __construct(modX $modx, array $config);
+    public function __construct(modX $modx, array $config = []);
 
     /**
      * The suggested name for the tool, this will be pre-filled for the user when configuring the tool.
