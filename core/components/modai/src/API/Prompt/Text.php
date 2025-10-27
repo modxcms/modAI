@@ -18,6 +18,8 @@ class Text extends API
 
     public function post(ServerRequestInterface $request): void
     {
+        $contextKey = '';
+        
         if (!$this->modx->hasPermission('modai_client_text')) {
             throw APIException::unauthorized();
         }
@@ -60,7 +62,7 @@ class Text extends API
             if (!$resource) {
                 throw new LexiconException('modai.error.no_resource_found');
             }
-
+            $contextKey = $resource->get('context_key');
             $content = $resource->getContent();
 
             if (empty($content)) {
@@ -74,9 +76,9 @@ class Text extends API
         $model = Settings::getTextSetting($this->modx, $field, 'model', $namespace);
         $temperature = (float)Settings::getTextSetting($this->modx, $field, 'temperature', $namespace);
         $maxTokens = (int)Settings::getTextSetting($this->modx, $field, 'max_tokens', $namespace);
-        $output = Settings::getTextSetting($this->modx, $field, 'base_output', $namespace, false);
+        $output = Settings::getTextSetting($this->modx, $field, 'base_output', $namespace, false, $contextKey);
         $base = Settings::getTextSetting($this->modx, $field, 'base_prompt', $namespace, false);
-        $fieldPrompt = Settings::getTextSetting($this->modx, $field, 'prompt', $namespace);
+        $fieldPrompt = Settings::getTextSetting($this->modx, $field, 'prompt', $namespace, false);
         $customOptions = Settings::getTextSetting($this->modx, $field, 'custom_options', $namespace, false);
 
         if (!empty($output)) {

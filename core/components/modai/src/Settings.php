@@ -25,28 +25,38 @@ class Settings
      * @param string $setting
      * @return string|null
      */
-    private static function getOption(modX $modx, string $namespace, string $field, string $area, string $setting): ?string
+    private static function getOption(modX $modx, string $namespace, string $field, string $area, string $setting, string $contextKey = 'web'): ?string
     {
+        $handler = $modx;
+        
+        if (!empty($contextKey)) {
+            
+            $context = $modx->getContext($contextKey);
+            if ($context) {
+                $handler = $context;
+            }
+        }
+        
         if (!empty($field)) {
-            $value = $modx->getOption("#sys.$field.$area.$setting");
+            $value = $handler->getOption("#sys.$field.$area.$setting");
             if ($value !== null && $value !== '') {
                 return $value;
             }
         }
 
-        $value = $modx->getOption("#sys.global.$area.$setting");
+        $value = $handler->getOption("#sys.global.$area.$setting");
         if ($value !== null && $value !== '') {
             return $value;
         }
 
         if (!empty($field)) {
-            $value = $modx->getOption("$namespace.$field.$area.$setting");
+            $value = $handler->getOption("$namespace.$field.$area.$setting");
             if ($value !== null && $value !== '') {
                 return $value;
             }
         }
 
-        $value = $modx->getOption("$namespace.global.$area.$setting");
+        $value = $handler->getOption("$namespace.global.$area.$setting");
         if ($value !== null && $value !== '') {
             return $value;
         }
@@ -56,13 +66,13 @@ class Settings
         }
 
         if (!empty($field)) {
-            $value = $modx->getOption("modai.$field.$area.$setting");
+            $value = $handler->getOption("modai.$field.$area.$setting");
             if ($value !== null && $value !== '') {
                 return $value;
             }
         }
 
-        $value = $modx->getOption("modai.global.$area.$setting");
+        $value = $handler->getOption("modai.global.$area.$setting");
         if ($value !== null && $value !== '') {
             return $value;
         }
@@ -73,9 +83,9 @@ class Settings
     /**
      * @throws RequiredSettingException
      */
-    public static function getTextSetting(modX $modx, string $field, string $setting, string $namespace = 'modai', bool $required = true): ?string
+    public static function getTextSetting(modX $modx, string $field, string $setting, string $namespace = 'modai', bool $required = true, string $contextKey = ''): ?string
     {
-        $value = self::getOption($modx, $namespace, $field, 'text', $setting);
+        $value = self::getOption($modx, $namespace, $field, 'text', $setting, $contextKey);
 
         if ($required && ($value === null || $value === '')) {
             throw new RequiredSettingException("modai.global.text.$setting");
