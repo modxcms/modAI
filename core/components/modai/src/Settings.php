@@ -25,12 +25,11 @@ class Settings
      * @param string $setting
      * @return string|null
      */
-    private static function getOption(modX $modx, string $namespace, string $field, string $area, string $setting, string $contextKey = 'web'): ?string
+    private static function getOption(modX $modx, string $namespace, string $field, string $area, string $setting, ?string $contextKey = null): ?string
     {
         $handler = $modx;
         
         if (!empty($contextKey)) {
-            
             $context = $modx->getContext($contextKey);
             if ($context) {
                 $handler = $context;
@@ -83,7 +82,7 @@ class Settings
     /**
      * @throws RequiredSettingException
      */
-    public static function getTextSetting(modX $modx, string $field, string $setting, string $namespace = 'modai', bool $required = true, string $contextKey = ''): ?string
+    public static function getTextSetting(modX $modx, string $field, string $setting, string $namespace = 'modai', bool $required = true, ?string $contextKey = null): ?string
     {
         $value = self::getOption($modx, $namespace, $field, 'text', $setting, $contextKey);
 
