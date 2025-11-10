@@ -110,9 +110,9 @@ class Settings
     /**
      * @throws RequiredSettingException
      */
-    public static function getVisionSetting(modX $modx, string $field, string $setting, string $namespace = 'modai', bool $required = true): ?string
+    public static function getVisionSetting(modX $modx, string $field, string $setting, string $namespace = 'modai', bool $required = true, ?string $contextKey = null): ?string
     {
-        $value = self::getOption($modx, $namespace, $field, 'vision', $setting);
+        $value = self::getOption($modx, $namespace, $field, 'vision', $setting, $contextKey);
 
         if ($required && ($value === null || $value === '')) {
             throw new RequiredSettingException("modai.global.vision.$setting");
