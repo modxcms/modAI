@@ -247,6 +247,7 @@ type VisionConfig = {
   image: HTMLImageElement;
   input: HTMLElement;
   field: string;
+  resource?: number | string;
   onUpdate: (data: TextData) => void;
   namespace?: string;
 };
@@ -276,6 +277,7 @@ const createVisionPrompt = (config: VisionConfig & Target) => {
           {
             image: base64Data,
             field: config.field,
+            resourceId: config.resource,
             namespace: config.namespace,
           },
           (data) => {

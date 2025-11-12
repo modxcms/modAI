@@ -140,6 +140,7 @@ export type VisionParams = {
   additionalOptions?: Record<string, unknown>;
   namespace?: string;
   image: string;
+  resourceId?: string | number;
 };
 
 export type ImageParams = {

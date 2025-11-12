@@ -31,6 +31,7 @@ const attachImagePlus = (imgPlusPanel: Element, fieldName: string) => {
     targetEl: imagePlus.altTextField.el.dom,
     input: imagePlus.altTextField.items.items[0].el.dom,
     field: fieldName,
+    resource: MODx.request.id,
     image: imagePlus.imagePreview.el.dom,
     onUpdate: (data) => {
       imagePlus.altTextField.items.items[0].setValue(data.content);
