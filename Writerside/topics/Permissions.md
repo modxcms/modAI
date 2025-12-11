@@ -19,6 +19,13 @@ modAI comes with `modAI Admin` access policy, `modAI` access policy template and
 - modai_admin_agent_context_provider_delete: Unassign context provider from an agent
 - modai_admin_related_agent_save: Assign agent to a tool/context provider
 - modai_admin_related_agent_delete: Unassign agent from a tool/context provider
+- modai_admin_prompt_library: Access Prompt Library tab
+- modai_admin_prompt_library_prompt_save: Create/Update prompt
+- modai_admin_prompt_library_prompt_save_public: Set prompt as public
+- modai_admin_prompt_library_prompt_delete: Delete prompts
+- modai_admin_prompt_library_category_save: Create/Update prompt category
+- modai_admin_prompt_library_category_save_public: Set prompt category as public
+- modai_admin_prompt_library_category_delete: Delete prompt category
 
 ### Client Permissions
 - modai_client: Use modAI
