@@ -8,3 +8,5 @@ vendor/
 _build/migrations/migrations.lock
 _build/gpm_scripts
 _build/gpm_resolvers
+copilot-instructions.md
+AGENTS.md
