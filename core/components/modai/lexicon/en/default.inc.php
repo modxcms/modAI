@@ -5,9 +5,13 @@ $_lang['modai.admin.menu.home_desc'] = 'Configure modAI';
 
 $_lang['modai.admin.home.page_title'] = 'modAI';
 $_lang['modai.admin.home.agents'] = 'Agents';
+$_lang['modai.admin.home.agents_desc'] = 'Create focused agents for tasks like content writing, SEO cleanup, or developer assistance, then configure ✦ buttons for them anywhere you choose. <a href="https://modxcms.github.io/modAI/agents.html">Learn more.</a>';
 $_lang['modai.admin.home.tools'] = 'Tools';
+$_lang['modai.admin.home.tools_desc'] = 'Define tools that let agents call MODX actions or external APIs—safely extending what modAI can do for you. <a href="https://modxcms.github.io/modAI/tools.html">Learn more.</a>';
 $_lang['modai.admin.home.context_providers'] = 'Context Providers';
+$_lang['modai.admin.home.context_providers_desc'] = 'Register context providers that feed agents structured data from MODX, external indexes, or vector databases so responses stay grounded in your content. <a href="https://modxcms.github.io/modAI/context-providers.html">Learn more.</a>';
 $_lang['modai.admin.home.prompt_library'] = 'Prompt Library';
+$_lang['modai.admin.home.prompt_library_desc'] = 'Build a shared library of prompts—like brand voice guidelines, SEO templates, or QA checklists—that anyone can apply with a click. <a href="https://modxcms.github.io/modAI/prompt-library.html">Learn more.</a>';
 
 $_lang['modai.admin.global.no_records'] = 'No records found.';
 $_lang['modai.admin.global.any'] = 'Any';

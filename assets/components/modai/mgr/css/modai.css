@@ -27,3 +27,22 @@
 .modai-admin--prompt-library_category_disabled {
     font-style: italic;
 }
+
+.modai-admin--panel_desc {
+    padding-top: 20px;
+    padding-left: 20px;
+    font-size: 14px;
+    color: #495057;
+}
+
+.modai-admin--panel_desc a {
+    color: #4a90e2;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom-color 0.2s ease;
+}
+
+.modai-admin--panel_desc a:hover {
+    border-bottom-color: #4a90e2;
+}

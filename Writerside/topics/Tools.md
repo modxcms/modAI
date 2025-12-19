@@ -1,28 +1,46 @@
 # Tools
 
-To be able to use tools through agents, or directly from chat, they have to be created and configured from this section.
+## What a Tool Is
 
-To create & configure tool, navigate to the Extras -> modAI -> Tools and hit `Create Tool` button.
+A **Tool** is a server‑side capability that an agent can call when it needs structured data or needs to perform an action.
 
-## Properties
+In modAI, Tools are generally implemented as PHP classes that:
+- Declare their **name**, **description/prompt**, and **parameters**
+- Implement logic to perform an action (e.g., read or update a MODX element, call an external API, run a search)
+- Return structured results to the agent 
+ 
+Think of Tools as “functions” an agent can call to go beyond plain text generation.
 
-### Tool Class
-Implementation of the tool. Every tool class can have an additional configuration that will show up in the `Config` panel on the right side. Additional tools can be registered using plugin with `modAIOnToolRegister` event. 
+## Common Tool Examples
+- Edit or create MODX **Templates**, **Chunks**, or **Snippets**
+- Fetch and return content from specific Resources
+- Trigger indexing jobs for a Context Provider
+- Call a third‑party API (e.g., analytics, search, CRM) and return summarized data
 
-### Name
-Name of the tool, this name has to be unique across all configured tools. This is how AI references a tool that it wants to run.
+## Registering Tools
+Tools are typically registered via configuration and/or service discovery. At a high level, you’ll:
+- Create a PHP class that implements the `\modAI\Tools\ToolInterface` interface.
+- Register the tool with modAI:
+    - Create a plugin that will run on `modAIOnToolRegister` event and will return the class name of the tool or an array of multiple Tools you wish to register.
+- Create the tool from Tools tab:
+    - Select the Tool class
+    - A **unique name** (e.g., `EditChunk`, `SearchResources`).
+    - Set the internal description explaining what the Tool does
+    - Adjust the **prompt** if needed
 
-### Description
-Internal description of the tool, doesn't have any special functionality.
+Once registered, the tool appears in the **Tools** tab and you’ll be able to attach it to agents.
 
-### Prompt
-Tool's prompt (aka description in AI docs), the prompt describes how to the tools works to the AI. If empty, the default prompt (from the tool class) will be used.
+## Configuring Tools in the Manager
+From the **Tools** tab you can:
+- Enable or disable individual Tools.
+- Edit the **user‑facing name** and **prompt/description**.
+- Whether a Tool is available in every prompt even without an agent
 
-### Enabled
-If set to `false`, the tool won't be available for use, even when assigned to agents.
+Changes here do not require you to redeploy code, which makes it a safe place to iterate on prompts and defaults.
 
-### Default
-When set to `true`, the tool will be available for use in every prompt (without a need to select an agent). Be careful with enabling this on tools as it will increase token usage and can worsen the AI responses.  
-
-### Additional Config Options
-Every tool class can expose a different set of additional config options. You can reference a value from system settings by using `ss:system_setting_key` format for the config option's value.
+## Security Considerations
+Because tools can read or modify data:
+- Ensure tools check **permissions** for the current MODX user.
+- Avoid exposing write or delete Tools to general users; instead, bind them to admin‑only Agents.
+- Validate and sanitize all input arguments.
+- Log usage for sensitive operations, especially those that change content or configuration.

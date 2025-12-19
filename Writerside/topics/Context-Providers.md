@@ -1,22 +1,48 @@
 # Context Providers
 
-To be able to use context providers through agents, they have to be created and configured from this section.
+## What a Context Provider Is
+A **Context Provider** is a component that knows how to:
+- Retrieve relevant documents or records (from MODX, a search index, or an external service).
+- Convert them into chunks of text and/or metadata suitable for AI consumption.
+- Optionally work with a vector database or other retrieval mechanism.
 
-To create & configure context provider, navigate to the Extras -> modAI -> Context Providers and hit `Create Context Provider` button.
+Agents call Context Providers when they need **grounded, site‑specific** information instead of relying only on the base model.
 
-## Properties
+## Typical Data Sources
+Examples of what a Context Provider might expose:
+- MODX **Resources** (e.g., content pages, knowledge base articles)
+- MODX **Elements** (Snippets, Chunks, Templates) and their descriptions
+- Indexed documentation, FAQs, or release notes
+- External knowledge bases or search APIs
 
-### Context Provider Class
-Implementation of the context provider. Every context provider class can have an additional configuration that will show up in the `Config` panel on the right side. Additional context providers can be registered using plugin with `modAIOnContextProviderRegister` event.
+## Registering Context Providers
+To add a new provider:
+- Implement a PHP class that follows the `\modAI\Tools\ToolInterface` interface.
+- Register the tool with modAI:
+    - Create a plugin that will run on `modAIOnContextProviderRegister` event and will return the class name of the Context Provider or an array of multiple context providers you wish to register.
+- Create the context provider from Context Providers tab:
+    - Select the Context Provider class
+    - A **unique name**.
+    - Set the internal description explaining what the Context Provider does
 
-### Name
-Name of the context provider, this name has to be unique across all configured context providers.
+Once registered, the context provider appears in the **Context Provider** tab and you’ll be able to attach it to agents.
 
-### Description
-Internal description of the context provider, doesn't have any special functionality.
+## Configuring Context Providers in the Manager
+From the **Context Providers** tab you can:
+- Enable or disable providers.
+- Attach providers to specific **Agents** so only the right agents can access a given data source.
 
-### Enabled
-If set to `false`, the context provider won't be available for use, even when assigned to agents.
+Design tips:
+- Use separate providers for very different datasets (e.g., “Public Docs”, “Internal Runbooks”, “Developer API Docs”).
+- Keep provider scopes narrow so retrieval stays relevant and efficient.
 
-### Additional Config Options
-Every context provider class can expose a different set of additional config options. You can reference a value from system settings by using `ss:system_setting_key` format for the config option's value.
+## Performance and Cost
+Context providers may rely on:
+- Full‑text search queries
+- Vector database lookups
+- External API calls
+
+Be mindful of:
+- Token usage when passing large chunks of context into prompts.
+- Rate limits and pricing for external services.
+- Caching strategies to reduce repeated work.

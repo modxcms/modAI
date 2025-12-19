@@ -45,10 +45,34 @@ Ext.extend(modAIAdmin.panel.Home, MODx.Panel, {
   getTopTabs: function (config) {
     var output = [];
 
+    if (config.permissions.modai_admin_prompt_library) {
+      output.push({
+        title: _('modai.admin.home.prompt_library'),
+        items: [
+          {
+            html: _('modai.admin.home.prompt_library_desc'),
+            border: false,
+            bodyCssClass: 'modai-admin--panel_desc',
+          },
+          {
+            xtype: 'modai-panel-prompt_library',
+            preventRender: true,
+            cls: 'main-wrapper',
+            permissions: config.permissions,
+          },
+        ],
+      });
+    }
+
     if (config.permissions.modai_admin_agents) {
       output.push({
         title: _('modai.admin.home.agents'),
         items: [
+          {
+            html: _('modai.admin.home.agents_desc'),
+            border: false,
+            bodyCssClass: 'modai-admin--panel_desc',
+          },
           {
             xtype: 'modai-grid-agents',
             preventRender: true,
@@ -64,6 +88,11 @@ Ext.extend(modAIAdmin.panel.Home, MODx.Panel, {
         title: _('modai.admin.home.tools'),
         items: [
           {
+            html: _('modai.admin.home.tools_desc'),
+            border: false,
+            bodyCssClass: 'modai-admin--panel_desc',
+          },
+          {
             xtype: 'modai-grid-tools',
             preventRender: true,
             cls: 'main-wrapper',
@@ -78,21 +107,12 @@ Ext.extend(modAIAdmin.panel.Home, MODx.Panel, {
         title: _('modai.admin.home.context_providers'),
         items: [
           {
-            xtype: 'modai-grid-context_providers',
-            preventRender: true,
-            cls: 'main-wrapper',
-            permissions: config.permissions,
+            html: _('modai.admin.home.context_providers_desc'),
+            border: false,
+            bodyCssClass: 'modai-admin--panel_desc',
           },
-        ],
-      });
-    }
-
-    if (config.permissions.modai_admin_prompt_library) {
-      output.push({
-        title: _('modai.admin.home.prompt_library'),
-        items: [
           {
-            xtype: 'modai-panel-prompt_library',
+            xtype: 'modai-grid-context_providers',
             preventRender: true,
             cls: 'main-wrapper',
             permissions: config.permissions,
