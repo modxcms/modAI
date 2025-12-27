@@ -65,11 +65,11 @@ class Message extends \xPDO\Om\xPDOObject
         $msg->set('role', $data['role']);
         $msg->set('content', $data['content']);
         $msg->set('content_type', $data['contentType']);
-        $msg->set('tool_calls', $data['toolCalls']);
-        $msg->set('contexts', $data['contexts']);
-        $msg->set('attachments', $data['attachments']);
-        $msg->set('metadata', $data['metadata']);
-        $msg->set('ctx', $data['ctx']);
+        $msg->set('tool_calls', $data['toolCalls'] ?? null);
+        $msg->set('contexts', $data['contexts'] ?? null);
+        $msg->set('attachments', $data['attachments'] ?? null);
+        $msg->set('metadata', $data['metadata']) ?? null;
+        $msg->set('ctx', $data['ctx'] ?? null);
         $msg->set('hidden', $data['hidden']);
 
         if (is_array($usage)) {
