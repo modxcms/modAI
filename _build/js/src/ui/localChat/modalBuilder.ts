@@ -6,6 +6,7 @@ import { buildModalInput } from './modalInput';
 import { portal } from './portal';
 import { buildResizer } from './resizer';
 import { buildSidebar } from './sidebar';
+import { clampModalToViewport } from './dragHandlers';
 import { loadModalState, saveModalState } from './state';
 import { chatHistory } from '../../chatHistory';
 import { globalState } from '../../globalState';
@@ -35,6 +36,8 @@ export const buildModal = (config: LocalChatConfig) => {
     chatModal.style.left = modalState.position.left ?? '';
     chatModal.style.transform = 'none';
   }
+
+  clampModalToViewport(chatModal);
 
   const resizeObserver = new ResizeObserver(() => {
     debouncedSaveModalState();
