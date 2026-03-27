@@ -8,6 +8,7 @@ use modAI\Services\Config\ImageConfig;
 use modAI\Services\Config\VisionConfig;
 use modAI\Services\Response\AIResponse;
 use modAI\Tools\ToolInterface;
+use modAI\Utils;
 use MODX\Revolution\modX;
 
 class CustomOpenAI implements AIService
@@ -16,6 +17,7 @@ class CustomOpenAI implements AIService
 
     const COMPLETIONS_API = '{url}/chat/completions';
     const IMAGES_API = '{url}/images/generations';
+    const IMAGES_EDIT_API = '{url}/images/edits';
 
     public function __construct(modX &$modx)
     {
@@ -271,6 +273,11 @@ class CustomOpenAI implements AIService
 
     public function generateImage(string $prompt, ImageConfig $config): AIResponse
     {
+        $attachments = $config->getAttachments();
+        if (!empty($attachments)) {
+            return $this->editImage($prompt, $config);
+        }
+
         $apiKey = $this->modx->getOption('modai.api.custom.key');
         if (empty($apiKey)) {
             throw new LexiconException('modai.error.invalid_api_key', ['service' => 'custom']);
@@ -309,6 +316,80 @@ class CustomOpenAI implements AIService
                 'Authorization' => 'Bearer ' . $apiKey
             ])
             ->withBody($input);
+    }
+
+    public function editImage(string $prompt, ImageConfig $config): AIResponse
+    {
+        $apiKey = $this->modx->getOption('modai.api.custom.key');
+        if (empty($apiKey)) {
+            throw new LexiconException('modai.error.invalid_api_key', ['service' => 'custom']);
+        }
+
+        $baseUrl = $this->modx->getOption('modai.api.custom.url');
+        if (empty($baseUrl)) {
+            throw new LexiconException('modai.error.invalid_url');
+        }
+
+        $input = $config->getOptions(function ($options) {
+            $gptConfig = [
+                'n' => 1,
+            ];
+
+            foreach ($options as $key => $value) {
+                if (empty($value)) {
+                    continue;
+                }
+
+                $gptConfig[$key] = $value;
+            }
+
+            return $gptConfig;
+        });
+
+        $input['prompt'] = $prompt;
+        $input['model'] = $config->getModel();
+
+        $binary = [];
+        $attachments = $config->getAttachments();
+        foreach ($attachments as $attachment) {
+            if ($attachment['__type'] !== 'image') {
+                continue;
+            }
+
+            $data = Utils::parseDataURL($attachment['value']);
+            if (is_string($data)) {
+                $imageData = file_get_contents($data);
+                if ($imageData === false) {
+                    throw new LexiconException("modai.error.failed_to_fetch_image");
+                }
+                $info = new \finfo(FILEINFO_MIME_TYPE);
+                $mimeType = $info->buffer($imageData);
+                $base64 = base64_encode($imageData);
+
+                $data = [
+                    'base64' => $base64,
+                    'mimeType' => $mimeType
+                ];
+            }
+
+            if (!isset($binary['image'])) {
+                $binary['image'] = [];
+            }
+
+            $binary['image'][] = $data;
+        }
+
+        $url = self::IMAGES_EDIT_API;
+        $url = str_replace('{url}', $baseUrl, $url);
+
+        return AIResponse::new(self::getServiceName(), $config->getRawModel(), "multipart/form-data")
+            ->withParser('image')
+            ->withUrl($url)
+            ->withHeaders([
+                'Authorization' => 'Bearer ' . $apiKey
+            ])
+            ->withBody($input)
+            ->withBinary($binary);
     }
 
     public static function getServiceName(): string
