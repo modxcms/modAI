@@ -240,7 +240,7 @@ class modAI
         $c->where([
             'enabled' => true,
         ]);
-        $c->select($this->modx->getSelectColumns(\modAI\Model\Agent::class, 'Agent', '', ['name', 'user_groups']));
+        $c->select($this->modx->getSelectColumns(\modAI\Model\Agent::class, 'Agent', '', ['name', 'user_groups', 'type']));
         $c->select([
             "GROUP_CONCAT(ContextProvider.name SEPARATOR ',') AS context_providers"
         ]);
@@ -248,7 +248,10 @@ class modAI
         $c->prepare();
         $c->stmt->execute();
 
-        $output = [];
+        $output = [
+            'text' => [],
+            'image' => [],
+        ];
 
         $userGroups = $this->modx->user->getUserGroups();
 
@@ -262,7 +265,7 @@ class modAI
                 }
             }
 
-            $output[$row['name']] = [
+            $output[$row['type']][$row['name']] = [
                 'id' => $row['name'],
                 'name' => $row['name'],
                 'contextProviders' => empty($row['context_providers']) ? null : explode(',', $row['context_providers']),

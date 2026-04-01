@@ -252,6 +252,7 @@ export const sendMessage = async (providedMessage?: string, hidePrompt?: boolean
           chatPublic: globalState.modal.chatPublic,
           lastMessageId,
           userMsg: userMsg,
+          agent: selectedAgent?.name,
           additionalOptions,
         },
         globalState.modal.abortController,

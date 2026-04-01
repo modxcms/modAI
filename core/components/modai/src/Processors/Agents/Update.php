@@ -3,6 +3,8 @@
 namespace modAI\Processors\Agents;
 
 use modAI\Model\Agent;
+use modAI\Model\AgentContextProvider;
+use modAI\Model\AgentTool;
 use MODX\Revolution\Processors\Model\UpdateProcessor;
 
 class Update extends UpdateProcessor
@@ -39,5 +41,24 @@ class Update extends UpdateProcessor
         }
 
         return parent::beforeSet();
+    }
+
+    public function afterSave()
+    {
+        if (parent::afterSave() === false) {
+            return false;
+        }
+
+        $type = $this->object->get('type');
+        if ($type !== 'image') {
+            return true;
+        }
+
+        $agentId = $this->object->get('id');
+
+        $this->modx->removeCollection(AgentTool::class, ['agent_id' => $agentId]);
+        $this->modx->removeCollection(AgentContextProvider::class, ['agent_id' => $agentId]);
+
+        return true;
     }
 }

@@ -203,9 +203,9 @@ export const buildModalInput = (config: LocalChatConfig) => {
     optionsLeft.innerHTML = '';
 
     additionalOptions = [];
-    if (config.type === 'text' && Object.keys(globalState.config.availableAgents).length > 0) {
+    if (Object.keys(globalState.config.availableAgents[config.type]).length > 0) {
       const agentSelectComponent = buildSelect(
-        globalState.config.availableAgents,
+        globalState.config.availableAgents[config.type],
         globalState.selectedAgent[`${config.key}/${config.type}`]?.id,
         (selectedAgent) => {
           globalState.selectedAgent[`${config.key}/${config.type}`] = selectedAgent ?? undefined;
