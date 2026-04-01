@@ -10,6 +10,7 @@ modAIAdmin.panel.Agent = function (config) {
   this.advancedConfig = new modAIAdmin.grid.AdvancedConfig({
     fieldLabel: _('modai.admin.agent.advanced_config'),
     initValue: config.record.advanced_config || [],
+    agentPanel: this,
   });
 
   Ext.applyIf(config, {
@@ -43,6 +44,10 @@ modAIAdmin.panel.Agent = function (config) {
 Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
   advancedConfig: null,
   advancedConfigField: null,
+  typeField: null,
+
+  toolsSection: null,
+  contextProvidersSection: null,
 
   success: function (o, r) {
     if (this.config.isUpdate === false) {
@@ -83,6 +88,20 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
   },
 
   getGeneralFields: function (config) {
+    this.typeField = new modAIAdmin.combo.AgentType({
+      fieldLabel: _('modai.admin.prompt_library.category.type'),
+      name: 'type',
+      hiddenName: 'type',
+      value: config.record.type || 'text',
+      allowBlank: false,
+      listeners: {
+        select: {
+          fn: this.onTypeChange,
+          scope: this,
+        },
+      },
+    });
+
     return [
       {
         layout: 'column',
@@ -140,11 +159,14 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
                     value: config.record.description,
                     allowBlank: true,
                   },
+                  this.typeField,
                   {
                     fieldLabel: _('modai.admin.agent.user_groups'),
                     xtype: 'modai-combo-user_groups',
-                    value: Array.isArray(config.record.user_groups) ? config.record.user_groups.join(',') : '',
-                  }
+                    value: Array.isArray(config.record.user_groups)
+                      ? config.record.user_groups.join(',')
+                      : '',
+                  },
                 ],
               },
             ],
@@ -225,6 +247,77 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
   },
 
   getUpdateFields: function (config) {
+    const agentType = this.typeField.getValue();
+
+    if (config.permissions.modai_admin_tools) {
+      this.toolsSection = new Ext.Panel({
+        columnWidth: 0.5,
+        hidden: agentType === 'image',
+        hideMode: 'offsets',
+        border: false,
+        defaults: {
+          msgTarget: 'under',
+          anchor: '100%',
+        },
+        items: [
+          {
+            title: _('modai.admin.agent.tools'),
+            headerCfg: {
+              cls: 'modai-admin-section_header x-panel-header',
+            },
+            defaults: {
+              msgTarget: 'under',
+              anchor: '100%',
+            },
+            layout: 'form',
+            msgTarget: 'under',
+            bodyCssClass: 'main-wrapper',
+            autoHeight: true,
+            collapsible: true,
+            hideMode: 'offsets',
+            items: [
+              {
+                xtype: 'modai-grid-agent_tools',
+                permissions: config.permissions,
+              },
+            ],
+          },
+        ],
+      });
+    }
+
+    if (config.permissions.modai_admin_context_providers) {
+      this.contextProvidersSection = new Ext.Panel({
+        hidden: agentType === 'image',
+        hideMode: 'offsets',
+        columnWidth: 0.5,
+        border: false,
+        items: [
+          {
+            title: _('modai.admin.agent.context_providers'),
+            headerCfg: {
+              cls: 'modai-admin-section_header x-panel-header',
+            },
+            defaults: {
+              msgTarget: 'under',
+              anchor: '100%',
+            },
+            layout: 'form',
+            bodyCssClass: 'main-wrapper',
+            autoHeight: true,
+            collapsible: true,
+            hideMode: 'offsets',
+            items: [
+              {
+                xtype: 'modai-grid-agent_context_providers',
+                permissions: config.permissions,
+              },
+            ],
+          },
+        ],
+      });
+    }
+
     return [
       {
         layout: 'column',
@@ -241,69 +334,22 @@ Ext.extend(modAIAdmin.panel.Agent, MODx.FormPanel, {
           msgTarget: 'under',
           border: false,
         },
-        items: [
-          (config.permissions.modai_admin_tools) && {
-            columnWidth: 0.5,
-            border: false,
-            defaults: {
-              msgTarget: 'under',
-              anchor: '100%',
-            },
-            items: [
-              {
-                title: _('modai.admin.agent.tools'),
-                headerCfg: {
-                  cls: 'modai-admin-section_header x-panel-header',
-                },
-                defaults: {
-                  msgTarget: 'under',
-                  anchor: '100%',
-                },
-                layout: 'form',
-                msgTarget: 'under',
-                bodyCssClass: 'main-wrapper',
-                autoHeight: true,
-                collapsible: true,
-                hideMode: 'offsets',
-                items: [
-                  {
-                    xtype: 'modai-grid-agent_tools',
-                    permissions: config.permissions
-                  },
-                ],
-              },
-            ],
-          },
-          (config.permissions.modai_admin_context_providers) && {
-            columnWidth: 0.5,
-            border: false,
-            items: [
-              {
-                title: _('modai.admin.agent.context_providers'),
-                headerCfg: {
-                  cls: 'modai-admin-section_header x-panel-header',
-                },
-                defaults: {
-                  msgTarget: 'under',
-                  anchor: '100%',
-                },
-                layout: 'form',
-                bodyCssClass: 'main-wrapper',
-                autoHeight: true,
-                collapsible: true,
-                hideMode: 'offsets',
-                items: [
-                  {
-                    xtype: 'modai-grid-agent_context_providers',
-                    permissions: config.permissions
-                  },
-                ],
-              },
-            ],
-          },
-        ].filter(Boolean),
+        items: [this.toolsSection, this.contextProvidersSection].filter(Boolean),
       },
     ];
+  },
+
+  onTypeChange: function (combo, record) {
+    if (!this.toolsSection || !this.contextProvidersSection) return;
+
+    if (record.data.v === 'text') {
+      this.toolsSection.show();
+      this.contextProvidersSection.show();
+      return;
+    }
+
+    this.toolsSection.hide();
+    this.contextProvidersSection.hide();
   },
 });
 Ext.reg('modai-panel-agent', modAIAdmin.panel.Agent);

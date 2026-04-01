@@ -62,7 +62,7 @@ class Chat extends API
 
         if (!empty($agent)) {
             /** @var Agent $agent */
-            $agent = $this->modx->getObject(Agent::class, ['name' => $agent]);
+            $agent = $this->modx->getObject(Agent::class, ['name' => $agent, 'type' => 'text']);
             if (!$agent) {
                 throw new LexiconException('modai.error.invalid_agent');
             }

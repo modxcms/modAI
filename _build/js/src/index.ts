@@ -13,6 +13,7 @@ import type { NestedSelectData } from './ui/dom/nestedSelect';
 export type AvailableAgent = {
   id: string;
   name: string;
+  type: 'text' | 'image';
   contextProviders: string[] | null;
 };
 
@@ -25,7 +26,10 @@ export type Config = {
   apiURL: string;
   cssURL: string;
   translateFn?: (key: string, params?: Record<string, string>) => string;
-  availableAgents: Record<string, AvailableAgent>;
+  availableAgents: {
+    text: Record<string, AvailableAgent>;
+    image: Record<string, AvailableAgent>;
+  };
   promptLibrary: { text?: NestedSelectData; image?: NestedSelectData };
   permissions: Record<Permissions, 1 | 0>;
   generateChatTitle: boolean;

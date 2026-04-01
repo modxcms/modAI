@@ -151,6 +151,7 @@ export type ImageParams = {
   lastMessageId?: string | null;
   additionalOptions?: Record<string, unknown>;
   field?: string;
+  agent?: string;
   namespace?: string;
 };
 

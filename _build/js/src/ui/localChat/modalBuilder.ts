@@ -1,4 +1,5 @@
 import { createElement, debounce } from '../utils';
+import { clampModalToViewport } from './dragHandlers';
 import { scrollToBottom } from './modalActions';
 import { buildModalChat } from './modalChat';
 import { buildModalHeader } from './modalHeader';
@@ -6,7 +7,6 @@ import { buildModalInput } from './modalInput';
 import { portal } from './portal';
 import { buildResizer } from './resizer';
 import { buildSidebar } from './sidebar';
-import { clampModalToViewport } from './dragHandlers';
 import { loadModalState, saveModalState } from './state';
 import { chatHistory } from '../../chatHistory';
 import { globalState } from '../../globalState';

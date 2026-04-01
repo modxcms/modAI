@@ -139,7 +139,12 @@ Ext.extend(modAIAdmin.grid.AdvancedConfig, MODx.grid.LocalGrid, {
 
   addOption: function () {
     this.stopEditing();
-    this.store.add(new this.store.recordType({ field: 'global', area: 'text' }));
+    this.store.add(
+      new this.store.recordType({
+        field: 'global',
+        area: this.config.agentPanel.typeField.getValue(),
+      }),
+    );
     this.startEditing(this.store.getCount() - 1, 2);
   },
 

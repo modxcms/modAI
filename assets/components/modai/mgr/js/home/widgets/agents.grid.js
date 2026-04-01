@@ -11,7 +11,7 @@ modAIAdmin.grid.Agents = function (config) {
     save_action: 'modAI\\Processors\\Agents\\UpdateFromGrid',
     autosave: true,
     preventSaveRefresh: false,
-    fields: ['id', 'name', 'description', 'model', 'enabled'],
+    fields: ['id', 'name', 'description', 'model', 'enabled', 'type'],
     paging: true,
     remoteSort: true,
     emptyText: _('modai.admin.global.no_records'),
@@ -32,7 +32,8 @@ modAIAdmin.grid.Agents = function (config) {
         editor: {
           xtype: 'textfield',
         },
-      },  {
+      },
+      {
         header: _('modai.admin.agent.description'),
         dataIndex: 'description',
         width: 0.7,
@@ -49,6 +50,15 @@ modAIAdmin.grid.Agents = function (config) {
         hidden: false,
         editor: {
           xtype: 'textfield',
+        },
+      },
+      {
+        header: _('modai.admin.agent.type'),
+        dataIndex: 'type',
+        width: 0.2,
+        hidden: false,
+        renderer: function (v) {
+          return _(`modai.admin.agent.type.${v}`);
         },
       },
       {
@@ -79,7 +89,7 @@ Ext.extend(modAIAdmin.grid.Agents, modAIAdmin.grid.ACLGrid, {
         text: _('modai.admin.agent.remove'),
         handler: this.removeAgent,
         permission: 'delete',
-      }
+      },
     ];
   },
 
