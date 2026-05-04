@@ -6,7 +6,8 @@
     "dev": "node esbuild.dev.mjs",
     "lint": "eslint",
     "changelog:pkg": "git cliff -c cliff_pkg.toml --output core/components/modai/docs/CHANGELOG.md --unreleased",
-    "changelog": "git cliff --output CHANGELOG.md"
+    "changelog": "git cliff --output CHANGELOG.md",
+    "docs:dev": "cd _build/docs && npm start"
   },
   "engines": {
     "node": "22"
