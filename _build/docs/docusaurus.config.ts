@@ -6,16 +6,11 @@ const config: Config = {
   title: 'modAI',
   tagline: 'A generative AI Extra for MODX Revolution that helps you create content faster and optimize SEO effortlessly.',
   favicon: 'https://modx.com/favicon.svg',
-
-  // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
-    v4: true, // Improve compatibility with the upcoming Docusaurus v4
+    v4: true,
   },
 
-  // Set the production url of your site here
   url: 'https://modxcms.github.io',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/modAI/',
   organizationName: 'modxcms',
   projectName: 'modai',
@@ -27,6 +22,16 @@ const config: Config = {
     locales: ['en'],
   },
 
+   headTags: [
+    {
+      tagName: 'meta',
+      attributes: {
+        name: 'algolia-site-verification',
+        content: 'F19BA35AF4F36AA6',
+      },
+    },
+  ],
+
   presets: [
     [
       'classic',
@@ -36,7 +41,7 @@ const config: Config = {
           routeBasePath: '/',
           sidebarPath: './sidebars.ts',
           editUrl:
-            'https://github.com/modxcms/modai/tree/main/docs/',
+            'https://github.com/modxcms/modai/tree/main/_build/docs/',
         },
         blog: false,
         pages: false,
@@ -91,6 +96,15 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.palenight,
+    },
+    algolia: {
+      appId: '46HN39MS5K',
+      apiKey: '5ad56659f6fd5f2a0ad167fb33bb82f4',
+      indexName: 'modai',
+      contextualSearch: true,
+      searchParameters: {},
+      searchPagePath: 'search',
+      insights: false,
     },
   } satisfies Preset.ThemeConfig,
 };
