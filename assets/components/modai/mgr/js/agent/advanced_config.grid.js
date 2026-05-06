@@ -121,11 +121,12 @@ modAIAdmin.grid.AdvancedConfig = function (config) {
   modAIAdmin.grid.AdvancedConfig.superclass.constructor.call(this, config);
 };
 Ext.extend(modAIAdmin.grid.AdvancedConfig, MODx.grid.LocalGrid, {
-  _loadStore: function (config) {
-    return new Ext.data.JsonStore({
-      fields: config.fields,
+  _loadStore: function () {
+    this.store = new Ext.data.JsonStore({
+      fields: this.config.fields,
       remoteSort: false,
     });
+    return this.store;
   },
 
   getMenu: function () {
