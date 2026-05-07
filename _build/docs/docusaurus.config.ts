@@ -99,7 +99,7 @@ const config: Config = {
     },
     algolia: {
       appId: '46HN39MS5K',
-      apiKey: '5ad56659f6fd5f2a0ad167fb33bb82f4',
+      apiKey: 'cf94ae49068bfcb5ffa20d54d8d903c8',
       indexName: 'modai',
       contextualSearch: true,
       searchParameters: {},
