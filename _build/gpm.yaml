@@ -91,7 +91,7 @@ systemSettings:
     value: 2048
   - key: global.text.model
     area: text
-    value: openai/gpt-5-mini
+    value: openai/gpt-5.5
   - key: global.text.temperature
     area: text
     value: 0.7
@@ -106,7 +106,7 @@ systemSettings:
 
   - key: global.vision.model
     area: vision
-    value: openai/gpt-5-mini
+    value: openai/gpt-5-nano
   - key: global.vision.prompt
     area: vision
     value: |-
@@ -125,7 +125,7 @@ systemSettings:
 
   - key: global.image.model
     area: image
-    value: openai/gpt-image-1
+    value: openai/gpt-image-2
   - key: global.image.style
     area: image
     value: ''
