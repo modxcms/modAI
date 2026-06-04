@@ -28,7 +28,6 @@ $settings = [
 
 switch ($options[xPDOTransport::PACKAGE_ACTION]) {
     case xPDOTransport::ACTION_INSTALL:
-    case xPDOTransport::ACTION_UPGRADE:
         foreach ($settings as $key => $setting) {
             $settingObject = $modx->getObject(modSystemSetting::class, ['key' => 'modai.api.' . str_replace('-', '.', $setting['key'])]);
             if ($settingObject) {
@@ -40,6 +39,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         }
         break;
     default:
+    case xPDOTransport::ACTION_UPGRADE:
     case xPDOTransport::ACTION_UNINSTALL:
         $output = '';
         break;
