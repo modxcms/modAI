@@ -120,6 +120,21 @@ After installation:
 2. Enable the features you want to use.
 3. Start using AI features inside the MODX Manager.
 
+### Getting provider API keys
+
+The installer prompts you for provider API keys during setup. You need **at least one** to use modAI, and you can add or change keys later in the system settings (`modai.api.{service}.key`).
+
+Create a key with the provider(s) you want to use:
+
+| Provider | Get a key | Notes |
+| --- | --- | --- |
+| **OpenAI** (ChatGPT, image generation) | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) | Requires a billing method / prepaid credits. The API is billed separately from any ChatGPT subscription. |
+| **Anthropic** (Claude) | [platform.claude.com/settings/keys](https://platform.claude.com/settings/keys) | Created in the Claude Console; requires account credits/billing. |
+| **Google Gemini** | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) | Created in Google AI Studio; free tier available with limits (higher usage and image generation may require billing). |
+| **OpenRouter** (multi-vendor gateway) | [openrouter.ai/settings/keys](https://openrouter.ai/settings/keys) | One key for many models and providers; requires account credits. |
+
+Custom / OpenAI-compatible endpoints are configured directly in the system settings. Treat API keys like passwords — never commit or share them.
+
 See [PROVIDERS.md](PROVIDERS.md) for provider setup notes.
 
 ## Development setup
