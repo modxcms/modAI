@@ -25,8 +25,12 @@ Provider support may vary by capability and model.
 | Vision analysis | Yes | Yes | Yes | Yes | Yes |
 | Image generation | Yes | No | Yes | Yes | Yes |
 | Function calling (tools) | Yes | Yes | Yes | Yes¹ | Yes¹ |
+| Text to audio (TTS) | Planned | — | Planned | Planned¹ | Planned¹ |
+| Voice input (STT) | Planned | — | Planned | Planned¹ | Planned¹ |
 
-¹ Model-dependent. OpenRouter and custom endpoints route to many underlying models; vision, image, and tool support depend on the selected model.
+**Legend:** Yes = supported today · Planned = on the [roadmap](ROADMAP.md), not yet implemented · — = not offered by the provider.
+
+¹ Model-dependent. OpenRouter and custom endpoints route to many underlying models; vision, image, audio, and tool support depend on the selected model.
 
 This matrix should be updated as provider support changes.
 
