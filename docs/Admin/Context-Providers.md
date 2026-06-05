@@ -21,8 +21,8 @@ Examples of what a Context Provider might expose:
 
 ## Registering Context Providers
 To add a new provider:
-- Implement a PHP class that follows the `\modAI\Tools\ToolInterface` interface.
-- Register the tool with modAI:
+- Implement a PHP class that follows the `\modAI\ContextProviders\ContextProviderInterface` interface.
+- Register the context provider with modAI:
     - Create a plugin that will run on `modAIOnContextProviderRegister` event and will return the class name of the Context Provider or an array of multiple context providers you wish to register.
 - Create the context provider from Context Providers tab:
     - Select the Context Provider class

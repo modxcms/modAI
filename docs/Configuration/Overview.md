@@ -8,7 +8,7 @@ Use the [Supported Services](Supported-Services.md) section to set up your respo
 
 ## Models
 
-When defining model name you want to use, you have to enter it in following format: `service_name/model_name`, so for example `gpt-4o-mini` would become `openai/gpt-4o-mini`, `gemini-2.0-flash` would be `google/gemini-2.0-flash` etc.
+When defining the model name you want to use, you have to enter it in the following format: `service_name/model_name`, so for example `gpt-4o-mini` would become `openai/gpt-4o-mini`, `gemini-2.0-flash` would be `google/gemini-2.0-flash` etc.
 
 ## Generative Fields
 
@@ -26,14 +26,14 @@ If you have text, textarea, image or image+ Template Variables you wish to use w
 
 ### Configuring Field Prompts
 
-Customize the base prompts and configurations in the `global`, `image`, `resources` and `vision` areas in the system settings as needed. The `modai.global.text.base_prompt` prepends the base to ever other text or textarea prompt, but it does not for image or vision model prompts.
+Customize the base prompts and configurations in the `global`, `image`, `resources` and `vision` areas in the system settings as needed. The `modai.global.text.base_prompt` prepends the base to every other text or textarea prompt, but it does not for image or vision model prompts.
 
 ## Settings Format
 
 Settings use the following naming convention: `{namespace}.{field}.{type}.{setting}`.
 
 - Where `namespace` by default is `modai`, but other extras can pass their own to override default settings from their extra.
-- Field in the core modAI can be `res.pagetitle`, `res.longtitle`, `res.introtext`, `res.description`, `res.content` and `tv.tv_name` (for any text/image/image+ TV), but Extras can pass whatever make sense for them (for example TinyMCE RTE will pass `ta` for the content RTE instance). The field can also be `global` which is a fallback for any setting.
+- Field in the core modAI can be `res.pagetitle`, `res.longtitle`, `res.introtext`, `res.description`, `res.content` and `tv.tv_name` (for any text/image/image+ TV), but Extras can pass whatever makes sense for them (for example TinyMCE RTE will pass `ta` for the content RTE instance). The field can also be `global` which is a fallback for any setting.
 - Type can be one of `text`/`image`/`vision` to denote this setting will get only applied to AI interaction from the specific category
 - Setting is a target setting name like `model`, `temperature`, `quality`
 

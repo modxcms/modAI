@@ -13,7 +13,7 @@ that can be easily revoked.
 
 Enabling system setting `modai.api.execute_on_server` will move the execution to the server side, hiding the network traffic.
 
-It can be enabled per service using `modai.api.{service}.execute_on_server}` format, for example, to enable this only for chatgpt, the setting would be: `modai.api.anthropic.execute_on_server`.
+It can be enabled per service using the `modai.api.{service}.execute_on_server` format. For example, to enable this only for ChatGPT, the setting would be: `modai.api.openai.execute_on_server`.
 
 ## OpenAI (ChatGPT)
 
@@ -33,7 +33,7 @@ ChatGPT is the default AI service assumed. Fill out the `modai.api.openai.key` a
   - **image to text** – [](https://ai.google.dev/gemini-api/docs/vision)
   - **image generation** – [](https://ai.google.dev/gemini-api/docs/imagen)
 
-Add a valide API key to the `modai.api.google.key` to use Google Gemini.
+Add a valid API key to the `modai.api.google.key` to use Google Gemini.
 
 To change a prompt to use Google Gemini, set its corresponding model setting, e.g:
 
@@ -42,7 +42,7 @@ To change a prompt to use Google Gemini, set its corresponding model setting, e.
 ## Anthropic (Claude)
 
 :::warning
-At this moment Claude can only work serverside. Setting either `modai.api.execute_on_server` or `modai.api.claude.execute_on_server` to `true`.
+At this moment Claude can only work server-side. Set either `modai.api.execute_on_server` or `modai.api.anthropic.execute_on_server` to `true`.
 :::
 
 - Service name: anthropic
@@ -73,13 +73,13 @@ To change a prompt to use OpenRouter, set its corresponding model setting, e.g:
 
 - Service name: custom
 
-Some services like [Open WebUI](https://docs.openwebui.com) provide a wrapper for multiple models. To use a custom model via these services you need to fill out the `modai.api.custom.url`, `modai.api.custom.key` and optionally the `modai.custom.compatibility`, which tells the model what API emulation to use (almost alway leave this as openai).
+Some services like [Open WebUI](https://docs.openwebui.com) provide a wrapper for multiple models. To use a custom model via these services you need to fill out the `modai.api.custom.url`, `modai.api.custom.key` and optionally the `modai.custom.compatibility`, which tells the model what API emulation to use (almost always leave this as openai).
 
 To use the custom service, set the following fields:
 
 - `modai.api.custom.url` → `{your custom URL}`
 - `modai.api.custom.key` → `{your API key}`
 
-Then, you for each model you want to use, set the corresponding "model" field with the prefix "custom/" followed by the model name, e.g:
+Then, for each model you want to use, set the corresponding "model" field with the prefix "custom/" followed by the model name, e.g:
 
 - `modai.global.model` → `custom/llama3.1:8b`

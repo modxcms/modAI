@@ -6,7 +6,7 @@ sidebar_position: 5
 
 ## Additional controls
 
-You can expose additional controls (select boxes) to the chat, both text and image mode. This allows you to present user with additional options, like selecting specific model or image quality.
+You can expose additional controls (select boxes) to the chat, both text and image mode. This allows you to present the user with additional options, like selecting a specific model or image quality.
 
 ### Format
 
@@ -17,7 +17,7 @@ To expose additional controls, update system setting `modai.chat.additional_cont
   "type": "object",
   "properties": {
     "image": {
-      "description": "Additional controles for the image mode",
+      "description": "Additional controls for the image mode",
       "type": "array",
       "items": [
         {
@@ -49,7 +49,7 @@ To expose additional controls, update system setting `modai.chat.additional_cont
       ]
     },
     "text": {
-      "description": "Additional controles for the text mode",
+      "description": "Additional controls for the text mode",
       "type": "array",
       "items": [
         {
@@ -86,7 +86,7 @@ To expose additional controls, update system setting `modai.chat.additional_cont
 
 ### Example
 
-Here's an example that will let user in text mode to select `Defaul`, `4o mini` or `4o` model and in the image mode `Default`, `Low` or `High` quality.
+Here's an example that lets the user select `Default`, `4o mini`, or `4o` as the model in text mode, and `Default`, `Low`, or `High` quality in image mode.
 
 ```JSON
 {

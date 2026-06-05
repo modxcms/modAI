@@ -38,7 +38,7 @@ Once registered, the tool appears in the **Tools** tab and you’ll be able to a
 From the **Tools** tab you can:
 - Enable or disable individual Tools.
 - Edit the **user‑facing name** and **prompt/description**.
-- Whether a Tool is available in every prompt even without an agent
+- Set whether a Tool is available in every prompt, even without an agent.
 
 Changes here do not require you to redeploy code, which makes it a safe place to iterate on prompts and defaults.
 
