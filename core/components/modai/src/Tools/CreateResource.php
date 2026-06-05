@@ -50,7 +50,7 @@ class CreateResource implements ToolInterface
                                 "description" => 'The content of the new resource. Generate this based on the users\' prompt. Allow the user to iterate on the content to create before finally calling the appropriate tool. Generate the content as HTML.'
                             ],
                         ],
-                        "required" => ["name", "description", 'content']
+                        "required" => ["pagetitle", "template", "parent", 'content']
                     ],
                     "description" => "List of resources to create"
                 ],
