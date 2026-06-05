@@ -1,0 +1,8 @@
+{
+  "label": "Configuration",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Set up modAI: connect AI services, control costs, manage permissions, and configure the chat."
+  }
+}

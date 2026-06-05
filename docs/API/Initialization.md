@@ -1,10 +1,14 @@
+---
+sidebar_position: 1
+---
+
 # Initialization
 
 modAI is available globally in manager, if you need to init it elsewhere, you can follow the instructions below.
 
 ## Loading up pre-requisites
 
-The following script will get the `modai` service (which can be `null` if it doesn't exist or if user doesn't have appropriate permissions). Then it loads lexicons needed for the modAI's UI and load the main JS file.
+The following script will get the `modai` service (which can be `null` if it doesn't exist or if user doesn't have appropriate permissions). Then it loads the lexicons needed for modAI's UI and loads the main JS file.
 
 ```php
 if (!$modx->services->has('modai')) {
@@ -27,7 +31,7 @@ $this->modx->regClientStartupScript($this->modAI->getJSFile());
 
 ## Initializing modAI
 
-When the main JS file is loaded, `ModAI.init` function will be available. It takes single `config` argument, with following parameters. We recommend using helper function to supply all necessary properties to the config `$modAI->getBaseConfig()`, you can check the usage in the example at the end of this page.
+When the main JS file is loaded, `ModAI.init` function will be available. It takes a single `config` argument, with the following parameters. We recommend using a helper function to supply all necessary properties to the config, `$modAI->getBaseConfig()`; you can check the usage in the example at the end of this page.
 
 ### Properties
 

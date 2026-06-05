@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # History Module
 
 The history module provides a state management system for tracking and navigating through historical values, with support for UI synchronization and context preservation.

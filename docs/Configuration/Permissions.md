@@ -1,3 +1,7 @@
+---
+sidebar_position: 4
+---
+
 # Permissions
 
 modAI comes with `modAI Admin` access policy, `modAI` access policy template and following permissions:
@@ -35,7 +39,7 @@ modAI comes with `modAI Admin` access policy, `modAI` access policy template and
 - modai_client_chat_image: Use modAI image generation
 
 ## Agents
-Access to specific agents can be controlled via assigning one or more user groups to the specific agent. If no user group is assigned, the agent is available for everyone. Sudo users have access to every agent, no matter what users groups are specified.
+Access to specific agents can be controlled via assigning one or more user groups to the specific agent. If no user group is assigned, the agent is available for everyone. Sudo users have access to every agent, no matter what user groups are specified.
 
 ## Image generation & Download
 To fully enable image generation & download for a user, user needs to have `modai_client_chat_image` permission, `file_create` permission and `create` policy on the specific media source that is configured as the target for download.
