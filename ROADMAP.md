@@ -50,8 +50,14 @@ AI-generated changes should be reviewable before they are applied.
 
 Improve creative and editorial workflows.
 
+A near-term focus is an **audio capability**, which improves accessibility and enables hands-free workflows:
+
+- Text to audio — for example, reading an article aloud
+- Voice input through speech to text — for example, dictating a prompt
+
 Examples:
 
+- Audio: text to audio and voice input (speech to text)
 - Image generation improvements
 - Vision analysis
 - Alt text generation
@@ -89,6 +95,8 @@ Examples:
 
 Potential long-term areas include:
 
+- Skills: reusable, packaged units that bundle a prompt, tools, context, and instructions — an evolution of agents and the prompt library
+- Sharing and installing skills across sites and the MODX community
 - Site-aware assistants
 - Agent-style workflows
 - Retrieval tools
