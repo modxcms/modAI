@@ -1,19 +1,186 @@
-# 🚀 modAI for MODX Revolution 3.0+
+# modAI
 
-A **generative AI Extra** for MODX Revolution that helps you **create content faster** and **optimize SEO effortlessly**.
+The native AI framework for MODX Revolution.
 
-## ✨ What modAI Can Do
-📝 **Generate Content** – Quickly craft page content, blog posts, and marketing copy.  
-🔍 **SEO Optimization** – Improve **meta titles, descriptions, and summaries** for better ranking.  
-🖼️ **Image Assistance** – Create and enhance images, **generate meaninful alt tags**, and improve accessibility.  
-💬 **Chat-Based Prompts** – Use **zero-shot or iterative chat** to refine your outputs dynamically.  
+modAI brings AI tools into the MODX Manager for content generation, image generation, image analysis, chat, agents and tools, provider integrations, and AI-assisted workflows across the MODX ecosystem.
 
-## ⚡ Powerful Features
-🌎 **Multi-Vendor Support** – Choose from **different AI providers** for flexibility.  
-🧠 **Multiple Model Types** – Use **text models, image models, vision models, and hybrid AI** for various tasks.  
-🔄 **Iterative Refinements** – Fine-tune AI-generated content through **chat-based enhancements**.  
-🔗 **Seamless Integration** – Attach to **any text or image field** in MODX and works with **SEO Suite** and **Image+**.  
+The project is built by the MODX team and is intended to grow with MODX itself.
 
-Perfect for **MODX users, content creators, and SEO specialists** who want to streamline their workflow! 🚀
+## Why modAI exists
 
-_For additional information, read the [documentation](https://modxcms.github.io/modAI/), view the [latest announcment](https://modx.com/blog/generative-ai-content-for-modx-revolution-with-modai), or ask a question in an issue here._
+Many CMS AI integrations wrap a single API and expose a few prompt buttons.
+
+modAI takes a different path. It gives MODX a shared AI foundation that supports multiple providers, multiple model types, agents and tools, retrieval, and deeper Manager workflows.
+
+The goal is practical: help MODX users create, refine, review, and manage content with AI assistance inside the tools they already use.
+
+## Project philosophy
+
+modAI is more than an AI content generator.
+
+The long-term goal is a shared AI layer for the MODX ecosystem. That includes content generation, image workflows, contextual assistance, automation, and future AI-powered experiences built on a common architecture.
+
+Read [DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md) before proposing large changes.
+
+## Project status
+
+modAI is actively developed and used in production.
+
+Current capabilities include:
+
+- AI chat and assistant workflows
+- Text generation
+- Image generation
+- Vision analysis
+- Multi-provider support
+- Streaming responses
+- Agents, tools, and function calling
+- Vector search and RAG via Context Providers
+
+Community feedback, testing, bug reports, and contributions are welcome.
+
+## Features
+
+### AI chat
+
+Use AI models directly within the MODX Manager through a streaming chat interface, with persistent history and optional shared chats.
+
+### Text generation
+
+Generate, rewrite, summarize, and improve content without leaving MODX.
+
+### Image generation
+
+Create original images with supported AI providers and add them to your content workflow, including directly from the Media browser.
+
+### Vision analysis
+
+Analyze images and generate alt text, captions, summaries, and descriptions.
+
+### SEO assistance
+
+Generate titles, meta descriptions, summaries, and other SEO-focused content.
+
+### Agents, tools, and function calling
+
+Configure agents that bundle a model, a system prompt, tools, and context providers. modAI ships with built-in tools for working with MODX resources, templates, chunks, and categories, and you can register your own.
+
+### Vector search and RAG
+
+Ground responses in your own content through Context Providers. A built-in Pinecone provider supports retrieval and can automatically index MODX content.
+
+### Multi-provider architecture
+
+Use the AI models that fit your workflow, requirements, and budget.
+
+Supported providers currently include:
+
+- OpenAI
+- Anthropic Claude
+- Google Gemini
+- OpenRouter
+- Custom / OpenAI-compatible endpoints
+
+More providers can be added through the provider layer.
+
+## Documentation
+
+User and configuration documentation lives on the documentation site:
+
+- **Docs site:** https://modxcms.github.io/modAI/
+- **Extras package:** https://extras.modx.com/package/modai
+
+Developer and contributor documentation:
+
+| Document | Purpose |
+| --- | --- |
+| [DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md) | Product and architecture principles |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture and component design |
+| [PROVIDERS.md](PROVIDERS.md) | Provider support and provider integration guidance |
+| [ROADMAP.md](ROADMAP.md) | Current priorities and future direction |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution guidelines and development workflow |
+
+If you want to contribute, start with the design principles and architecture docs.
+
+## Requirements
+
+- MODX Revolution 3.x
+- PHP 8.2+
+- Credentials for at least one supported AI provider
+
+Provider-specific features may have their own requirements.
+
+## Installation
+
+Install modAI through the MODX Extras installer ([package page](https://extras.modx.com/package/modai)).
+
+After installation:
+
+1. Configure at least one AI provider.
+2. Enable the features you want to use.
+3. Start using AI features inside the MODX Manager.
+
+See [PROVIDERS.md](PROVIDERS.md) for provider setup notes.
+
+## Development setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/modxcms/modAI.git
+cd modAI
+```
+
+Install dependencies:
+
+```bash
+composer install
+npm install
+```
+
+Build assets:
+
+```bash
+npm run build
+```
+
+Start development mode (watch/rebuild):
+
+```bash
+npm run dev
+```
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for implementation notes and [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
+
+## Contributing
+
+We welcome contributions of all sizes.
+
+Useful areas include:
+
+- Provider integrations
+- Manager UI improvements
+- Documentation
+- Testing and QA
+- Performance work
+- Vision workflows
+- Tools and agents
+- Vector search and retrieval
+
+Before starting a larger change, review:
+
+- [DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md)
+- [ARCHITECTURE.md](ARCHITECTURE.md)
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+
+For significant changes, open an issue or discussion first.
+
+## Community
+
+- Report bugs through GitHub Issues
+- Discuss ideas through GitHub Discussions
+- Share feedback with the MODX community
+
+## License
+
+modAI is open source software released under the terms of the included [license](LICENSE.md) (GNU AGPL v3.0).
