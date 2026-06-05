@@ -23,6 +23,7 @@ If you have text, textarea, image or image+ Template Variables you wish to use w
 - **richtext inputs** – handled the same as a textarea input, but you must manually copy/paste the output into the textarea
 - **image inputs** – modAI uses the default image model and sizes and creates the images in the `assets/ai` directory
 - **image+ TVs** – handled the same as image inputs, with the addition of being able to use the Vision model for creating alt tag captions from generated images
+- **ImageCropper TVs** – supported the same way as image+ TVs
 
 ### Configuring Field Prompts
 
@@ -58,20 +59,30 @@ modai.global.text.model
 
 The `setting` for text or textarea inputs can contain several options below which will override the default settings from the `global` area:
 
-- **model** – for text or textarea, modAI defaults to use `openai/gpt-4o-mini`
+- **model** – for text or textarea, modAI defaults to `openai/gpt-5.5`
 - **temperature** – defaults to `0.7`, increase this to 1 for more “creative” results or 0 for highly predictable ones
 - **max_tokens** – defaults to `2048`
+- **base_output** – global output rules prepended to every text/textarea prompt; the defaults instruct the model to return clean, ready-to-use content with no explanation or surrounding quotes
+- **context_prompt** – template used to inject Context Provider results into the next message; defaults to `Here's context for next message, act only on this: {context}`
+
+:::note
+Default model names change between modAI releases as providers ship new models. The values below reflect the current defaults — always check your system settings for what's actually configured on your install.
+:::
 
 Image and Image+ fields do not prepend their prompts with the base prompt. Image/Image+ setting defaults in the `image` area include:
 
-- **model** – defaults to `openai/dall-e-3`
-- **quality** – defaults to `standard`
-- **size** – defaults to `1792x1024`
-- **style** – defaults to `vivid`
+- **model** – defaults to `openai/gpt-image-2`
+- **quality** – defaults to `auto`
+- **size** – defaults to `1024x1024`
+- **style** – no default (empty)
+- **path** – where generated images are saved; defaults to `assets/ai/{resourceId}/{hash}.png`
+- **media_source** – the MODX media source generated images are written to (defaults to the default source)
+- **download_domains** – optional allowlist of domains modAI may download generated images from
 
 Image+ fields can use Vision models to describe an image for the alt content found in the `vision` area:
 
-- **vision.model** – defaults to `openai/gpt-4o-mini`
+- **vision.model** – defaults to `openai/gpt-5-nano`
+- **vision.max_tokens** – defaults to `1024`
 
 ### Custom Options
 
@@ -92,3 +103,13 @@ If you'd like to stream the AI response into the UI (see the incrementally gener
 :::warning
 If you are executing requests on the server (`modai.api.execute_on_server` is set to `true`), make sure you configured your server to support streaming (disabled buffering etc.), you can make these changes only for the `/assets/components/modai/api.php` path.
 :::
+
+## Initialization & Integrations
+
+modAI loads itself into the Manager automatically. A few settings control where it appears and how its assets are cached:
+
+- **`modai.init.global_chat`** (default `Yes`) – shows the global AI [chat](Chat.md) button in the Manager menu.
+- **`modai.init.media_browser`** (default `Yes`) – adds an AI image-generation button to the Media browser. See [Chat → Media browser integration](Chat.md#media-browser-integration).
+- **`modai.cache.lit`** (default `0`) – a cache-busting version appended to modAI's JS/CSS URLs. Increment it to force browsers to reload modAI's assets after an update.
+
+To automatically index MODX content into a Pinecone vector database for retrieval, see the `modai.contexts.*` settings in [Context Providers → How indexing works](../Admin/Context-Providers.md#how-indexing-works).
