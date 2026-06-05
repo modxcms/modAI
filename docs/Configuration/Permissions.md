@@ -1,3 +1,7 @@
+---
+sidebar_position: 4
+---
+
 # Permissions
 
 modAI comes with `modAI Admin` access policy, `modAI` access policy template and following permissions:

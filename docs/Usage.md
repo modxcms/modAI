@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # Usage
 
 Wherever you see a field or a label with a “sparkle button” (✦) next to it, click it to use the chatGPT api to create content in those fields based on the system settings prompts/configurations. By default, it automatically creates sparkle buttons for several fields as outlined below. Delete the prompt settings to remove modAI’s sparkle buttons and the generative AI content creation for those fields:

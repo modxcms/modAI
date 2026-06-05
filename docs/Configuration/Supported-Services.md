@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # Supported AI Services
 
 ### Executing AI requests

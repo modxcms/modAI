@@ -1,0 +1,8 @@
+{
+  "label": "Developer API",
+  "position": 6,
+  "link": {
+    "type": "generated-index",
+    "description": "Initialize modAI outside the manager and work with its internal modules."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "label": "Agents, Tools & Prompts",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Extend modAI with Tools, Context Providers, Agents, and a shared Prompt Library."
+  }
+}

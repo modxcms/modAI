@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # Context Providers
 
 ## What a Context Provider Is

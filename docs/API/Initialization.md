@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # Initialization
 
 modAI is available globally in manager, if you need to init it elsewhere, you can follow the instructions below.

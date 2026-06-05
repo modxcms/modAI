@@ -1,3 +1,7 @@
+---
+sidebar_position: 3
+---
+
 # Cost
 
 OpenAI API credits must be purchased for this Extra to work with Image models. Find costs for the various models: [https://openai.com/api/pricing/](https://openai.com/api/pricing/)
