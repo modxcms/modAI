@@ -24,7 +24,7 @@ Read [DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md) before proposing large changes
 
 ## Project status
 
-modAI is actively developed and used in production.
+modAI is actively developed and maintained.
 
 Current capabilities include:
 
@@ -83,6 +83,13 @@ Supported providers currently include:
 
 More providers can be added through the provider layer.
 
+### Works with other MODX Extras
+
+modAI complements tools you may already use:
+
+- **[image+](https://extras.modx.com/package/imageplustvinput)** — generate and manage images for image+ TVs, such as hero images and Open Graph previews.
+- **[SEO Suite](https://extras.modx.com/package/seosuite)** — generate the meta titles, descriptions, and summaries SEO Suite manages.
+
 ## Documentation
 
 User and configuration documentation lives on the documentation site:
@@ -123,7 +130,7 @@ Create a key with the provider(s) you want to use:
 | Provider | Get a key | Notes |
 | --- | --- | --- |
 | **OpenAI** (ChatGPT, image generation) | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) | Requires a billing method / prepaid credits. The API is billed separately from any ChatGPT subscription. |
-| **Anthropic** (Claude) | [platform.claude.com/settings/keys](https://platform.claude.com/settings/keys) | Created in the Claude Console; requires account credits/billing. |
+| **Anthropic** (Claude) | [platform.claude.com/settings/keys](https://platform.claude.com/settings/keys) | Created in the Claude Console; requires account credits/billing. Runs server-side only — enable `modai.api.anthropic.execute_on_server`. |
 | **Google Gemini** | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) | Created in Google AI Studio; free tier available with limits (higher usage and image generation may require billing). |
 | **OpenRouter** (multi-vendor gateway) | [openrouter.ai/settings/keys](https://openrouter.ai/settings/keys) | One key for many models and providers; requires account credits. |
 
@@ -163,6 +170,8 @@ Start development mode (watch/rebuild):
 ```bash
 npm run dev
 ```
+
+modAI runs inside the MODX Manager, so building the assets alone does not produce a running instance. To exercise your changes you need a local MODX Revolution 3.x site with modAI set up for development.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for implementation notes and [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 
