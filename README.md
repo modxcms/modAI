@@ -112,16 +112,11 @@ Provider-specific features may have their own requirements.
 
 ## Installation
 
-Install modAI through the MODX Extras installer ([package page](https://extras.modx.com/package/modai)). During setup you'll be prompted to add at least one provider API key (you can also add or change keys later in the system settings).
-
-After installation:
-
-1. Enable the features you want to use.
-2. Start using AI features inside the MODX Manager.
+Install modAI through the MODX Extras installer ([package page](https://extras.modx.com/package/modai)). The installer prompts you for provider API keys as part of setup.
 
 ### Getting provider API keys
 
-The installer prompts you for provider API keys during setup. You need **at least one** to use modAI, and you can add or change keys later in the system settings (`modai.api.{service}.key`).
+You need **at least one** provider key to use modAI. The installer prompts you for keys during setup, and you can add or change them later in the system settings (`modai.api.{service}.key`).
 
 Create a key with the provider(s) you want to use:
 
@@ -135,6 +130,11 @@ Create a key with the provider(s) you want to use:
 Custom / OpenAI-compatible endpoints are configured directly in the system settings. Treat API keys like passwords — never commit or share them.
 
 See [PROVIDERS.md](PROVIDERS.md) for provider setup notes.
+
+### After installation
+
+1. Enable the features you want to use.
+2. Start using AI features inside the MODX Manager.
 
 ## Development setup
 
