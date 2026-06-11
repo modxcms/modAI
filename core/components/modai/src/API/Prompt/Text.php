@@ -97,7 +97,7 @@ class Text extends API
         $result = $aiService->getCompletions(
             [['content' => $content]],
             CompletionsConfig::new($model, $this->modx)
-                ->options(['max_tokens' => $maxTokens, 'temperature' => $temperature], $customOptions)
+                ->options(['max_completion_tokens' => $maxTokens, 'temperature' => $temperature], $customOptions)
                 ->systemInstructions($systemInstructions)
                 ->stream($stream)
             //                ->toolChoice('none')
