@@ -201,7 +201,7 @@ class Chat extends API
             CompletionsConfig::new($model, $this->modx)
                 ->tools($tools)
                 ->messages($messages)
-                ->options(['max_tokens' => $maxTokens, 'temperature' => $temperature], $customOptions, $agentOptions, $additionalOptions)
+                ->options(['max_completion_tokens' => $maxTokens, 'temperature' => $temperature], $customOptions, $agentOptions, $additionalOptions)
                 ->systemInstructions($systemInstructions)
                 ->stream($stream)
         )->withChatId($usedChatId);
