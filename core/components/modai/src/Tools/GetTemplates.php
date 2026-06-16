@@ -83,7 +83,7 @@ class GetTemplates implements ToolInterface
 
             if (!empty($arguments['name'])) {
                 $where[] = [
-                    'templatename' => $arguments['query'],
+                    'templatename' => $arguments['name'],
                 ];
             }
 

@@ -83,7 +83,7 @@ class GetChunks implements ToolInterface
 
             if (!empty($arguments['name'])) {
                 $where[] = [
-                    'name' => $arguments['query'],
+                    'name' => $arguments['name'],
                 ];
             }
 

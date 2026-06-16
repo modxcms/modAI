@@ -93,15 +93,15 @@ class EditChunk implements ToolInterface
         }
         $chunk->set('description', (string)$arguments['chunk']['description']);
         $chunk->set('snippet', (string)$arguments['chunk']['content']);
-        if ($chunk->save()) {
-            return json_encode(['success' => true, 'message' => 'Chunk updated. Use with: [[$' . $chunk->get('name') . ']]']);
+        if (!$chunk->save()) {
+            return json_encode(['success' => false, 'message' => 'Could not save chunk.']);
         }
 
         if ($this->clearCache) {
             $this->modx->cacheManager->refresh();
         }
 
-        return json_encode(['success' => false, 'message' => 'Could not save chunk.']);
+        return json_encode(['success' => true, 'message' => 'Chunk updated. Use with: [[$' . $chunk->get('name') . ']]']);
     }
 
     public static function checkPermissions(modX $modx): bool
