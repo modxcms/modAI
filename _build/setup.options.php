@@ -130,7 +130,7 @@ $output[] = '
 <div class="modai-setup">
 <h2>API Keys</h2>
 <p>Add the API keys for the services you wish to use.</p>
-<p>You can add these later in the system settings, but you will need at least one to use modAI. Click the vendor labels below to open instructions for each one. <a href="https://modxcms.github.io/modAI/supported-services.html" target="_blank">Learn more about API keys in modAI</a>.</p>
+<p>You can add these later in the system settings, but you will need at least one to use modAI. Click the vendor labels below to open instructions for each one. <a href="https://modxcms.github.io/modAI/Configuration/Supported-Services" target="_blank">Learn more about API keys in modAI</a>.</p>
 <div class="modai-setup-fields">';
 
 foreach ($settings as $setting) {
