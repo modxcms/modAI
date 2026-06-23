@@ -178,6 +178,11 @@ class Anthropic implements AIService
 
             foreach ($options as $key => $value) {
                 switch ($key) {
+                    case 'max_tokens':
+                        if ($value >= 0) {
+                            $gptConfig['max_tokens'] = $value;
+                        }
+                        break;
                     case 'temperature':
                         $value = floatval($value);
                         if ($value >= 0) {

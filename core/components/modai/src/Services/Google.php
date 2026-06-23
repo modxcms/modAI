@@ -200,7 +200,9 @@ class Google implements AIService
             foreach ($options as $key => $value) {
                 switch ($key) {
                     case 'max_tokens':
-                        $generationConfig['maxOutputTokens'] = $value;
+                        if ($value >= 0) {
+                            $generationConfig['maxOutputTokens'] = $value;
+                        }
                         break;
                     case 'temperature':
                         $value = floatval($value);

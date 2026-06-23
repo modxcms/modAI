@@ -208,7 +208,9 @@ class OpenAI implements AIService
             foreach ($options as $key => $value) {
                 switch ($key) {
                     case 'max_tokens':
-                        $gptConfig['max_output_tokens'] = $value;
+                        if ($value >= 0) {
+                            $gptConfig['max_output_tokens'] = $value;
+                        }
                         break;
                     case 'temperature':
                         $value = floatval($value);
