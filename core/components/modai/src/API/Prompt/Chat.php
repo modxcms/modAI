@@ -52,6 +52,13 @@ class Chat extends API
             $chatId = null;
         }
 
+        if ($chatId === null && $lastMessageId !== null) {
+            $message = $this->modx->getObject(Message::class, ['id' => $lastMessageId, 'created_by' => $this->modx->user->id]);
+            if ($message) {
+                $chatId = $message->get('chat');
+            }
+        }
+
         if (empty($prompt) && empty($messages)) {
             throw new LexiconException('modai.error.prompt_required');
         }
